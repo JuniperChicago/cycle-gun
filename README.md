@@ -48,7 +48,69 @@ stream with payload references.
     })
 ```
 
-TODO: Complete example
+## A more complete example
+
+Note: virtual-dom details omitted and transducers are verbose here
+
+```typescript
+import xs from 'xstream';
+import { run } from '@cycle/xstream-run';
+import { makeDOMDriver } from '@cycle/dom';
+import { makeGunDriver } from 'cycle-gun';
+import * as uuid from 'uuid-random';
+import * as equal from 'deep-equal';
+import dropRepeats from 'xstream/extra/dropRepeats';
+
+
+function gunGetTodo(gun) {
+    return gun.get('example/todo/data');
+}
+
+function main(sources) {
+
+  const {DOM, gun} = sources;
+
+  const gunTodoEvent$ = gun.get(gunGetTodo));
+
+  // Transform gun events into action messages
+  const gunState$ = gunTodoEvent$
+    .compose(dropRepeats(equal))
+    .map((event) => {
+      return { typeKey: 'getTodo', payload: event };
+    })
+
+  // sink gunState$ into a state reducer or into vdom
+
+
+
+
+  // sink streams of payloaded reducers to gun driver
+  const outgoingGunEvents$ = event$
+    .filter(event => event.typeKey === 'putTodo')
+    .map((event) => {
+      return (gunInstance) => {
+        return gunInstance.get('example/todo/data').path(uuid()).put(event.payload);
+      }
+    })
+
+  return {
+    // DOM: vtree$
+    gun: outgoingGunEvents$
+
+    // DOM: xs.from([div('.container', [h1(['this is a test'])])])
+  };
+}
+
+//const socketIODriver = makeSocketIODriver(socket);
+
+const drivers = {
+  // DOM: makeDOMDriver('#app'),
+  gun: makeGunDriver('http://localhost:3500')
+};
+
+run(main, drivers);
+
+```
 
 
 
