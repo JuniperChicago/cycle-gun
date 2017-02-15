@@ -1,0 +1,29 @@
+{
+  "name": "cycle-gun",
+  "version": "0.0.9",
+  "description": "A cycle.js driver that wraps gun.js",
+  "main": "lib/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JuniperChicago/cycle-gun.git"
+  },
+  "keywords": [
+    "cycle.js",
+    "gun.js"
+  ],
+  "author": "Robin Schulemann <rschulemann@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/JuniperChicago/cycle-gun/issues"
+  },
+  "homepage": "https://github.com/JuniperChicago/cycle-gun#readme",
+  "dependencies": {
+    "@cycle/xstream-run": "^4.2.0",
+    "deep-equal": "1.0.1",
+    "gun": "^0.3.992",
+    "xstream": "^9.3.0"
+  }
+}
