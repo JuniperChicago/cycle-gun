@@ -8,8 +8,8 @@ Note: This driver currently depends on the [xstream](https://github.com/staltz/x
 
 ## Overview
 
-- A gun store is created inside a driver function pointing to an optional peer.
-- A a method named `get` is returned with the sources.
+- Gunjs store is created inside a driver function pointing to an optional peer.
+- Method named `get` is returned with the sources.
 - The `get` method accepts a function argument that accesses the gun store directly and returns an event stream.
 - The returned event stream transforms selected events from the gun store into xstream events
 - transform functions are bundled with the payload and streamed into driver sinks
@@ -34,9 +34,7 @@ const gunTodoEvent$ = gun.get((gunInstance) => {
 
 ## Sinking messages to gun driver
 
-In this version, we sink payload and transform messages to
-the gun driver by sending a transform function through the
-stream with payload references.
+In this version, we sink payload and transform messages to the gun driver by sending a transform function through the stream with payload references.
 
 ```typescript
   var outgoingGunTodo$ = event$
