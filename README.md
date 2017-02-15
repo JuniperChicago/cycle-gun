@@ -113,6 +113,14 @@ run(main, drivers);
 ```
 
 
+## Other cyclejs reources
+
+Please see [awesome-cyclejs](https://github.com/cyclejs-community/awesome-cyclejs) - A curated list of awesome Cycle.js resources.
+
+
+[MIT License](./LICENSE)
+
+
 
 
 
