@@ -1,5 +1,5 @@
 import xs from 'xstream';
-import { div, table, td, tr, thead, tbody, header, span } from '@cycle/dom';
+import { div, table, td, tr, thead, tbody, header, span, form, input, label, button } from '@cycle/dom';
 
 function transformTodoStream(inStream) {
     return inStream.map((state) => {
@@ -57,17 +57,31 @@ export default function app(sources) {
         return stateStream.map((state) => {
 
             const {headings, rows} = state;
-            
+
             console.log(state);
-            return div({ attrs: { class: '' } }, [
-                header({ attrs: { class: '' } }, [
-                    div({ attrs: { class: '' } }, [
-                        div("what the fuck"),
-                        span({ attrs: { class: '' } }, 'Example Todo')
+            return div('.example__layout.mdl-layout', [
+                header('.example__header.mdl-layout__header', [
+                    div('.mdl-layout__header-row', [
+                        span('.mdl-layout__title', 'Example Todo')
                     ])
                 ]),
                 // div(rows.map((row) => {return tr(row.val)}))
-                table({ attrs: { class: 'mdl-data-table' } }, tbodyElems(state))
+                div('.example__content.mdl-layout__content', [
+                    div('.example__horizontal-form', [
+                        form('.example__horizontal-form__element', [
+                            div('.mdl-textfield mdl-js-textfield', [
+                                input({ attrs: { class: 'mdl-textfield__input', type: 'text', id: 'sample1' } }),
+                                label({ attrs: { class: 'mdl-textfield__label', for: 'sample1' } }, 'Text')
+                            ])
+                        ]),
+                        button('.example__horizontal__button.mdl-button.mdl-button--raised mdl-button--colored', 'save')
+                    ]),
+                    div('.example__content', [
+                        table('.mdl-data-table', tbodyElems(state))
+                        ])
+                    
+                ])
+
 
 
 
