@@ -4,7 +4,8 @@
   "description": "A cycle.js driver that wraps gun.js",
   "main": "lib/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "bundle-example-browser": "./node_modules/.bin/browserify lib/example/browser/index.js --debug > example/browser/bundle.js"
   },
   "repository": {
     "type": "git",
@@ -21,9 +22,14 @@
   },
   "homepage": "https://github.com/JuniperChicago/cycle-gun#readme",
   "dependencies": {
-    "@cycle/xstream-run": "^4.2.0",
-    "deep-equal": "1.0.1",
     "gun": "^0.3.992",
     "xstream": "^9.3.0"
+  },
+  "devDependencies": {
+    "@cycle/dom": "^14.0.0",
+    "@cycle/xstream-run": "^4.2.0",
+    "browserify": "14.1.0",
+    "deep-equal": "1.0.1",
+    "uuid-random": "^1.0.5"
   }
 }
