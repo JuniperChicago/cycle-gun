@@ -19,6 +19,7 @@ import {
     section,
     main,
     h2,
+    h3,
     h4,
     fieldset
 
@@ -60,7 +61,7 @@ function theadElems(tableData) {
         .map(heading => {
 
             if (heading === 'X') {
-                return th('', 'X')
+                return th('.th-delete', 'X')
             } else {
                 return th('', heading)
             }
@@ -80,8 +81,8 @@ function tbodyElems(tableData) {
             .map((heading) => {
 
                 if (heading === 'X') {
-                    console.log(row.key)
-                    return td('', [button({ attrs: { class: 'button-remove', 'data-key': row.key } }, 'X')])
+                    //console.log(row.key)
+                    return td('.delete', [button({ attrs: { class: 'button-remove', 'data-key': row.key } }, 'X')])
                 } else {
                     return td('', row[heading])
                 }
@@ -180,16 +181,18 @@ export default function app(sources) {
             //console.log(gun);
             return div('pure-g', [
                 div('', [
-                    header(''),
                     main('.content', [
                         div('', [
+                            section('.margin-top', [
+                                h2("Task List Example")
+                            ]),
                             section('', [
                                 div('', [
                                     div('', [
-                                        // h4("Add new task"),
+
                                         form('.pure-form.pure-form-stacked', [
                                             fieldset('', [
-                                                legend('', 'Task list Example'),
+                                                // legend('', 'Task list Example'),
 
                                                 label({ attrs: { for: 'text-newtask' } }, 'Add Task'),
                                                 input({
@@ -205,7 +208,7 @@ export default function app(sources) {
                                                 }),
                                             ])
                                         ]),
-                                        button('#save-task.pure-button.pure-button-primary', 'save'),
+                                        button('#save-task.pure-button.pure-button-primary.button-margin-right', 'save'),
                                         button('#clear.pure-button.pure-button-primary', 'clear')
                                     ]),
                                 ])

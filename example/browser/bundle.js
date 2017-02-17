@@ -78,7 +78,7 @@ function theadElems(tableData) {
         .filter(function (heading) { return heading !== 'key'; }) // skippings the key
         .map(function (heading) {
         if (heading === 'X') {
-            return dom_1.th('', 'X');
+            return dom_1.th('.th-delete', 'X');
         }
         else {
             return dom_1.th('', heading);
@@ -93,8 +93,8 @@ function tbodyElems(tableData) {
             .filter(function (heading) { return heading !== 'key'; }) // skipping the key
             .map(function (heading) {
             if (heading === 'X') {
-                console.log(row.key);
-                return dom_1.td('', [dom_1.button({ attrs: { class: 'button-remove', 'data-key': row.key } }, 'X')]);
+                //console.log(row.key)
+                return dom_1.td('.delete', [dom_1.button({ attrs: { class: 'button-remove', 'data-key': row.key } }, 'X')]);
             }
             else {
                 return dom_1.td('', row[heading]);
@@ -165,16 +165,17 @@ function app(sources) {
             //console.log(gun);
             return dom_1.div('pure-g', [
                 dom_1.div('', [
-                    dom_1.header(''),
                     dom_1.main('.content', [
                         dom_1.div('', [
+                            dom_1.section('.margin-top', [
+                                dom_1.h2("Task List Example")
+                            ]),
                             dom_1.section('', [
                                 dom_1.div('', [
                                     dom_1.div('', [
-                                        // h4("Add new task"),
                                         dom_1.form('.pure-form.pure-form-stacked', [
                                             dom_1.fieldset('', [
-                                                dom_1.legend('', 'Task list Example'),
+                                                // legend('', 'Task list Example'),
                                                 dom_1.label({ attrs: { for: 'text-newtask' } }, 'Add Task'),
                                                 dom_1.input({
                                                     attrs: {
@@ -189,7 +190,7 @@ function app(sources) {
                                                 }),
                                             ])
                                         ]),
-                                        dom_1.button('#save-task.pure-button.pure-button-primary', 'save'),
+                                        dom_1.button('#save-task.pure-button.pure-button-primary.button-margin-right', 'save'),
                                         dom_1.button('#clear.pure-button.pure-button-primary', 'clear')
                                     ]),
                                 ])
