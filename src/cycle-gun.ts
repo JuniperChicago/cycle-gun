@@ -30,7 +30,7 @@ export function makeGunDriver(url) {
         })
         .compose(dropRepeats(equal));
     };
-
+    
     function processTransform(inputFunction){
         return inputFunction(gun);
     }
