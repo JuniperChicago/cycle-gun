@@ -6,6 +6,19 @@ import { makeGunDriver } from '../../../lib/index.js';
 import * as equal from 'deep-equal';
 import dropRepeats from 'xstream/extra/dropRepeats';
 
+function preventDefaultSinkDriver(prevented$) {
+  
+  prevented$.addListener({
+    next: ev => {
+    //console.log(ev);
+      ev.preventDefault()
+    },
+    error: () => {},
+    complete: () => {},
+  })
+  return xs.empty()
+}
+
 
 import app from './app';
 
@@ -19,7 +32,8 @@ function main(sources) {
     
     const sinks = {
         DOM: appPage.DOM,
-        gun: xs.merge(appPage.gun)
+        gun: xs.merge(appPage.gun),
+        // preventDefault: preventDefaultSinkDriver,
     }
 
     return sinks;

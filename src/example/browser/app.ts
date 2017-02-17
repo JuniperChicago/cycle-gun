@@ -43,22 +43,14 @@ function transformTodoStream(inStream) {
 
 function tbodyElems(tableData) {
     const {headings, rows} = tableData;
-    // generator rows based on headers
     return rows.map((row) => {
-        // generate data items within each row
         const tdElems = headings.map((heading) => {
-            //console.log(heading)
             return td({ attrs: { class: 'mdl-data-table__cell--non-numeric' } }, row[heading])
         })
         return tr({ attrs: { class: '' } }, tdElems);
     })
 }
 
-// function tableElem(state) {
-//     //console.log(state);
-
-//     return table({ attrs: { class: 'mdl-data-table' } }, tbodyElems(state));
-// }
 
 
 export default function app(sources) {
@@ -66,41 +58,72 @@ export default function app(sources) {
     const {DOM, gun} = sources;
 
     function intent(D) {
-        
-        const click$ = D.select('#save-task').events('click');
-        const text$ = D.select('#text-newtask').events('input')
+
+        // clear
+        const clearButtonClick$ = D.select('#clear').events('click')
+
+
+        // save
+        const saveButtonClick$ = D.select('#save-task').events('click')
+
+
+        // return - save
+        const keydownEvent$ = D.select('#text-newtask').events('keypress')
+            .filter(event => event.keyCode === 13)
+            .map((event) => {
+                event = event || window.event; // get window.event if e argument missing (in IE)
+                event.preventDefault();
+                return {};
+            })
+
+        // text value
+        const textEvent$ = D.select('#text-newtask').events('input')
             .map(ev => ev.target.value)
             .startWith('')
-        return click$.compose(sampleCombine(text$)).map(([click, text]) => {
+            .map(event => {
+                return { typeKey: 'text-content', payload: event }
+            })
 
-            return {typeKey: 'out-gun', payload: text};
-        }).debug('click')
+        const clickOrEnter$ = xs.merge(saveButtonClick$, keydownEvent$);
 
+        const outgun$ = clickOrEnter$.compose(sampleCombine(textEvent$)).map(([click, event]) => {
+            return { typeKey: 'out-gun', payload: event.payload };
+        })
+
+        const clearEvents$ = xs.merge(clearButtonClick$, saveButtonClick$, keydownEvent$)
+            .map(event => {
+                return { typeKey: 'text-clear', payload: null }
+            });
+
+
+
+        return {
+            textEvent$,
+            clearEvents$,
+            outgun$
+        }
+
+
+        // return xs.merge(outgun$)
     }
-
-
-
-
-
-
-
-
 
 
     const gunTodos$ = gun.get((gunInstance) => {
         return gunInstance.get('example/todo/data');
     })
 
-    // We are removing nulls, keys that 
+    // We are removing nulls, keys that
     const gunTable$ = transformTodoStream(gunTodos$);
 
-    function vtree(stateStream) {
+    function vtree(gunStream, textStream) {
 
-        return stateStream.map((state) => {
+        return xs.combine(gunStream, textStream).map(([gun, text]) => {
 
-            const {headings, rows} = state;
 
-            console.log(state);
+
+            
+
+            console.log(gun);
             return main('.mdl-layout__container', [
                 div('.mdl-layout--fixed-header', [
                     section('.section--center.mdl-grid.mdl-grid--no-spacing', [
@@ -113,49 +136,83 @@ export default function app(sources) {
                 ]),
                 section('.section--center.mdl-grid.mdl-grid--no-spacing', [
                     div('.mdl-card.mdl-cell.mdl-cell--6-col', [
-                        // div('.example__horizontal-form', [
-                        // div('', [
-                        // form('', [
                         div('.mdl-card__supporting-text', [
                             h4("Add new task"),
                             form('', [
                                 div('.mdl-textfield', [
-                                    input({ attrs: { class: 'mdl-textfield__input', type: 'text', id: 'text-newtask', placeholder: 'Enter task' } }),
-                                    // label({ attrs: { class: 'mdl-textfield__label', for: 'sample1' } }, 'New Task Here')
+                                    // div(text),
+                                    input({
+                                        attrs: {
+                                            class: 'mdl-textfield__input',
+                                            type: 'text',
+                                            id: 'text-newtask',
+                                        },
+                                        hook: {
+                                            update: (o, n) => n.elm.value = text
+                                        }
+                                    }),
                                 ])
                             ]),
-                            button('#save-task.mdl-button.mdl-button--raised mdl-button--colored', 'save')
+                            button('#save-task.mdl-button.mdl-button--raised mdl-button--colored', 'save'),
+                            button('#clear.mdl-button.mdl-button--raised mdl-button--colored', 'clear')
                         ]),
-
-
-                        // button('.mdl-button.mdl-button--raised mdl-button--colored', 'save')
-                        // ])
-
                     ])
                 ]),
                 section('.section--center.mdl-grid.mdl-grid--no-spacing', [
                     div('.mdl-card.mdl-cell.mdl-cell--6-col', [
-                        table('.mdl-data-table', tbodyElems(state))
+                        table('.mdl-data-table', tbodyElems(gun))
                     ])
                 ])
             ])
         })
     }
 
+    const events = intent(DOM);
 
-    const intent$ = intent(DOM);
+    const blendedEvents$ = xs.merge(events.textEvent$, events.clearEvents$)
 
-    const outgoingGunTodo$ = intent$
-    .filter((event) => event.typeKey === 'out-gun')
-    .map((event) => {
-      return (gunInstance) => {
-        return gunInstance.get('example/todo/data').path(uuid()).put(event.payload);
-      }
-    })
+    
+    
+    function model(event$) {
 
-    const vtree$ = vtree(gunTable$);
+        const clearTransformer$ = event$.filter(event => event.typeKey === 'text-clear')
+            .map((event) => {
+                return function (acc) {
+                    acc = ''
+                    return acc;
+                }
+            })
 
-    //console.log(vtree$)
+        const textTransformer$ = event$.filter(event => event.typeKey === 'text-content')
+            .map((event) => {
+                return function (acc) {
+                    acc = event.payload;
+                    return acc;
+                }
+            })
+
+        const transformSelector$ = xs.merge(clearTransformer$, textTransformer$)
+
+        const transformer = (acc, trnsFn) => trnsFn(acc);
+
+        return transformSelector$.fold(transformer, '')
+
+    }
+
+
+
+    const outgoingGunTodo$ = events.outgun$
+        .filter((event) => event.typeKey === 'out-gun')
+        .map((event) => {
+            return (gunInstance) => {
+                return gunInstance.get('example/todo/data').path(uuid()).put(event.payload);
+            }
+        })
+
+    const text$ = model(blendedEvents$);
+
+    const vtree$ = vtree(gunTable$, text$);
+
     const sinks = {
         gun: outgoingGunTodo$,
         DOM: vtree$
