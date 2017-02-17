@@ -17,7 +17,8 @@ import {
     section,
     main,
     h2,
-    h4
+    h4,
+    fieldset
 
 } from '@cycle/dom';
 
@@ -121,49 +122,52 @@ export default function app(sources) {
 
 
 
-            
+
+            ////////////////////////////////
 
             console.log(gun);
-            return main('.mdl-layout__container', [
-                div('.mdl-layout--fixed-header', [
-                    section('.section--center.mdl-grid.mdl-grid--no-spacing', [
-                        header('.mdl-layout__header', [
-                            div('.mdl-layout__header-row', [
-                                span('.mdl-layout__title', 'Example Todo')
-                            ])
-                        ])
-                    ]),
-                ]),
-                section('.section--center.mdl-grid.mdl-grid--no-spacing', [
-                    div('.mdl-card.mdl-cell.mdl-cell--6-col', [
-                        div('.mdl-card__supporting-text', [
-                            h4("Add new task"),
-                            form('', [
-                                div('.mdl-textfield', [
-                                    // div(text),
-                                    input({
-                                        attrs: {
-                                            class: 'mdl-textfield__input',
-                                            type: 'text',
-                                            id: 'text-newtask',
-                                        },
-                                        hook: {
-                                            update: (o, n) => n.elm.value = text
-                                        }
-                                    }),
+            return div('pure-g', [
+                div('', [
+                    header(''),
+                    main('.content', [
+                        div('', [
+                            section('', [
+                                div('', [
+                                    div('', [
+                                        h4("Add new task"),
+                                        form('.pure-form', [
+                                            fieldset('', [
+                                                // div(text),
+                                                input({
+                                                    attrs: {
+                                                        class: '',
+                                                        type: 'text',
+                                                        id: 'text-newtask',
+                                                        autocomplete: 'off'
+                                                    },
+                                                    hook: {
+                                                        update: (o, n) => n.elm.value = text
+                                                    }
+                                                }),
+                                            ])
+                                        ]),
+                                        button('#save-task.pure-button.pure-button-primary', 'save'),
+                                        button('#clear.pure-button.pure-button-primary', 'clear')
+                                    ]),
                                 ])
                             ]),
-                            button('#save-task.mdl-button.mdl-button--raised mdl-button--colored', 'save'),
-                            button('#clear.mdl-button.mdl-button--raised mdl-button--colored', 'clear')
+                            section('', [
+                                div('', [
+                                    table('.pure-table.example-table', tbodyElems(gun))
+                                ])
+                            ])
                         ]),
-                    ])
-                ]),
-                section('.section--center.mdl-grid.mdl-grid--no-spacing', [
-                    div('.mdl-card.mdl-cell.mdl-cell--6-col', [
-                        table('.mdl-data-table', tbodyElems(gun))
+
                     ])
                 ])
             ])
+
+            //////////////////////////////
         })
     }
 
@@ -171,8 +175,8 @@ export default function app(sources) {
 
     const blendedEvents$ = xs.merge(events.textEvent$, events.clearEvents$)
 
-    
-    
+
+
     function model(event$) {
 
         const clearTransformer$ = event$.filter(event => event.typeKey === 'text-clear')

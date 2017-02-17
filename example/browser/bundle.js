@@ -122,48 +122,49 @@ function app(sources) {
     var gunTable$ = transformTodoStream(gunTodos$);
     function vtree(gunStream, textStream) {
         return xstream_1.default.combine(gunStream, textStream).map(function (_a) {
+            ////////////////////////////////
             var gun = _a[0], text = _a[1];
             console.log(gun);
-            return dom_1.main('.mdl-layout__container', [
-                dom_1.div('.mdl-layout--fixed-header', [
-                    dom_1.section('.section--center.mdl-grid.mdl-grid--no-spacing', [
-                        dom_1.header('.mdl-layout__header', [
-                            dom_1.div('.mdl-layout__header-row', [
-                                dom_1.span('.mdl-layout__title', 'Example Todo')
-                            ])
-                        ])
-                    ]),
-                ]),
-                dom_1.section('.section--center.mdl-grid.mdl-grid--no-spacing', [
-                    dom_1.div('.mdl-card.mdl-cell.mdl-cell--6-col', [
-                        dom_1.div('.mdl-card__supporting-text', [
-                            dom_1.h4("Add new task"),
-                            dom_1.form('', [
-                                dom_1.div('.mdl-textfield', [
-                                    // div(text),
-                                    dom_1.input({
-                                        attrs: {
-                                            class: 'mdl-textfield__input',
-                                            type: 'text',
-                                            id: 'text-newtask',
-                                        },
-                                        hook: {
-                                            update: function (o, n) { return n.elm.value = text; }
-                                        }
-                                    }),
+            return dom_1.div('pure-g', [
+                dom_1.div('', [
+                    dom_1.header(''),
+                    dom_1.main('.content', [
+                        dom_1.div('', [
+                            dom_1.section('', [
+                                dom_1.div('', [
+                                    dom_1.div('', [
+                                        dom_1.h4("Add new task"),
+                                        dom_1.form('.pure-form', [
+                                            dom_1.fieldset('', [
+                                                // div(text),
+                                                dom_1.input({
+                                                    attrs: {
+                                                        class: '',
+                                                        type: 'text',
+                                                        id: 'text-newtask',
+                                                        autocomplete: 'off'
+                                                    },
+                                                    hook: {
+                                                        update: function (o, n) { return n.elm.value = text; }
+                                                    }
+                                                }),
+                                            ])
+                                        ]),
+                                        dom_1.button('#save-task.pure-button.pure-button-primary', 'save'),
+                                        dom_1.button('#clear.pure-button.pure-button-primary', 'clear')
+                                    ]),
                                 ])
                             ]),
-                            dom_1.button('#save-task.mdl-button.mdl-button--raised mdl-button--colored', 'save'),
-                            dom_1.button('#clear.mdl-button.mdl-button--raised mdl-button--colored', 'clear')
+                            dom_1.section('', [
+                                dom_1.div('', [
+                                    dom_1.table('.pure-table.example-table', tbodyElems(gun))
+                                ])
+                            ])
                         ]),
-                    ])
-                ]),
-                dom_1.section('.section--center.mdl-grid.mdl-grid--no-spacing', [
-                    dom_1.div('.mdl-card.mdl-cell.mdl-cell--6-col', [
-                        dom_1.table('.mdl-data-table', tbodyElems(gun))
                     ])
                 ])
             ]);
+            //////////////////////////////
         });
     }
     var events = intent(DOM);
