@@ -1,6 +1,6 @@
 {
   "name": "cycle-gun",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "A cycle.js driver that wraps gun.js",
   "main": "lib/index.js",
   "scripts": {
