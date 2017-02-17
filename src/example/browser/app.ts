@@ -2,10 +2,12 @@ import xs from 'xstream';
 import sampleCombine from 'xstream/extra/sampleCombine'
 import * as uuid from '../../../node_modules/uuid-random/uuid-random.min.js';
 import {
+    legend,
     div,
     table,
     td,
     tr,
+    th,
     thead,
     tbody,
     header,
@@ -25,15 +27,23 @@ import {
 function transformTodoStream(inStream) {
     return inStream.map((state) => {
         let rows = [];
+        let headings = [];
         let count = 1;
         for (let key in state) {
             let row = state[key];
             if (!state[key] || typeof row === 'object') continue;
             let c = count++
             // might want to convert to json here...
-            rows.push({ id: c, key, val: row })
+            rows.push({ key, val: row })
         }
-        let headings = Object.keys(rows[0]);
+
+
+        if (rows.length > 0) {
+            headings = Object.keys(rows[0])
+            headings.push('X')
+        }
+
+
         return {
             headings,
             rows
@@ -42,17 +52,53 @@ function transformTodoStream(inStream) {
 }
 
 
-function tbodyElems(tableData) {
-    const {headings, rows} = tableData;
-    return rows.map((row) => {
-        const tdElems = headings.map((heading) => {
-            return td({ attrs: { class: 'mdl-data-table__cell--non-numeric' } }, row[heading])
+function theadElems(tableData) {
+
+    const {headings} = tableData;
+    const thElems = headings
+        .filter(heading => heading !== 'key') // skippings the key
+        .map(heading => {
+
+            if (heading === 'X') {
+                return th('', 'X')
+            } else {
+                return th('', heading)
+            }
         })
-        return tr({ attrs: { class: '' } }, tdElems);
-    })
+
+    return tr('', thElems);
+
 }
 
 
+function tbodyElems(tableData) {
+    const {headings, rows} = tableData;
+    return rows.map((row) => {
+
+        const tdElems = headings
+            .filter(heading => heading !== 'key') // skipping the key
+            .map((heading) => {
+
+                if (heading === 'X') {
+                    console.log(row.key)
+                    return td('', [button({ attrs: { class: 'button-remove', 'data-key': row.key } }, 'X')])
+                } else {
+                    return td('', row[heading])
+                }
+            })
+
+        return tr({
+            attrs: {
+                class: ''
+            },
+            props: {
+                key: row.key
+            }
+        },
+            tdElems
+        );
+    })
+}
 
 export default function app(sources) {
 
@@ -62,6 +108,8 @@ export default function app(sources) {
 
         // clear
         const clearButtonClick$ = D.select('#clear').events('click')
+
+        const removeButtonClick$ = D.select('.button-remove').events('click')
 
 
         // save
@@ -87,8 +135,16 @@ export default function app(sources) {
 
         const clickOrEnter$ = xs.merge(saveButtonClick$, keydownEvent$);
 
-        const outgun$ = clickOrEnter$.compose(sampleCombine(textEvent$)).map(([click, event]) => {
-            return { typeKey: 'out-gun', payload: event.payload };
+        const outgunRemoveTask$ = removeButtonClick$.map(event => {
+
+            const key = event.target.getAttribute('data-key');
+            return { typeKey: 'out-gun', payload: { key, value: null } }
+        })
+
+
+        const outgunAddTask$ = clickOrEnter$.compose(sampleCombine(textEvent$)).map(([click, event]) => {
+
+            return { typeKey: 'out-gun', payload: { key: uuid(), value: event.payload } };
         })
 
         const clearEvents$ = xs.merge(clearButtonClick$, saveButtonClick$, keydownEvent$)
@@ -96,18 +152,14 @@ export default function app(sources) {
                 return { typeKey: 'text-clear', payload: null }
             });
 
-
-
         return {
             textEvent$,
             clearEvents$,
-            outgun$
+            outgun$: xs.merge(outgunAddTask$, outgunRemoveTask$)
         }
-
 
         // return xs.merge(outgun$)
     }
-
 
     const gunTodos$ = gun.get((gunInstance) => {
         return gunInstance.get('example/todo/data');
@@ -125,7 +177,7 @@ export default function app(sources) {
 
             ////////////////////////////////
 
-            console.log(gun);
+            //console.log(gun);
             return div('pure-g', [
                 div('', [
                     header(''),
@@ -134,10 +186,12 @@ export default function app(sources) {
                             section('', [
                                 div('', [
                                     div('', [
-                                        h4("Add new task"),
-                                        form('.pure-form', [
+                                        // h4("Add new task"),
+                                        form('.pure-form.pure-form-stacked', [
                                             fieldset('', [
-                                                // div(text),
+                                                legend('', 'Task list Example'),
+
+                                                label({ attrs: { for: 'text-newtask' } }, 'Add Task'),
                                                 input({
                                                     attrs: {
                                                         class: '',
@@ -158,7 +212,11 @@ export default function app(sources) {
                             ]),
                             section('', [
                                 div('', [
-                                    table('.pure-table.example-table', tbodyElems(gun))
+                                    table('.pure-table.example-table', [
+                                        thead('', [theadElems(gun)]),
+                                        tbody(tbodyElems(gun))
+
+                                    ])
                                 ])
                             ])
                         ]),
@@ -208,8 +266,10 @@ export default function app(sources) {
     const outgoingGunTodo$ = events.outgun$
         .filter((event) => event.typeKey === 'out-gun')
         .map((event) => {
+
+            const {key, value} = event.payload;
             return (gunInstance) => {
-                return gunInstance.get('example/todo/data').path(uuid()).put(event.payload);
+                return gunInstance.get('example/todo/data').path(key).put(value);
             }
         })
 
