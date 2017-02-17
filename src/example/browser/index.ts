@@ -29,7 +29,6 @@ function main(sources) {
 
     const appPage = app(sources);
 
-    
     const sinks = {
         DOM: appPage.DOM,
         gun: xs.merge(appPage.gun),
@@ -39,9 +38,10 @@ function main(sources) {
     return sinks;
 
 }
+
 const drivers = {
     DOM: makeDOMDriver('#app'),
-    gun: makeGunDriver('http://localhost:3500')
+    gun: makeGunDriver('http://localhost:3800')
 }
 run(main, drivers);
 
