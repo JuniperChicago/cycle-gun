@@ -1,41 +1,16 @@
 /**
  * Test & Development Server
  * 
+ * 
  */
-// import * as path from 'path';
+
 import * as http from 'http';
-// import * as fs from 'fs';
+
 
 import * as Gun from 'gun';
 
-// import { SocketMessage } from './Types';
-
-// import * as ws from 'ws';
-
-// const wss = new ws.Server({ port: 8100 });
-
-
-// function unloadMessage(message) {
-//   return JSON.parse(message);
-// }
-
-
-// function loadMessage(typeKey: string, payload: any) {
-//   return JSON.stringify({ typeKey, payload })
-// }
-
-
-// function sendFactory(socket) {
-//   return (typeKey, payload) => {
-//     socket.send(loadMessage(typeKey, payload));
-//   }
-// }
-
-
 const port = 3800;
 const ip = '127.0.0.1';
-
-
 
 const gun = Gun({
   file: './data.json',
@@ -54,8 +29,8 @@ const server = http.createServer(function (req, res) {
 
     return; // filters gun requests!
   }
-
 });
+
 
 gun.wsp(server);
 server.listen(port, ip);

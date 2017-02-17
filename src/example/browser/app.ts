@@ -25,6 +25,15 @@ import {
 
 } from '@cycle/dom';
 
+
+
+
+/**
+ * Transforms gun store object into object containing headers and rows
+ * 
+ * @param {any} inStream
+ * @returns
+ */
 function transformTodoStream(inStream) {
   return inStream.map((state) => {
     let rows = [];
@@ -37,14 +46,10 @@ function transformTodoStream(inStream) {
       // might want to convert to json here...
       rows.push({ key, val: row })
     }
-
-
     if (rows.length > 0) {
       headings = Object.keys(rows[0])
       headings.push('X')
     }
-
-
     return {
       headings,
       rows
@@ -53,13 +58,13 @@ function transformTodoStream(inStream) {
 }
 
 
+
 function theadElems(tableData) {
   const {headings} = tableData;
-  
+
   const thElems = headings
     .filter(heading => heading !== 'key') // skippings the key
     .map(heading => {
-      
       if (heading === 'X') {
         return th('.th-delete', 'X')
       } else {
@@ -68,10 +73,15 @@ function theadElems(tableData) {
     })
 
   return tr('', thElems);
-
 }
 
 
+/**
+ * build table body elements
+ * 
+ * @param {any} tableData
+ * @returns
+ */
 function tbodyElems(tableData) {
   const {headings, rows} = tableData;
   return rows.map((row) => {
@@ -88,37 +98,29 @@ function tbodyElems(tableData) {
         }
       })
 
-    return tr({
-      attrs: {
-        class: ''
-      },
-      props: {
-        key: row.key
-      }
-    },
-      tdElems
-    );
+    return tr('', tdElems);
   })
 }
 
 export default function app(sources) {
 
-  const {DOM, gun} = sources;
 
-  function intent(D) {
+
+
+
+  function intent(DOM) {
 
     // clear
-    const clearButtonClick$ = D.select('#clear').events('click')
+    const clearButtonClick$ = DOM.select('#clear').events('click')
+    
+    // remove task
+    const removeButtonClick$ = DOM.select('.button-remove').events('click')
 
-    const removeButtonClick$ = D.select('.button-remove').events('click')
+    // save task
+    const saveButtonClick$ = DOM.select('#save-task').events('click')
 
-
-    // save
-    const saveButtonClick$ = D.select('#save-task').events('click')
-
-
-    // return - save
-    const keydownEvent$ = D.select('#text-newtask').events('keypress')
+    // return - save task
+    const keydownEvent$ = DOM.select('#text-newtask').events('keypress')
       .filter(event => event.keyCode === 13)
       .map((event) => {
         event = event || window.event; // get window.event if e argument missing (in IE)
@@ -126,107 +128,41 @@ export default function app(sources) {
         return {};
       })
 
-    // text value
-    const textEvent$ = D.select('#text-newtask').events('input')
+    // input text value
+    const textEvent$ = DOM.select('#text-newtask').events('input')
       .map(ev => ev.target.value)
       .startWith('')
+      .map(event => ({ typeKey: 'text-content', payload: event }))
+
+    // merge task save events
+    const saveClickOrEnter$ = xs.merge(saveButtonClick$, keydownEvent$);
+
+    // transform remove task message and payload
+    const outgunRemoveTask$ = removeButtonClick$
       .map(event => {
-        return { typeKey: 'text-content', payload: event }
+        const key = event.target.getAttribute('data-key');
+        return { typeKey: 'out-gun', payload: { key, value: null } }
       })
 
-    const clickOrEnter$ = xs.merge(saveButtonClick$, keydownEvent$);
+    // transform add task message and payload  
+    const outgunAddTask$ = saveClickOrEnter$
+      .compose(sampleCombine(textEvent$))
+      .map(([click, event]) => ({ typeKey: 'out-gun', payload: { key: uuid(), value: event.payload } }))
 
-    const outgunRemoveTask$ = removeButtonClick$.map(event => {
-
-      const key = event.target.getAttribute('data-key');
-      return { typeKey: 'out-gun', payload: { key, value: null } }
-    })
-
-
-    const outgunAddTask$ = clickOrEnter$.compose(sampleCombine(textEvent$)).map(([click, event]) => {
-
-      return { typeKey: 'out-gun', payload: { key: uuid(), value: event.payload } };
-    })
-
-    const clearEvents$ = xs.merge(clearButtonClick$, saveButtonClick$, keydownEvent$)
-      .map(event => {
-        return { typeKey: 'text-clear', payload: null }
-      });
+    // transform text clearing events into messages
+    const textClearEvents$ = xs.merge(clearButtonClick$, saveButtonClick$, keydownEvent$)
+      .map(event => ({ typeKey: 'text-clear', payload: null }));
 
     return {
       textEvent$,
-      clearEvents$,
+      textClearEvents$,
       outgun$: xs.merge(outgunAddTask$, outgunRemoveTask$)
     }
-
-    // return xs.merge(outgun$)
   }
 
-  const gunTodos$ = gun.get((gunInstance) => {
-    return gunInstance.get('example/todo/data');
-  })
-
-  // We are removing nulls, keys that
-  const gunTable$ = transformTodoStream(gunTodos$);
-
-  function vtree(gunStream, textStream) {
-
-    return xs.combine(gunStream, textStream).map(([gun, text]) => {
-
-      ////////////////////////////////
-
-      return div('pure-g', [
-        div('', [
-          main('.content', [
-            // div('', [
-              section('.margin-top', [
-                h2("Task List Example")
-              ]),
-              section('', [
-                  // div('', [
-                    form('.pure-form.pure-form-stacked', [
-                      fieldset('', [
-                        label({ attrs: { for: 'text-newtask' } }, 'Add Task'),
-                        input({
-                          attrs: {
-                            class: '',
-                            type: 'text',
-                            id: 'text-newtask',
-                            autocomplete: 'off'
-                          },
-                          hook: {
-                            update: (o, n) => n.elm.value = text
-                          }
-                        }),
-                      ])
-                    ]),
-                    button('#save-task.pure-button.pure-button-primary.button-margin-right', 'save'),
-                    button('#clear.pure-button.pure-button-primary', 'clear')
-                  // ]),
-              ]),
-              section('', [
-                div('', [
-                  table('.pure-table.example-table', [
-                    thead('', [theadElems(gun)]),
-                    tbody(tbodyElems(gun))
-                  ])
-                ])
-              ])
-            // ]),
-          ])
-        ])
-      ])
-
-      //////////////////////////////
-    })
-  }
-
-  const events = intent(DOM);
-
-  const blendedEvents$ = xs.merge(events.textEvent$, events.clearEvents$)
-
-
-
+ 
+  // utilizes a reducer type store
+  // reducers are selected using streams and filters 
   function model(event$) {
 
     const clearTransformer$ = event$.filter(event => event.typeKey === 'text-clear')
@@ -247,27 +183,98 @@ export default function app(sources) {
 
     const transformSelector$ = xs.merge(clearTransformer$, textTransformer$)
 
+    // general transformer function
     const transformer = (acc, trnsFn) => trnsFn(acc);
 
     return transformSelector$.fold(transformer, '')
 
   }
 
+  function vtree(gunStream, textStream) {
 
+    return xs.combine(gunStream, textStream).map(([gun, text]) => {
+
+      ////////////////////////////////
+
+      return div('pure-g', [
+        div('', [
+          main('.content', [
+            section('.margin-top', [
+              h2("Cycle-Gun Task List Example")
+            ]),
+            section('', [
+              form('.pure-form.pure-form-stacked', [
+                fieldset('', [
+                  label({ attrs: { for: 'text-newtask' } }, 'Add Task'),
+                  input({
+                    attrs: {
+                      class: '',
+                      type: 'text',
+                      id: 'text-newtask',
+                      autocomplete: 'off'
+                    },
+                    hook: {
+                      update: (o, n) => n.elm.value = text
+                    }
+                  }),
+                ])
+              ]),
+              button('#save-task.pure-button.pure-button-primary.button-margin-right', 'save'),
+              button('#clear.pure-button.pure-button-primary', 'clear')
+            ]),
+            section('', [
+              div('', [
+                table('.pure-table.example-table', [
+                  thead('', [theadElems(gun)]),
+                  tbody(tbodyElems(gun))
+                ])
+              ])
+            ])
+          ])
+        ])
+      ])
+
+      //////////////////////////////
+    })
+  }
+
+
+  const {DOM, gun} = sources;
+
+
+
+  // Get streams from cycle-gun driver
+  ///////////////////////////////////////////////////////////////////////////
+  const gunTodos$ = gun.get((gunInstance) => {
+    return gunInstance.get('example/todo/data');
+  })
+
+  // We are removing nulls, keys that are meta, etc...
+  const gunTable$ = transformTodoStream(gunTodos$);
+
+  
+  
+  // intent() returns and object of streams
+  const events = intent(DOM);
+
+  const blendedTextEvents$ = xs.merge(events.textEvent$, events.textClearEvents$)
 
   const outgoingGunTodo$ = events.outgun$
     .filter((event) => event.typeKey === 'out-gun')
     .map((event) => {
-
       const {key, value} = event.payload;
+      
+      // return function that directly interacts with the gun instance
       return (gunInstance) => {
+        
+        // gun.js api here
         return gunInstance.get('example/todo/data').path(key).put(value);
       }
     })
 
-  const text$ = model(blendedEvents$);
-
-  const vtree$ = vtree(gunTable$, text$);
+  const textState$ = model(blendedTextEvents$);
+  
+  const vtree$ = vtree(gunTable$, textState$);
 
   const sinks = {
     gun: outgoingGunTodo$,

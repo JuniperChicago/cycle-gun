@@ -5,8 +5,10 @@
   "main": "lib/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "bundle-example-browser": "./node_modules/.bin/browserify lib/example/browser/index.js --debug > example/browser/bundle.js",
-    "bundle-example-browser-watch": "./node_modules/.bin/watchify lib/example/browser/index.js -o example/browser/bundle.js"
+    "bundle-example": "./node_modules/.bin/browserify lib/example/browser/index.js --debug > example/browser/bundle.js",
+    "example-browser-watch": "./node_modules/.bin/watchify lib/example/browser/index.js -o example/browser/bundle.js",
+    "copy-example-server": "cp ./lib/example/server/*.* ./example/server",
+    "example-server": "npm run copy-example-server && node ./example/server/server.js"
   },
   "repository": {
     "type": "git",
