@@ -6,9 +6,10 @@ import { makeGunDriver } from '../../../lib/index.js';
 import * as equal from 'deep-equal';
 import dropRepeats from 'xstream/extra/dropRepeats';
 
-import * as uuid from '../../../node_modules/uuid-random/uuid-random.min.js';
+
 import app from './app';
 
+// main function
 function main(sources) {
 
     const {DOM} = sources;
@@ -28,7 +29,6 @@ const drivers = {
     DOM: makeDOMDriver('#app'),
     gun: makeGunDriver('http://localhost:3500')
 }
-
 run(main, drivers);
 
 

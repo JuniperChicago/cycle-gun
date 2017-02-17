@@ -5,7 +5,8 @@
   "main": "lib/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "bundle-example-browser": "./node_modules/.bin/browserify lib/example/browser/index.js --debug > example/browser/bundle.js"
+    "bundle-example-browser": "./node_modules/.bin/browserify lib/example/browser/index.js --debug > example/browser/bundle.js",
+    "bundle-example-browser-watch": "./node_modules/.bin/watchify lib/example/browser/index.js -o example/browser/bundle.js"
   },
   "repository": {
     "type": "git",
@@ -30,6 +31,7 @@
     "@cycle/xstream-run": "^4.2.0",
     "browserify": "14.1.0",
     "deep-equal": "1.0.1",
-    "uuid-random": "^1.0.5"
+    "uuid-random": "^1.0.5",
+    "watchify": "3.9.0"
   }
 }
