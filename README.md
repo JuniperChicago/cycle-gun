@@ -8,15 +8,15 @@ Note: This driver currently depends on the [xstream](https://github.com/staltz/x
 
 ## Overview
 
-- Gunjs store is created inside a driver function pointing to an optional peer.
+- Gun.js store is created inside a cycle driver pointing to an optional peer.
 - Method named `get` is returned with the sources.
 - The `get` method accepts a function argument that accesses the gun store directly and returns an event stream.
-- The returned event stream transforms selected events from the gun store into xstream events
-- transform functions are bundled with the payload and streamed into driver sinks
- 
+- The returned event stream contains the gun event object
+- Sink streams contain functions with payload references that are applied directly to the gun.js instance.
+
 ## Creating `get` Stream
 
-The get stream applies a function to the gun instance, usually with a `gun.get('key')` and attaches a reactive stream that listens to the response of the initial function and any changes to the data stored under the given key, both the local instance and synced changes from peers of the gun instance as well.
+The get method applies a function directly to the gun instance. The `gun.get('key')` example attaches a reactive stream that listens to the response of the initial function and any changes to the data stored under the given key, both the local instance and synced changes from peers of the gun instance as well.
 
 ```typescript
 
@@ -46,14 +46,14 @@ In this version, we sink payload and transform messages to the gun driver by sen
     })
 ```
 
-## A more complete example
+## A more detailed example
 
 Note: virtual-dom details omitted and transducers are verbose here
 
 ```typescript
 import xs from 'xstream';
 import { run } from '@cycle/xstream-run';
-import { makeDOMDriver } from '@cycle/dom';
+<!--import { makeDOMDriver } from '@cycle/dom';-->
 import { makeGunDriver } from 'cycle-gun';
 import * as uuid from 'uuid-random';
 import * as equal from 'deep-equal';
@@ -70,19 +70,19 @@ function main(sources) {
 
   const gunTodoEvent$ = gun.get(gunGetTodo));
 
-  // Transform gun events into action messages
+  // map gun driver events into messages, or return as state
   const gunState$ = gunTodoEvent$
     .compose(dropRepeats(equal))
     .map((event) => {
       return { typeKey: 'getTodo', payload: event };
     })
 
-  // sink gunState$ into a state reducer or into vdom
+  // sink gunState$ into a flux-type store or into vdom
 
 
 
 
-  // sink streams of payloaded reducers to gun driver
+  // sink map filtered stream of payloads into function and emit function
   const outgoingGunEvents$ = event$
     .filter(event => event.typeKey === 'putTodo')
     .map((event) => {
@@ -94,12 +94,8 @@ function main(sources) {
   return {
     // DOM: vtree$
     gun: outgoingGunEvents$
-
-    // DOM: xs.from([div('.container', [h1(['this is a test'])])])
   };
 }
-
-//const socketIODriver = makeSocketIODriver(socket);
 
 const drivers = {
   // DOM: makeDOMDriver('#app'),
