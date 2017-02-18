@@ -4177,7 +4177,7 @@ describe('cycle-gun driver instance', function () {
             var get$ = sources.gun.get(function (gunInstance) {
                 return gunInstance.get('example/todo/data');
             });
-            
+
             get$.addListener({
                 next: function (event) {
                     console.log(event)
@@ -4185,6 +4185,34 @@ describe('cycle-gun driver instance', function () {
                 }
             });
         });
+
+        it('checks data elements are same as those sent', function () {
+            var get$ = sources.gun.get(function (gunInstance) {
+                return gunInstance.get('example/todo/data');
+            });
+
+            get$.addListener({
+                next: function (event) {
+                    console.log(event)
+                    assert.strictEqual(event['1'], 'test1');
+                    assert.strictEqual(event['2'], 'test2');
+                    assert.strictEqual(event['3'], 'test3');
+                    assert.strictEqual(event['4'], 'test4');
+
+                }
+            });
+        });
+
+
+
+
+
+
+
+
+
+
+
 
 
 
