@@ -2054,7 +2054,7 @@ function symbolObservablePonyfill(root) {
 };
 },{}],13:[function(require,module,exports){
 "use strict";
-var index_1 = require('../index');
+var index_1 = require("../index");
 var empty = {};
 var DropRepeatsOperator = (function () {
     function DropRepeatsOperator(ins, fn) {
@@ -2182,16 +2182,15 @@ var __extends = (this && this.__extends) || function (d, b) {
     function __() { this.constructor = d; }
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
-var symbol_observable_1 = require('symbol-observable');
+var symbol_observable_1 = require("symbol-observable");
 var NO = {};
 exports.NO = NO;
 function noop() { }
-function copy(a) {
+function cp(a) {
     var l = a.length;
     var b = Array(l);
-    for (var i = 0; i < l; ++i) {
+    for (var i = 0; i < l; ++i)
         b[i] = a[i];
-    }
     return b;
 }
 function and(f1, f2) {
@@ -2216,13 +2215,12 @@ var NO_IL = {
 exports.NO_IL = NO_IL;
 // mutates the input
 function internalizeProducer(producer) {
-    producer._start =
-        function _start(il) {
-            il.next = il._n;
-            il.error = il._e;
-            il.complete = il._c;
-            this.start(il);
-        };
+    producer._start = function _start(il) {
+        il.next = il._n;
+        il.error = il._e;
+        il.complete = il._c;
+        this.start(il);
+    };
     producer._stop = producer.stop;
 }
 var StreamSub = (function () {
@@ -2282,16 +2280,14 @@ var Merge = (function () {
         var s = this.insArr;
         var L = s.length;
         this.ac = L;
-        for (var i = 0; i < L; i++) {
+        for (var i = 0; i < L; i++)
             s[i]._add(this);
-        }
     };
     Merge.prototype._stop = function () {
         var s = this.insArr;
         var L = s.length;
-        for (var i = 0; i < L; i++) {
+        for (var i = 0; i < L; i++)
             s[i]._remove(this);
-        }
         this.out = NO;
     };
     Merge.prototype._n = function (t) {
@@ -2327,9 +2323,8 @@ var CombineListener = (function () {
         var p = this.p, out = this.out;
         if (out === NO)
             return;
-        if (p.up(t, this.i)) {
+        if (p.up(t, this.i))
             out._n(p.vals);
-        }
     };
     CombineListener.prototype._e = function (err) {
         var out = this.out;
@@ -2341,9 +2336,8 @@ var CombineListener = (function () {
         var p = this.p;
         if (p.out === NO)
             return;
-        if (--p.Nc === 0) {
+        if (--p.Nc === 0)
             p.out._c();
-        }
     };
     return CombineListener;
 }());
@@ -2382,9 +2376,8 @@ var Combine = (function () {
         var s = this.insArr;
         var n = s.length;
         var ils = this.ils;
-        for (var i = 0; i < n; i++) {
+        for (var i = 0; i < n; i++)
             s[i]._remove(ils[i]);
-        }
         this.out = NO;
         this.ils = [];
         this.vals = [];
@@ -2398,9 +2391,8 @@ var FromArray = (function () {
     }
     FromArray.prototype._start = function (out) {
         var a = this.a;
-        for (var i = 0, l = a.length; i < l; i++) {
+        for (var i = 0, n = a.length; i < n; i++)
             out._n(a[i]);
-        }
         out._c();
     };
     FromArray.prototype._stop = function () {
@@ -2459,12 +2451,10 @@ var Debug = (function () {
         this.out = NO;
         this.s = noop;
         this.l = '';
-        if (typeof arg === 'string') {
+        if (typeof arg === 'string')
             this.l = arg;
-        }
-        else if (typeof arg === 'function') {
+        else if (typeof arg === 'function')
             this.s = arg;
-        }
     }
     Debug.prototype._start = function (out) {
         this.out = out;
@@ -2487,12 +2477,10 @@ var Debug = (function () {
                 u._e(e);
             }
         }
-        else if (l) {
+        else if (l)
             console.log(l + ':', t);
-        }
-        else {
+        else
             console.log(t);
-        }
         u._n(t);
     };
     Debug.prototype._e = function (err) {
@@ -2792,9 +2780,8 @@ var Last = (function () {
             u._n(this.val);
             u._c();
         }
-        else {
-            u._e('TODO show proper error');
-        }
+        else
+            u._e(new Error('last() failed because input stream completed'));
     };
     return Last;
 }());
@@ -2913,9 +2900,10 @@ var MapOp = (function () {
 var FilterMapFusion = (function (_super) {
     __extends(FilterMapFusion, _super);
     function FilterMapFusion(passes, project, ins) {
-        _super.call(this, project, ins);
-        this.type = 'filter+map';
-        this.passes = passes;
+        var _this = _super.call(this, project, ins) || this;
+        _this.type = 'filter+map';
+        _this.passes = passes;
+        return _this;
     }
     FilterMapFusion.prototype._n = function (t) {
         if (!this.passes(t))
@@ -3016,12 +3004,10 @@ var Take = (function () {
     Take.prototype._start = function (out) {
         this.out = out;
         this.taken = 0;
-        if (this.max <= 0) {
+        if (this.max <= 0)
             out._c();
-        }
-        else {
+        else
             this.ins._add(this);
-        }
     };
     Take.prototype._stop = function () {
         this.ins._remove(this);
@@ -3032,9 +3018,8 @@ var Take = (function () {
         if (u === NO)
             return;
         var m = ++this.taken;
-        if (m < this.max) {
+        if (m < this.max)
             u._n(t);
-        }
         else if (m === this.max) {
             u._n(t);
             u._c();
@@ -3071,8 +3056,10 @@ var Stream = (function () {
             this._dl._n(t);
         if (L == 1)
             a[0]._n(t);
+        else if (L == 0)
+            return;
         else {
-            var b = copy(a);
+            var b = cp(a);
             for (var i = 0; i < L; i++)
                 b[i]._n(t);
         }
@@ -3088,8 +3075,10 @@ var Stream = (function () {
             this._dl._e(err);
         if (L == 1)
             a[0]._e(err);
+        else if (L == 0)
+            return;
         else {
-            var b = copy(a);
+            var b = cp(a);
             for (var i = 0; i < L; i++)
                 b[i]._e(err);
         }
@@ -3104,8 +3093,10 @@ var Stream = (function () {
             this._dl._c();
         if (L == 1)
             a[0]._c();
+        else if (L == 0)
+            return;
         else {
-            var b = copy(a);
+            var b = cp(a);
             for (var i = 0; i < L; i++)
                 b[i]._c();
         }
@@ -3166,35 +3157,28 @@ var Stream = (function () {
     // force it to end its execution and dispose resources. This method
     // assumes as a precondition that this._ils has just one listener.
     Stream.prototype._pruneCycles = function () {
-        if (this._hasNoSinks(this, [])) {
+        if (this._hasNoSinks(this, []))
             this._remove(this._ils[0]);
-        }
     };
     // Checks whether *there is no* path starting from `x` that leads to an end
     // listener (sink) in the stream graph, following edges A->B where B is a
     // listener of A. This means these paths constitute a cycle somehow. Is given
     // a trace of all visited nodes so far.
     Stream.prototype._hasNoSinks = function (x, trace) {
-        if (trace.indexOf(x) !== -1) {
+        if (trace.indexOf(x) !== -1)
             return true;
-        }
-        else if (x.out === this) {
+        else if (x.out === this)
             return true;
-        }
-        else if (x.out && x.out !== NO) {
+        else if (x.out && x.out !== NO)
             return this._hasNoSinks(x.out, trace.concat(x));
-        }
         else if (x._ils) {
-            for (var i = 0, N = x._ils.length; i < N; i++) {
-                if (!this._hasNoSinks(x._ils[i], trace.concat(x))) {
+            for (var i = 0, N = x._ils.length; i < N; i++)
+                if (!this._hasNoSinks(x._ils[i], trace.concat(x)))
                     return false;
-                }
-            }
             return true;
         }
-        else {
+        else
             return false;
-        }
     };
     Stream.prototype.ctor = function () {
         return this instanceof MemoryStream ? MemoryStream : Stream;
@@ -3248,9 +3232,8 @@ var Stream = (function () {
     Stream.create = function (producer) {
         if (producer) {
             if (typeof producer.start !== 'function'
-                || typeof producer.stop !== 'function') {
+                || typeof producer.stop !== 'function')
                 throw new Error('producer requires both start and stop functions');
-            }
             internalizeProducer(producer); // mutates the input
         }
         return new Stream(producer);
@@ -3264,9 +3247,8 @@ var Stream = (function () {
      * @return {MemoryStream}
      */
     Stream.createWithMemory = function (producer) {
-        if (producer) {
+        if (producer)
             internalizeProducer(producer); // mutates the input
-        }
         return new MemoryStream(producer);
     };
     /**
@@ -3335,15 +3317,12 @@ var Stream = (function () {
      * @return {Stream}
      */
     Stream.from = function (input) {
-        if (typeof input[symbol_observable_1.default] === 'function') {
+        if (typeof input[symbol_observable_1.default] === 'function')
             return Stream.fromObservable(input);
-        }
-        else if (typeof input.then === 'function') {
+        else if (typeof input.then === 'function')
             return Stream.fromPromise(input);
-        }
-        else if (Array.isArray(input)) {
+        else if (Array.isArray(input))
             return Stream.fromArray(input);
-        }
         throw new TypeError("Type of input to from() must be an Array, Promise, or Observable");
     };
     /**
@@ -3366,7 +3345,7 @@ var Stream = (function () {
     Stream.of = function () {
         var items = [];
         for (var _i = 0; _i < arguments.length; _i++) {
-            items[_i - 0] = arguments[_i];
+            items[_i] = arguments[_i];
         }
         return Stream.fromArray(items);
     };
@@ -3414,8 +3393,10 @@ var Stream = (function () {
      * @param {any} observable The observable to be converted as a stream.
      * @return {Stream}
      */
-    Stream.fromObservable = function (observable) {
-        return new Stream(new FromObservable(observable));
+    Stream.fromObservable = function (obs) {
+        if (obs.endWhen)
+            return obs;
+        return new Stream(new FromObservable(obs));
     };
     /**
      * Creates a stream that periodically emits incremental numbers, every
@@ -3439,9 +3420,8 @@ var Stream = (function () {
     Stream.prototype._map = function (project) {
         var p = this._prod;
         var ctor = this.ctor();
-        if (p instanceof Filter) {
+        if (p instanceof Filter)
             return new ctor(new FilterMapFusion(p.f, project, p.ins));
-        }
         return new ctor(new MapOp(project, this));
     };
     /**
@@ -3508,9 +3488,8 @@ var Stream = (function () {
      */
     Stream.prototype.filter = function (passes) {
         var p = this._prod;
-        if (p instanceof Filter) {
+        if (p instanceof Filter)
             return new Stream(new Filter(and(p.f, passes), p.ins));
-        }
         return new Stream(new Filter(passes, this));
     };
     /**
@@ -3817,15 +3796,13 @@ var Stream = (function () {
      * not be a MemoryStream.
      */
     Stream.prototype.imitate = function (target) {
-        if (target instanceof MemoryStream) {
+        if (target instanceof MemoryStream)
             throw new Error('A MemoryStream was given to imitate(), but it only ' +
                 'supports a Stream. Read more about this restriction here: ' +
                 'https://github.com/staltz/xstream#faq');
-        }
         this._target = target;
-        for (var ils = this._ils, N = ils.length, i = 0; i < N; i++) {
+        for (var ils = this._ils, N = ils.length, i = 0; i < N; i++)
             target._add(ils[i]);
-        }
         this._ils = [];
     };
     /**
@@ -3897,90 +3874,91 @@ var Stream = (function () {
             this._dl = listener;
         }
     };
-    /**
-     * Blends multiple streams together, emitting events from all of them
-     * concurrently.
-     *
-     * *merge* takes multiple streams as arguments, and creates a stream that
-     * behaves like each of the argument streams, in parallel.
-     *
-     * Marble diagram:
-     *
-     * ```text
-     * --1----2-----3--------4---
-     * ----a-----b----c---d------
-     *            merge
-     * --1-a--2--b--3-c---d--4---
-     * ```
-     *
-     * @factory true
-     * @param {Stream} stream1 A stream to merge together with other streams.
-     * @param {Stream} stream2 A stream to merge together with other streams. Two
-     * or more streams may be given as arguments.
-     * @return {Stream}
-     */
-    Stream.merge = function merge() {
-        var streams = [];
-        for (var _i = 0; _i < arguments.length; _i++) {
-            streams[_i - 0] = arguments[_i];
-        }
-        return new Stream(new Merge(streams));
-    };
-    /**
-     * Combines multiple input streams together to return a stream whose events
-     * are arrays that collect the latest events from each input stream.
-     *
-     * *combine* internally remembers the most recent event from each of the input
-     * streams. When any of the input streams emits an event, that event together
-     * with all the other saved events are combined into an array. That array will
-     * be emitted on the output stream. It's essentially a way of joining together
-     * the events from multiple streams.
-     *
-     * Marble diagram:
-     *
-     * ```text
-     * --1----2-----3--------4---
-     * ----a-----b-----c--d------
-     *          combine
-     * ----1a-2a-2b-3b-3c-3d-4d--
-     * ```
-     *
-     * Note: to minimize garbage collection, *combine* uses the same array
-     * instance for each emission.  If you need to compare emissions over time,
-     * cache the values with `map` first:
-     *
-     * ```js
-     * import pairwise from 'xstream/extra/pairwise'
-     *
-     * const stream1 = xs.of(1);
-     * const stream2 = xs.of(2);
-     *
-     * xs.combine(stream1, stream2).map(
-     *   combinedEmissions => ([ ...combinedEmissions ])
-     * ).compose(pairwise)
-     * ```
-     *
-     * @factory true
-     * @param {Stream} stream1 A stream to combine together with other streams.
-     * @param {Stream} stream2 A stream to combine together with other streams.
-     * Multiple streams, not just two, may be given as arguments.
-     * @return {Stream}
-     */
-    Stream.combine = function combine() {
-        var streams = [];
-        for (var _i = 0; _i < arguments.length; _i++) {
-            streams[_i - 0] = arguments[_i];
-        }
-        return new Stream(new Combine(streams));
-    };
     return Stream;
 }());
+/**
+ * Blends multiple streams together, emitting events from all of them
+ * concurrently.
+ *
+ * *merge* takes multiple streams as arguments, and creates a stream that
+ * behaves like each of the argument streams, in parallel.
+ *
+ * Marble diagram:
+ *
+ * ```text
+ * --1----2-----3--------4---
+ * ----a-----b----c---d------
+ *            merge
+ * --1-a--2--b--3-c---d--4---
+ * ```
+ *
+ * @factory true
+ * @param {Stream} stream1 A stream to merge together with other streams.
+ * @param {Stream} stream2 A stream to merge together with other streams. Two
+ * or more streams may be given as arguments.
+ * @return {Stream}
+ */
+Stream.merge = function merge() {
+    var streams = [];
+    for (var _i = 0; _i < arguments.length; _i++) {
+        streams[_i] = arguments[_i];
+    }
+    return new Stream(new Merge(streams));
+};
+/**
+ * Combines multiple input streams together to return a stream whose events
+ * are arrays that collect the latest events from each input stream.
+ *
+ * *combine* internally remembers the most recent event from each of the input
+ * streams. When any of the input streams emits an event, that event together
+ * with all the other saved events are combined into an array. That array will
+ * be emitted on the output stream. It's essentially a way of joining together
+ * the events from multiple streams.
+ *
+ * Marble diagram:
+ *
+ * ```text
+ * --1----2-----3--------4---
+ * ----a-----b-----c--d------
+ *          combine
+ * ----1a-2a-2b-3b-3c-3d-4d--
+ * ```
+ *
+ * Note: to minimize garbage collection, *combine* uses the same array
+ * instance for each emission.  If you need to compare emissions over time,
+ * cache the values with `map` first:
+ *
+ * ```js
+ * import pairwise from 'xstream/extra/pairwise'
+ *
+ * const stream1 = xs.of(1);
+ * const stream2 = xs.of(2);
+ *
+ * xs.combine(stream1, stream2).map(
+ *   combinedEmissions => ([ ...combinedEmissions ])
+ * ).compose(pairwise)
+ * ```
+ *
+ * @factory true
+ * @param {Stream} stream1 A stream to combine together with other streams.
+ * @param {Stream} stream2 A stream to combine together with other streams.
+ * Multiple streams, not just two, may be given as arguments.
+ * @return {Stream}
+ */
+Stream.combine = function combine() {
+    var streams = [];
+    for (var _i = 0; _i < arguments.length; _i++) {
+        streams[_i] = arguments[_i];
+    }
+    return new Stream(new Combine(streams));
+};
 exports.Stream = Stream;
 var MemoryStream = (function (_super) {
     __extends(MemoryStream, _super);
     function MemoryStream(producer) {
-        _super.call(this, producer);
-        this._has = false;
+        var _this = _super.call(this, producer) || this;
+        _this._has = false;
+        return _this;
     }
     MemoryStream.prototype._n = function (x) {
         this._v = x;
