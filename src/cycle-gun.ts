@@ -1,8 +1,6 @@
 
 import xs from 'xstream';
 import * as Gun from 'gun';
-import dropRepeats from 'xstream/extra/dropRepeats';
-import * as equal from 'deep-equal';
 
 export function makeGunDriver(url) {
     // TODO: multiple peer handling?
@@ -45,5 +43,4 @@ export function makeGunDriver(url) {
             get
         };
     };
-
 } 
