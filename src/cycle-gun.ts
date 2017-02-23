@@ -1,11 +1,10 @@
 
 import xs from 'xstream';
-import * as Gun from '../node_modules/gun/gun.js';
+import * as Gun from 'gun';
 import dropRepeats from 'xstream/extra/dropRepeats';
 import * as equal from 'deep-equal';
 
 export function makeGunDriver(url) {
-
     // TODO: multiple peer handling?
 
     const gun = Gun(url);
@@ -28,7 +27,6 @@ export function makeGunDriver(url) {
                 // socket.removeEventListener(typeKey, this.eventListener);
             }
         })
-        .compose(dropRepeats(equal));
     };
     
     function processTransform(inputFunction){
