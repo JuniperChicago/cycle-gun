@@ -16,7 +16,7 @@ Note: This driver currently depends on the [xstream](https://github.com/staltz/x
 
 ## Creating `get` Stream
 
-The get method applies a function directly to the gun instance. The `gun.get('key')` example attaches a reactive stream that listens to the response of the initial function and any changes to the data stored under the given key, both the local instance and synced changes from peers of the gun instance as well.
+The get method applies a function directly to the gun instance. The `gun.get(gunFn)` example attaches a reactive stream that listens to the response of the initial function and any changes to the data stored under the given key, both the local instance and synced changes from peers of the gun instance as well.
 
 ```typescript
 

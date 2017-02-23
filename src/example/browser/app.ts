@@ -144,7 +144,8 @@ export default function app(sources) {
         return { typeKey: 'out-gun', payload: { key, value: null } }
       })
 
-    // transform add task message and payload  
+    // transform add task message and payload
+    // TODO: check for duplicates on text event
     const outgunAddTask$ = saveClickOrEnter$
       .compose(sampleCombine(textEvent$))
       .map(([click, event]) => ({ typeKey: 'out-gun', payload: { key: uuid(), value: event.payload } }))
