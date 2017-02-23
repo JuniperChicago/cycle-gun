@@ -14,6 +14,14 @@ Note: This driver currently depends on the [xstream](https://github.com/staltz/x
 - The returned event stream contains the gun event object
 - Sink streams contain functions with payload references that are applied directly to the gun.js instance.
 
+## Installation
+
+```
+npm install --save cycle-gun
+```
+
+
+
 ## Creating `get` Stream
 
 The get method applies a function directly to the gun instance. The `gun.get(gunFn)` example attaches a reactive stream that listens to the response of the initial function and any changes to the data stored under the given key, both the local instance and synced changes from peers of the gun instance as well.
