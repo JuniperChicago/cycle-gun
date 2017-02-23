@@ -27,7 +27,7 @@
   },
   "homepage": "https://github.com/JuniperChicago/cycle-gun#readme",
   "dependencies": {
-    "gun": "^0.3.992",
+    "gun": "0.6.3",
     "xstream": "10.2.0"
   },
   "devDependencies": {
