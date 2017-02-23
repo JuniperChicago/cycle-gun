@@ -248,7 +248,7 @@ export default function app(sources) {
   ///////////////////////////////////////////////////////////////////////////
   const gunTodos$ = gun.get((gunInstance) => {
     return gunInstance.get('example/todo/data');
-  })
+  });
 
   // We are removing nulls, keys that are meta, etc...
   const gunTable$ = transformTodoStream(gunTodos$);
