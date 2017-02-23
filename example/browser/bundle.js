@@ -1,9 +1,7 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 "use strict";
 var xstream_1 = require('xstream');
-var Gun = require('../node_modules/gun/gun.js');
-var dropRepeats_1 = require('xstream/extra/dropRepeats');
-var equal = require('deep-equal');
+var Gun = require('gun');
 function makeGunDriver(url) {
     // TODO: multiple peer handling?
     var gun = Gun(url);
@@ -22,8 +20,7 @@ function makeGunDriver(url) {
             stop: function () {
                 // socket.removeEventListener(typeKey, this.eventListener);
             }
-        })
-            .compose(dropRepeats_1.default(equal));
+        });
     }
     ;
     function processTransform(inputFunction) {
@@ -43,7 +40,7 @@ function makeGunDriver(url) {
 }
 exports.makeGunDriver = makeGunDriver;
 
-},{"../node_modules/gun/gun.js":167,"deep-equal":84,"xstream":267,"xstream/extra/dropRepeats":265}],2:[function(require,module,exports){
+},{"gun":164,"xstream":263}],2:[function(require,module,exports){
 "use strict";
 var xstream_1 = require('xstream');
 var sampleCombine_1 = require('xstream/extra/sampleCombine');
@@ -144,7 +141,8 @@ function app(sources) {
             var key = event.target.getAttribute('data-key');
             return { typeKey: 'out-gun', payload: { key: key, value: null } };
         });
-        // transform add task message and payload  
+        // transform add task message and payload
+        // TODO: check for duplicates on text event
         var outgunAddTask$ = saveClickOrEnter$
             .compose(sampleCombine_1.default(textEvent$))
             .map(function (_a) {
@@ -258,7 +256,7 @@ function app(sources) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = app;
 
-},{"../../../node_modules/uuid-random/uuid-random.min.js":263,"@cycle/dom":17,"xstream":267,"xstream/extra/sampleCombine":266}],3:[function(require,module,exports){
+},{"../../../node_modules/uuid-random/uuid-random.min.js":260,"@cycle/dom":17,"xstream":263,"xstream/extra/sampleCombine":262}],3:[function(require,module,exports){
 "use strict";
 var xstream_1 = require('xstream');
 var xstream_run_1 = require('@cycle/xstream-run');
@@ -281,7 +279,7 @@ var drivers = {
 };
 xstream_run_1.run(main, drivers);
 
-},{"../../../lib/index.js":4,"./app":2,"@cycle/dom":17,"@cycle/xstream-run":27,"xstream":267}],4:[function(require,module,exports){
+},{"../../../lib/index.js":4,"./app":2,"@cycle/dom":17,"@cycle/xstream-run":27,"xstream":263}],4:[function(require,module,exports){
 "use strict";
 var cycle_gun_1 = require('./cycle-gun');
 exports.makeGunDriver = cycle_gun_1.makeGunDriver;
@@ -457,7 +455,7 @@ var BodyDOMSource = (function () {
 }());
 exports.BodyDOMSource = BodyDOMSource;
 
-},{"./fromEvent":14,"@cycle/xstream-adapter":26,"xstream":267}],7:[function(require,module,exports){
+},{"./fromEvent":14,"@cycle/xstream-adapter":26,"xstream":263}],7:[function(require,module,exports){
 "use strict";
 var xstream_1 = require('xstream');
 var xstream_adapter_1 = require('@cycle/xstream-adapter');
@@ -494,7 +492,7 @@ var DocumentDOMSource = (function () {
 }());
 exports.DocumentDOMSource = DocumentDOMSource;
 
-},{"./fromEvent":14,"@cycle/xstream-adapter":26,"xstream":267}],8:[function(require,module,exports){
+},{"./fromEvent":14,"@cycle/xstream-adapter":26,"xstream":263}],8:[function(require,module,exports){
 "use strict";
 var ScopeChecker_1 = require('./ScopeChecker');
 var utils_1 = require('./utils');
@@ -537,7 +535,7 @@ var ElementFinder = (function () {
 }());
 exports.ElementFinder = ElementFinder;
 
-},{"./ScopeChecker":12,"./utils":25,"matches-selector":198}],9:[function(require,module,exports){
+},{"./ScopeChecker":12,"./utils":25,"matches-selector":195}],9:[function(require,module,exports){
 "use strict";
 var ScopeChecker_1 = require('./ScopeChecker');
 var utils_1 = require('./utils');
@@ -672,7 +670,7 @@ var EventDelegator = (function () {
 }());
 exports.EventDelegator = EventDelegator;
 
-},{"./ScopeChecker":12,"./utils":25,"matches-selector":198}],10:[function(require,module,exports){
+},{"./ScopeChecker":12,"./utils":25,"matches-selector":195}],10:[function(require,module,exports){
 "use strict";
 var xstream_1 = require('xstream');
 var xstream_adapter_1 = require('@cycle/xstream-adapter');
@@ -700,7 +698,7 @@ var HTMLSource = (function () {
 }());
 exports.HTMLSource = HTMLSource;
 
-},{"@cycle/xstream-adapter":26,"xstream":267}],11:[function(require,module,exports){
+},{"@cycle/xstream-adapter":26,"xstream":263}],11:[function(require,module,exports){
 "use strict";
 var xstream_adapter_1 = require('@cycle/xstream-adapter');
 var DocumentDOMSource_1 = require('./DocumentDOMSource');
@@ -903,7 +901,7 @@ var MainDOMSource = (function () {
 }());
 exports.MainDOMSource = MainDOMSource;
 
-},{"./BodyDOMSource":6,"./DocumentDOMSource":7,"./ElementFinder":8,"./EventDelegator":9,"./fromEvent":14,"./isolate":18,"./utils":25,"@cycle/xstream-adapter":26,"matches-selector":198,"xstream":267}],12:[function(require,module,exports){
+},{"./BodyDOMSource":6,"./DocumentDOMSource":7,"./ElementFinder":8,"./EventDelegator":9,"./fromEvent":14,"./isolate":18,"./utils":25,"@cycle/xstream-adapter":26,"matches-selector":195,"xstream":263}],12:[function(require,module,exports){
 "use strict";
 var ScopeChecker = (function () {
     function ScopeChecker(scope, isolateModule) {
@@ -959,7 +957,7 @@ var VNodeWrapper = (function () {
 }());
 exports.VNodeWrapper = VNodeWrapper;
 
-},{"./hyperscript":16,"snabbdom-selector/lib/classNameFromVNode":236,"snabbdom-selector/lib/selectorParser":237}],14:[function(require,module,exports){
+},{"./hyperscript":16,"snabbdom-selector/lib/classNameFromVNode":233,"snabbdom-selector/lib/selectorParser":234}],14:[function(require,module,exports){
 "use strict";
 var xstream_1 = require('xstream');
 function fromEvent(element, eventName, useCapture) {
@@ -978,7 +976,7 @@ function fromEvent(element, eventName, useCapture) {
 }
 exports.fromEvent = fromEvent;
 
-},{"xstream":267}],15:[function(require,module,exports){
+},{"xstream":263}],15:[function(require,module,exports){
 "use strict";
 var hyperscript_1 = require('./hyperscript');
 function isValidString(param) {
@@ -1116,7 +1114,7 @@ function h(sel, b, c) {
 exports.h = h;
 ;
 
-},{"snabbdom/is":247,"snabbdom/vnode":256}],17:[function(require,module,exports){
+},{"snabbdom/is":244,"snabbdom/vnode":253}],17:[function(require,module,exports){
 "use strict";
 var thunk = require('snabbdom/thunk');
 exports.thunk = thunk;
@@ -1407,7 +1405,7 @@ exports.u = hyperscript_helpers_1.default.u;
 exports.ul = hyperscript_helpers_1.default.ul;
 exports.video = hyperscript_helpers_1.default.video;
 
-},{"./hyperscript":16,"./hyperscript-helpers":15,"./makeDOMDriver":20,"./makeHTMLDriver":21,"./mockDOMSource":22,"snabbdom/thunk":255}],18:[function(require,module,exports){
+},{"./hyperscript":16,"./hyperscript-helpers":15,"./makeDOMDriver":20,"./makeHTMLDriver":21,"./mockDOMSource":22,"snabbdom/thunk":252}],18:[function(require,module,exports){
 "use strict";
 var utils_1 = require('./utils');
 function isolateSource(source, scope) {
@@ -1540,7 +1538,7 @@ var IsolateModule = (function () {
 }());
 exports.IsolateModule = IsolateModule;
 
-},{"es6-map":153}],20:[function(require,module,exports){
+},{"es6-map":150}],20:[function(require,module,exports){
 "use strict";
 var snabbdom_1 = require('snabbdom');
 var xstream_1 = require('xstream');
@@ -1599,7 +1597,7 @@ function makeDOMDriver(container, options) {
 }
 exports.makeDOMDriver = makeDOMDriver;
 
-},{"./MainDOMSource":11,"./VNodeWrapper":13,"./isolateModule":19,"./modules":23,"./transposition":24,"./utils":25,"@cycle/xstream-adapter":26,"es6-map":153,"snabbdom":254,"xstream":267}],21:[function(require,module,exports){
+},{"./MainDOMSource":11,"./VNodeWrapper":13,"./isolateModule":19,"./modules":23,"./transposition":24,"./utils":25,"@cycle/xstream-adapter":26,"es6-map":150,"snabbdom":251,"xstream":263}],21:[function(require,module,exports){
 "use strict";
 var xstream_adapter_1 = require('@cycle/xstream-adapter');
 var transposition_1 = require('./transposition');
@@ -1628,7 +1626,7 @@ function makeHTMLDriver(effect, options) {
 }
 exports.makeHTMLDriver = makeHTMLDriver;
 
-},{"./HTMLSource":10,"./transposition":24,"@cycle/xstream-adapter":26,"snabbdom-to-html":239}],22:[function(require,module,exports){
+},{"./HTMLSource":10,"./transposition":24,"@cycle/xstream-adapter":26,"snabbdom-to-html":236}],22:[function(require,module,exports){
 "use strict";
 var xstream_adapter_1 = require('@cycle/xstream-adapter');
 var xstream_1 = require('xstream');
@@ -1699,7 +1697,7 @@ function mockDOMSource(streamAdapter, mockConfig) {
 }
 exports.mockDOMSource = mockDOMSource;
 
-},{"@cycle/xstream-adapter":26,"xstream":267}],23:[function(require,module,exports){
+},{"@cycle/xstream-adapter":26,"xstream":263}],23:[function(require,module,exports){
 "use strict";
 var ClassModule = require('snabbdom/modules/class');
 exports.ClassModule = ClassModule;
@@ -1716,7 +1714,7 @@ exports.HeroModule = HeroModule;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = [StyleModule, ClassModule, PropsModule, AttrsModule];
 
-},{"snabbdom/modules/attributes":248,"snabbdom/modules/class":249,"snabbdom/modules/eventlisteners":250,"snabbdom/modules/hero":251,"snabbdom/modules/props":252,"snabbdom/modules/style":253}],24:[function(require,module,exports){
+},{"snabbdom/modules/attributes":245,"snabbdom/modules/class":246,"snabbdom/modules/eventlisteners":247,"snabbdom/modules/hero":248,"snabbdom/modules/props":249,"snabbdom/modules/style":250}],24:[function(require,module,exports){
 "use strict";
 var xstream_adapter_1 = require('@cycle/xstream-adapter');
 var xstream_1 = require('xstream');
@@ -1768,7 +1766,7 @@ function makeTransposeVNode(runStreamAdapter) {
 }
 exports.makeTransposeVNode = makeTransposeVNode;
 
-},{"@cycle/xstream-adapter":26,"xstream":267}],25:[function(require,module,exports){
+},{"@cycle/xstream-adapter":26,"xstream":263}],25:[function(require,module,exports){
 "use strict";
 function isElement(obj) {
     return typeof HTMLElement === "object" ?
@@ -1850,7 +1848,7 @@ var XStreamAdapter = {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = XStreamAdapter;
 
-},{"xstream":267}],27:[function(require,module,exports){
+},{"xstream":263}],27:[function(require,module,exports){
 "use strict";
 var base_1 = require('@cycle/base');
 var xstream_adapter_1 = require('@cycle/xstream-adapter');
@@ -2002,7 +2000,7 @@ Entity.prototype.encode = function encode(data, enc, /* internal */ reporter) {
   return this._getEncoder(enc).encode(data, reporter);
 };
 
-},{"../asn1":28,"inherits":176,"vm":264}],30:[function(require,module,exports){
+},{"../asn1":28,"inherits":173,"vm":261}],30:[function(require,module,exports){
 var inherits = require('inherits');
 var Reporter = require('../base').Reporter;
 var Buffer = require('buffer').Buffer;
@@ -2120,7 +2118,7 @@ EncoderBuffer.prototype.join = function join(out, offset) {
   return out;
 };
 
-},{"../base":31,"buffer":73,"inherits":176}],31:[function(require,module,exports){
+},{"../base":31,"buffer":73,"inherits":173}],31:[function(require,module,exports){
 var base = exports;
 
 base.Reporter = require('./reporter').Reporter;
@@ -2764,7 +2762,7 @@ Node.prototype._isPrintstr = function isPrintstr(str) {
   return /^[A-Za-z0-9 '\(\)\+,\-\.\/:=\?]*$/.test(str);
 };
 
-},{"../base":31,"minimalistic-assert":200}],33:[function(require,module,exports){
+},{"../base":31,"minimalistic-assert":197}],33:[function(require,module,exports){
 var inherits = require('inherits');
 
 function Reporter(options) {
@@ -2887,7 +2885,7 @@ ReporterError.prototype.rethrow = function rethrow(msg) {
   return this;
 };
 
-},{"inherits":176}],34:[function(require,module,exports){
+},{"inherits":173}],34:[function(require,module,exports){
 var constants = require('../constants');
 
 exports.tagClass = {
@@ -3278,7 +3276,7 @@ function derDecodeLen(buf, primitive, fail) {
   return len;
 }
 
-},{"../../asn1":28,"inherits":176}],37:[function(require,module,exports){
+},{"../../asn1":28,"inherits":173}],37:[function(require,module,exports){
 var decoders = exports;
 
 decoders.der = require('./der');
@@ -3335,7 +3333,7 @@ PEMDecoder.prototype.decode = function decode(data, options) {
   return DERDecoder.prototype.decode.call(this, input, options);
 };
 
-},{"./der":36,"buffer":73,"inherits":176}],39:[function(require,module,exports){
+},{"./der":36,"buffer":73,"inherits":173}],39:[function(require,module,exports){
 var inherits = require('inherits');
 var Buffer = require('buffer').Buffer;
 
@@ -3632,7 +3630,7 @@ function encodeTag(tag, primitive, cls, reporter) {
   return res;
 }
 
-},{"../../asn1":28,"buffer":73,"inherits":176}],40:[function(require,module,exports){
+},{"../../asn1":28,"buffer":73,"inherits":173}],40:[function(require,module,exports){
 var encoders = exports;
 
 encoders.der = require('./der');
@@ -3661,7 +3659,7 @@ PEMEncoder.prototype.encode = function encode(data, options) {
   return out.join('\n');
 };
 
-},{"./der":39,"inherits":176}],42:[function(require,module,exports){
+},{"./der":39,"inherits":173}],42:[function(require,module,exports){
 'use strict'
 
 exports.byteLength = byteLength
@@ -7657,7 +7655,7 @@ function xorTest (a, b) {
 }
 
 }).call(this,require("buffer").Buffer)
-},{"./aes":47,"./ghash":52,"buffer":73,"buffer-xor":72,"cipher-base":74,"inherits":176}],49:[function(require,module,exports){
+},{"./aes":47,"./ghash":52,"buffer":73,"buffer-xor":72,"cipher-base":74,"inherits":173}],49:[function(require,module,exports){
 var ciphers = require('./encrypter')
 exports.createCipher = exports.Cipher = ciphers.createCipher
 exports.createCipheriv = exports.Cipheriv = ciphers.createCipheriv
@@ -7811,7 +7809,7 @@ exports.createDecipher = createDecipher
 exports.createDecipheriv = createDecipheriv
 
 }).call(this,require("buffer").Buffer)
-},{"./aes":47,"./authCipher":48,"./modes":53,"./modes/cbc":54,"./modes/cfb":55,"./modes/cfb1":56,"./modes/cfb8":57,"./modes/ctr":58,"./modes/ecb":59,"./modes/ofb":60,"./streamCipher":61,"buffer":73,"cipher-base":74,"evp_bytestokey":166,"inherits":176}],51:[function(require,module,exports){
+},{"./aes":47,"./authCipher":48,"./modes":53,"./modes/cbc":54,"./modes/cfb":55,"./modes/cfb1":56,"./modes/cfb8":57,"./modes/ctr":58,"./modes/ecb":59,"./modes/ofb":60,"./streamCipher":61,"buffer":73,"cipher-base":74,"evp_bytestokey":163,"inherits":173}],51:[function(require,module,exports){
 (function (Buffer){
 var aes = require('./aes')
 var Transform = require('cipher-base')
@@ -7937,7 +7935,7 @@ exports.createCipheriv = createCipheriv
 exports.createCipher = createCipher
 
 }).call(this,require("buffer").Buffer)
-},{"./aes":47,"./authCipher":48,"./modes":53,"./modes/cbc":54,"./modes/cfb":55,"./modes/cfb1":56,"./modes/cfb8":57,"./modes/ctr":58,"./modes/ecb":59,"./modes/ofb":60,"./streamCipher":61,"buffer":73,"cipher-base":74,"evp_bytestokey":166,"inherits":176}],52:[function(require,module,exports){
+},{"./aes":47,"./authCipher":48,"./modes":53,"./modes/cbc":54,"./modes/cfb":55,"./modes/cfb1":56,"./modes/cfb8":57,"./modes/ctr":58,"./modes/ecb":59,"./modes/ofb":60,"./streamCipher":61,"buffer":73,"cipher-base":74,"evp_bytestokey":163,"inherits":173}],52:[function(require,module,exports){
 (function (Buffer){
 var zeros = new Buffer(16)
 zeros.fill(0)
@@ -8415,7 +8413,7 @@ StreamCipher.prototype._final = function () {
 }
 
 }).call(this,require("buffer").Buffer)
-},{"./aes":47,"buffer":73,"cipher-base":74,"inherits":176}],62:[function(require,module,exports){
+},{"./aes":47,"buffer":73,"cipher-base":74,"inherits":173}],62:[function(require,module,exports){
 var ebtk = require('evp_bytestokey')
 var aes = require('browserify-aes/browser')
 var DES = require('browserify-des')
@@ -8490,7 +8488,7 @@ function getCiphers () {
 }
 exports.listCiphers = exports.getCiphers = getCiphers
 
-},{"browserify-aes/browser":49,"browserify-aes/modes":53,"browserify-des":63,"browserify-des/modes":64,"evp_bytestokey":166}],63:[function(require,module,exports){
+},{"browserify-aes/browser":49,"browserify-aes/modes":53,"browserify-des":63,"browserify-des/modes":64,"evp_bytestokey":163}],63:[function(require,module,exports){
 (function (Buffer){
 var CipherBase = require('cipher-base')
 var des = require('des.js')
@@ -8537,7 +8535,7 @@ DES.prototype._final = function () {
 }
 
 }).call(this,require("buffer").Buffer)
-},{"buffer":73,"cipher-base":74,"des.js":87,"inherits":176}],64:[function(require,module,exports){
+},{"buffer":73,"cipher-base":74,"des.js":84,"inherits":173}],64:[function(require,module,exports){
 exports['des-ecb'] = {
   key: 8,
   iv: 0
@@ -8607,7 +8605,7 @@ function getr(priv) {
 }
 
 }).call(this,require("buffer").Buffer)
-},{"bn.js":43,"buffer":73,"randombytes":215}],66:[function(require,module,exports){
+},{"bn.js":43,"buffer":73,"randombytes":212}],66:[function(require,module,exports){
 (function (Buffer){
 'use strict'
 exports['RSA-SHA224'] = exports.sha224WithRSAEncryption = {
@@ -8790,7 +8788,7 @@ module.exports = {
 }
 
 }).call(this,require("buffer").Buffer)
-},{"./algos":66,"./sign":69,"./verify":70,"buffer":73,"create-hash":77,"inherits":176,"stream":257}],68:[function(require,module,exports){
+},{"./algos":66,"./sign":69,"./verify":70,"buffer":73,"create-hash":77,"inherits":173,"stream":254}],68:[function(require,module,exports){
 'use strict'
 exports['1.3.132.0.10'] = 'secp256k1'
 
@@ -8993,7 +8991,7 @@ module.exports.getKey = getKey
 module.exports.makeKey = makeKey
 
 }).call(this,require("buffer").Buffer)
-},{"./curves":68,"bn.js":43,"browserify-rsa":65,"buffer":73,"create-hmac":80,"elliptic":97,"parse-asn1":204}],70:[function(require,module,exports){
+},{"./curves":68,"bn.js":43,"browserify-rsa":65,"buffer":73,"create-hmac":80,"elliptic":94,"parse-asn1":201}],70:[function(require,module,exports){
 (function (Buffer){
 // much of this based on https://github.com/indutny/self-signed/blob/gh-pages/lib/rsa.js
 var curves = require('./curves')
@@ -9100,7 +9098,7 @@ function checkValue (b, q) {
 module.exports = verify
 
 }).call(this,require("buffer").Buffer)
-},{"./curves":68,"bn.js":43,"buffer":73,"elliptic":97,"parse-asn1":204}],71:[function(require,module,exports){
+},{"./curves":68,"bn.js":43,"buffer":73,"elliptic":94,"parse-asn1":201}],71:[function(require,module,exports){
 (function (global){
 'use strict';
 
@@ -10934,7 +10932,7 @@ function isnan (val) {
   return val !== val // eslint-disable-line no-self-compare
 }
 
-},{"base64-js":42,"ieee754":174}],74:[function(require,module,exports){
+},{"base64-js":42,"ieee754":171}],74:[function(require,module,exports){
 (function (Buffer){
 var Transform = require('stream').Transform
 var inherits = require('inherits')
@@ -11028,7 +11026,7 @@ CipherBase.prototype._toString = function (value, enc, fin) {
 }
 
 }).call(this,require("buffer").Buffer)
-},{"buffer":73,"inherits":176,"stream":257,"string_decoder":258}],75:[function(require,module,exports){
+},{"buffer":73,"inherits":173,"stream":254,"string_decoder":255}],75:[function(require,module,exports){
 (function (Buffer){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -11139,7 +11137,7 @@ function objectToString(o) {
 }
 
 }).call(this,{"isBuffer":require("../../is-buffer/index.js")})
-},{"../../is-buffer/index.js":177}],76:[function(require,module,exports){
+},{"../../is-buffer/index.js":174}],76:[function(require,module,exports){
 (function (Buffer){
 var elliptic = require('elliptic');
 var BN = require('bn.js');
@@ -11265,7 +11263,7 @@ function formatReturnValue(bn, enc, len) {
 }
 
 }).call(this,require("buffer").Buffer)
-},{"bn.js":43,"buffer":73,"elliptic":97}],77:[function(require,module,exports){
+},{"bn.js":43,"buffer":73,"elliptic":94}],77:[function(require,module,exports){
 (function (Buffer){
 'use strict';
 var inherits = require('inherits')
@@ -11321,7 +11319,7 @@ module.exports = function createHash (alg) {
 }
 
 }).call(this,require("buffer").Buffer)
-},{"./md5":79,"buffer":73,"cipher-base":74,"inherits":176,"ripemd160":227,"sha.js":229}],78:[function(require,module,exports){
+},{"./md5":79,"buffer":73,"cipher-base":74,"inherits":173,"ripemd160":224,"sha.js":226}],78:[function(require,module,exports){
 (function (Buffer){
 'use strict';
 var intSize = 4;
@@ -11587,7 +11585,7 @@ module.exports = function createHmac(alg, key) {
 }
 
 }).call(this,require("buffer").Buffer)
-},{"buffer":73,"create-hash/browser":77,"inherits":176,"stream":257}],81:[function(require,module,exports){
+},{"buffer":73,"create-hash/browser":77,"inherits":173,"stream":254}],81:[function(require,module,exports){
 'use strict'
 
 exports.randomBytes = exports.rng = exports.pseudoRandomBytes = exports.prng = require('randombytes')
@@ -11666,7 +11664,7 @@ var publicEncrypt = require('public-encrypt')
   }
 })
 
-},{"browserify-cipher":62,"browserify-sign":67,"browserify-sign/algos":66,"create-ecdh":76,"create-hash":77,"create-hmac":80,"diffie-hellman":93,"pbkdf2":205,"public-encrypt":209,"randombytes":215}],82:[function(require,module,exports){
+},{"browserify-cipher":62,"browserify-sign":67,"browserify-sign/algos":66,"create-ecdh":76,"create-hash":77,"create-hmac":80,"diffie-hellman":90,"pbkdf2":202,"public-encrypt":206,"randombytes":212}],82:[function(require,module,exports){
 'use strict';
 
 var copy       = require('es5-ext/object/copy')
@@ -11699,7 +11697,7 @@ module.exports = function (props/*, bindTo*/) {
 	});
 };
 
-},{"es5-ext/object/copy":126,"es5-ext/object/map":134,"es5-ext/object/valid-callable":140,"es5-ext/object/valid-value":141}],83:[function(require,module,exports){
+},{"es5-ext/object/copy":123,"es5-ext/object/map":131,"es5-ext/object/valid-callable":137,"es5-ext/object/valid-value":138}],83:[function(require,module,exports){
 'use strict';
 
 var assign        = require('es5-ext/object/assign')
@@ -11764,136 +11762,7 @@ d.gs = function (dscr, get, set/*, options*/) {
 	return !options ? desc : assign(normalizeOpts(options), desc);
 };
 
-},{"es5-ext/object/assign":123,"es5-ext/object/is-callable":129,"es5-ext/object/normalize-options":135,"es5-ext/string/#/contains":142}],84:[function(require,module,exports){
-var pSlice = Array.prototype.slice;
-var objectKeys = require('./lib/keys.js');
-var isArguments = require('./lib/is_arguments.js');
-
-var deepEqual = module.exports = function (actual, expected, opts) {
-  if (!opts) opts = {};
-  // 7.1. All identical values are equivalent, as determined by ===.
-  if (actual === expected) {
-    return true;
-
-  } else if (actual instanceof Date && expected instanceof Date) {
-    return actual.getTime() === expected.getTime();
-
-  // 7.3. Other pairs that do not both pass typeof value == 'object',
-  // equivalence is determined by ==.
-  } else if (!actual || !expected || typeof actual != 'object' && typeof expected != 'object') {
-    return opts.strict ? actual === expected : actual == expected;
-
-  // 7.4. For all other Object pairs, including Array objects, equivalence is
-  // determined by having the same number of owned properties (as verified
-  // with Object.prototype.hasOwnProperty.call), the same set of keys
-  // (although not necessarily the same order), equivalent values for every
-  // corresponding key, and an identical 'prototype' property. Note: this
-  // accounts for both named and indexed properties on Arrays.
-  } else {
-    return objEquiv(actual, expected, opts);
-  }
-}
-
-function isUndefinedOrNull(value) {
-  return value === null || value === undefined;
-}
-
-function isBuffer (x) {
-  if (!x || typeof x !== 'object' || typeof x.length !== 'number') return false;
-  if (typeof x.copy !== 'function' || typeof x.slice !== 'function') {
-    return false;
-  }
-  if (x.length > 0 && typeof x[0] !== 'number') return false;
-  return true;
-}
-
-function objEquiv(a, b, opts) {
-  var i, key;
-  if (isUndefinedOrNull(a) || isUndefinedOrNull(b))
-    return false;
-  // an identical 'prototype' property.
-  if (a.prototype !== b.prototype) return false;
-  //~~~I've managed to break Object.keys through screwy arguments passing.
-  //   Converting to array solves the problem.
-  if (isArguments(a)) {
-    if (!isArguments(b)) {
-      return false;
-    }
-    a = pSlice.call(a);
-    b = pSlice.call(b);
-    return deepEqual(a, b, opts);
-  }
-  if (isBuffer(a)) {
-    if (!isBuffer(b)) {
-      return false;
-    }
-    if (a.length !== b.length) return false;
-    for (i = 0; i < a.length; i++) {
-      if (a[i] !== b[i]) return false;
-    }
-    return true;
-  }
-  try {
-    var ka = objectKeys(a),
-        kb = objectKeys(b);
-  } catch (e) {//happens when one is a string literal and the other isn't
-    return false;
-  }
-  // having the same number of owned properties (keys incorporates
-  // hasOwnProperty)
-  if (ka.length != kb.length)
-    return false;
-  //the same set of keys (although not necessarily the same order),
-  ka.sort();
-  kb.sort();
-  //~~~cheap key test
-  for (i = ka.length - 1; i >= 0; i--) {
-    if (ka[i] != kb[i])
-      return false;
-  }
-  //equivalent values for every corresponding key, and
-  //~~~possibly expensive deep test
-  for (i = ka.length - 1; i >= 0; i--) {
-    key = ka[i];
-    if (!deepEqual(a[key], b[key], opts)) return false;
-  }
-  return typeof a === typeof b;
-}
-
-},{"./lib/is_arguments.js":85,"./lib/keys.js":86}],85:[function(require,module,exports){
-var supportsArgumentsClass = (function(){
-  return Object.prototype.toString.call(arguments)
-})() == '[object Arguments]';
-
-exports = module.exports = supportsArgumentsClass ? supported : unsupported;
-
-exports.supported = supported;
-function supported(object) {
-  return Object.prototype.toString.call(object) == '[object Arguments]';
-};
-
-exports.unsupported = unsupported;
-function unsupported(object){
-  return object &&
-    typeof object == 'object' &&
-    typeof object.length == 'number' &&
-    Object.prototype.hasOwnProperty.call(object, 'callee') &&
-    !Object.prototype.propertyIsEnumerable.call(object, 'callee') ||
-    false;
-};
-
-},{}],86:[function(require,module,exports){
-exports = module.exports = typeof Object.keys === 'function'
-  ? Object.keys : shim;
-
-exports.shim = shim;
-function shim (obj) {
-  var keys = [];
-  for (var key in obj) keys.push(key);
-  return keys;
-}
-
-},{}],87:[function(require,module,exports){
+},{"es5-ext/object/assign":120,"es5-ext/object/is-callable":126,"es5-ext/object/normalize-options":132,"es5-ext/string/#/contains":139}],84:[function(require,module,exports){
 'use strict';
 
 exports.utils = require('./des/utils');
@@ -11902,7 +11771,7 @@ exports.DES = require('./des/des');
 exports.CBC = require('./des/cbc');
 exports.EDE = require('./des/ede');
 
-},{"./des/cbc":88,"./des/cipher":89,"./des/des":90,"./des/ede":91,"./des/utils":92}],88:[function(require,module,exports){
+},{"./des/cbc":85,"./des/cipher":86,"./des/des":87,"./des/ede":88,"./des/utils":89}],85:[function(require,module,exports){
 'use strict';
 
 var assert = require('minimalistic-assert');
@@ -11969,7 +11838,7 @@ proto._update = function _update(inp, inOff, out, outOff) {
   }
 };
 
-},{"inherits":176,"minimalistic-assert":200}],89:[function(require,module,exports){
+},{"inherits":173,"minimalistic-assert":197}],86:[function(require,module,exports){
 'use strict';
 
 var assert = require('minimalistic-assert');
@@ -12112,7 +11981,7 @@ Cipher.prototype._finalDecrypt = function _finalDecrypt() {
   return this._unpad(out);
 };
 
-},{"minimalistic-assert":200}],90:[function(require,module,exports){
+},{"minimalistic-assert":197}],87:[function(require,module,exports){
 'use strict';
 
 var assert = require('minimalistic-assert');
@@ -12257,7 +12126,7 @@ DES.prototype._decrypt = function _decrypt(state, lStart, rStart, out, off) {
   utils.rip(l, r, out, off);
 };
 
-},{"../des":87,"inherits":176,"minimalistic-assert":200}],91:[function(require,module,exports){
+},{"../des":84,"inherits":173,"minimalistic-assert":197}],88:[function(require,module,exports){
 'use strict';
 
 var assert = require('minimalistic-assert');
@@ -12314,7 +12183,7 @@ EDE.prototype._update = function _update(inp, inOff, out, outOff) {
 EDE.prototype._pad = DES.prototype._pad;
 EDE.prototype._unpad = DES.prototype._unpad;
 
-},{"../des":87,"inherits":176,"minimalistic-assert":200}],92:[function(require,module,exports){
+},{"../des":84,"inherits":173,"minimalistic-assert":197}],89:[function(require,module,exports){
 'use strict';
 
 exports.readUInt32BE = function readUInt32BE(bytes, off) {
@@ -12572,7 +12441,7 @@ exports.padSplit = function padSplit(num, size, group) {
   return out.join(' ');
 };
 
-},{}],93:[function(require,module,exports){
+},{}],90:[function(require,module,exports){
 (function (Buffer){
 var generatePrime = require('./lib/generatePrime')
 var primes = require('./lib/primes.json')
@@ -12618,7 +12487,7 @@ exports.DiffieHellmanGroup = exports.createDiffieHellmanGroup = exports.getDiffi
 exports.createDiffieHellman = exports.DiffieHellman = createDiffieHellman
 
 }).call(this,require("buffer").Buffer)
-},{"./lib/dh":94,"./lib/generatePrime":95,"./lib/primes.json":96,"buffer":73}],94:[function(require,module,exports){
+},{"./lib/dh":91,"./lib/generatePrime":92,"./lib/primes.json":93,"buffer":73}],91:[function(require,module,exports){
 (function (Buffer){
 var BN = require('bn.js');
 var MillerRabin = require('miller-rabin');
@@ -12786,7 +12655,7 @@ function formatReturnValue(bn, enc) {
 }
 
 }).call(this,require("buffer").Buffer)
-},{"./generatePrime":95,"bn.js":43,"buffer":73,"miller-rabin":199,"randombytes":215}],95:[function(require,module,exports){
+},{"./generatePrime":92,"bn.js":43,"buffer":73,"miller-rabin":196,"randombytes":212}],92:[function(require,module,exports){
 var randomBytes = require('randombytes');
 module.exports = findPrime;
 findPrime.simpleSieve = simpleSieve;
@@ -12893,7 +12762,7 @@ function findPrime(bits, gen) {
 
 }
 
-},{"bn.js":43,"miller-rabin":199,"randombytes":215}],96:[function(require,module,exports){
+},{"bn.js":43,"miller-rabin":196,"randombytes":212}],93:[function(require,module,exports){
 module.exports={
     "modp1": {
         "gen": "02",
@@ -12928,7 +12797,7 @@ module.exports={
         "prime": "ffffffffffffffffc90fdaa22168c234c4c6628b80dc1cd129024e088a67cc74020bbea63b139b22514a08798e3404ddef9519b3cd3a431b302b0a6df25f14374fe1356d6d51c245e485b576625e7ec6f44c42e9a637ed6b0bff5cb6f406b7edee386bfb5a899fa5ae9f24117c4b1fe649286651ece45b3dc2007cb8a163bf0598da48361c55d39a69163fa8fd24cf5f83655d23dca3ad961c62f356208552bb9ed529077096966d670c354e4abc9804f1746c08ca18217c32905e462e36ce3be39e772c180e86039b2783a2ec07a28fb5c55df06f4c52c9de2bcbf6955817183995497cea956ae515d2261898fa051015728e5a8aaac42dad33170d04507a33a85521abdf1cba64ecfb850458dbef0a8aea71575d060c7db3970f85a6e1e4c7abf5ae8cdb0933d71e8c94e04a25619dcee3d2261ad2ee6bf12ffa06d98a0864d87602733ec86a64521f2b18177b200cbbe117577a615d6c770988c0bad946e208e24fa074e5ab3143db5bfce0fd108e4b82d120a92108011a723c12a787e6d788719a10bdba5b2699c327186af4e23c1a946834b6150bda2583e9ca2ad44ce8dbbbc2db04de8ef92e8efc141fbecaa6287c59474e6bc05d99b2964fa090c3a2233ba186515be7ed1f612970cee2d7afb81bdd762170481cd0069127d5b05aa993b4ea988d8fddc186ffb7dc90a6c08f4df435c93402849236c3fab4d27c7026c1d4dcb2602646dec9751e763dba37bdf8ff9406ad9e530ee5db382f413001aeb06a53ed9027d831179727b0865a8918da3edbebcf9b14ed44ce6cbaced4bb1bdb7f1447e6cc254b332051512bd7af426fb8f401378cd2bf5983ca01c64b92ecf032ea15d1721d03f482d7ce6e74fef6d55e702f46980c82b5a84031900b1c9e59e7c97fbec7e8f323a97a7e36cc88be0f1d45b7ff585ac54bd407b22b4154aacc8f6d7ebf48e1d814cc5ed20f8037e0a79715eef29be32806a1d58bb7c5da76f550aa3d8a1fbff0eb19ccb1a313d55cda56c9ec2ef29632387fe8d76e3c0468043e8f663f4860ee12bf2d5b0b7474d6e694f91e6dbe115974a3926f12fee5e438777cb6a932df8cd8bec4d073b931ba3bc832b68d9dd300741fa7bf8afc47ed2576f6936ba424663aab639c5ae4f5683423b4742bf1c978238f16cbe39d652de3fdb8befc848ad922222e04a4037c0713eb57a81a23f0c73473fc646cea306b4bcbc8862f8385ddfa9d4b7fa2c087e879683303ed5bdd3a062b3cf5b3a278a66d2a13f83f44f82ddf310ee074ab6a364597e899a0255dc164f31cc50846851df9ab48195ded7ea1b1d510bd7ee74d73faf36bc31ecfa268359046f4eb879f924009438b481c6cd7889a002ed5ee382bc9190da6fc026e479558e4475677e9aa9e3050e2765694dfc81f56e880b96e7160c980dd98edd3dfffffffffffffffff"
     }
 }
-},{}],97:[function(require,module,exports){
+},{}],94:[function(require,module,exports){
 'use strict';
 
 var elliptic = exports;
@@ -12944,7 +12813,7 @@ elliptic.curves = require('./elliptic/curves');
 elliptic.ec = require('./elliptic/ec');
 elliptic.eddsa = require('./elliptic/eddsa');
 
-},{"../package.json":113,"./elliptic/curve":100,"./elliptic/curves":103,"./elliptic/ec":104,"./elliptic/eddsa":107,"./elliptic/hmac-drbg":110,"./elliptic/utils":112,"brorand":44}],98:[function(require,module,exports){
+},{"../package.json":110,"./elliptic/curve":97,"./elliptic/curves":100,"./elliptic/ec":101,"./elliptic/eddsa":104,"./elliptic/hmac-drbg":107,"./elliptic/utils":109,"brorand":44}],95:[function(require,module,exports){
 'use strict';
 
 var BN = require('bn.js');
@@ -13321,7 +13190,7 @@ BasePoint.prototype.dblp = function dblp(k) {
   return r;
 };
 
-},{"../../elliptic":97,"bn.js":43}],99:[function(require,module,exports){
+},{"../../elliptic":94,"bn.js":43}],96:[function(require,module,exports){
 'use strict';
 
 var curve = require('../curve');
@@ -13756,7 +13625,7 @@ Point.prototype.eqXToP = function eqXToP(x) {
 Point.prototype.toP = Point.prototype.normalize;
 Point.prototype.mixedAdd = Point.prototype.add;
 
-},{"../../elliptic":97,"../curve":100,"bn.js":43,"inherits":176}],100:[function(require,module,exports){
+},{"../../elliptic":94,"../curve":97,"bn.js":43,"inherits":173}],97:[function(require,module,exports){
 'use strict';
 
 var curve = exports;
@@ -13766,7 +13635,7 @@ curve.short = require('./short');
 curve.mont = require('./mont');
 curve.edwards = require('./edwards');
 
-},{"./base":98,"./edwards":99,"./mont":101,"./short":102}],101:[function(require,module,exports){
+},{"./base":95,"./edwards":96,"./mont":98,"./short":99}],98:[function(require,module,exports){
 'use strict';
 
 var curve = require('../curve');
@@ -13948,7 +13817,7 @@ Point.prototype.getX = function getX() {
   return this.x.fromRed();
 };
 
-},{"../../elliptic":97,"../curve":100,"bn.js":43,"inherits":176}],102:[function(require,module,exports){
+},{"../../elliptic":94,"../curve":97,"bn.js":43,"inherits":173}],99:[function(require,module,exports){
 'use strict';
 
 var curve = require('../curve');
@@ -14888,7 +14757,7 @@ JPoint.prototype.isInfinity = function isInfinity() {
   return this.z.cmpn(0) === 0;
 };
 
-},{"../../elliptic":97,"../curve":100,"bn.js":43,"inherits":176}],103:[function(require,module,exports){
+},{"../../elliptic":94,"../curve":97,"bn.js":43,"inherits":173}],100:[function(require,module,exports){
 'use strict';
 
 var curves = exports;
@@ -15095,7 +14964,7 @@ defineCurve('secp256k1', {
   ]
 });
 
-},{"../elliptic":97,"./precomputed/secp256k1":111,"hash.js":168}],104:[function(require,module,exports){
+},{"../elliptic":94,"./precomputed/secp256k1":108,"hash.js":165}],101:[function(require,module,exports){
 'use strict';
 
 var BN = require('bn.js');
@@ -15334,7 +15203,7 @@ EC.prototype.getKeyRecoveryParam = function(e, signature, Q, enc) {
   throw new Error('Unable to find valid recovery factor');
 };
 
-},{"../../elliptic":97,"./key":105,"./signature":106,"bn.js":43}],105:[function(require,module,exports){
+},{"../../elliptic":94,"./key":102,"./signature":103,"bn.js":43}],102:[function(require,module,exports){
 'use strict';
 
 var BN = require('bn.js');
@@ -15455,7 +15324,7 @@ KeyPair.prototype.inspect = function inspect() {
          ' pub: ' + (this.pub && this.pub.inspect()) + ' >';
 };
 
-},{"../../elliptic":97,"bn.js":43}],106:[function(require,module,exports){
+},{"../../elliptic":94,"bn.js":43}],103:[function(require,module,exports){
 'use strict';
 
 var BN = require('bn.js');
@@ -15592,7 +15461,7 @@ Signature.prototype.toDER = function toDER(enc) {
   return utils.encode(res, enc);
 };
 
-},{"../../elliptic":97,"bn.js":43}],107:[function(require,module,exports){
+},{"../../elliptic":94,"bn.js":43}],104:[function(require,module,exports){
 'use strict';
 
 var hash = require('hash.js');
@@ -15712,7 +15581,7 @@ EDDSA.prototype.isPoint = function isPoint(val) {
   return val instanceof this.pointClass;
 };
 
-},{"../../elliptic":97,"./key":108,"./signature":109,"hash.js":168}],108:[function(require,module,exports){
+},{"../../elliptic":94,"./key":105,"./signature":106,"hash.js":165}],105:[function(require,module,exports){
 'use strict';
 
 var elliptic = require('../../elliptic');
@@ -15810,7 +15679,7 @@ KeyPair.prototype.getPublic = function getPublic(enc) {
 
 module.exports = KeyPair;
 
-},{"../../elliptic":97}],109:[function(require,module,exports){
+},{"../../elliptic":94}],106:[function(require,module,exports){
 'use strict';
 
 var BN = require('bn.js');
@@ -15878,7 +15747,7 @@ Signature.prototype.toHex = function toHex() {
 
 module.exports = Signature;
 
-},{"../../elliptic":97,"bn.js":43}],110:[function(require,module,exports){
+},{"../../elliptic":94,"bn.js":43}],107:[function(require,module,exports){
 'use strict';
 
 var hash = require('hash.js');
@@ -15994,7 +15863,7 @@ HmacDRBG.prototype.generate = function generate(len, enc, add, addEnc) {
   return utils.encode(res, enc);
 };
 
-},{"../elliptic":97,"hash.js":168}],111:[function(require,module,exports){
+},{"../elliptic":94,"hash.js":165}],108:[function(require,module,exports){
 module.exports = {
   doubles: {
     step: 4,
@@ -16776,7 +16645,7 @@ module.exports = {
   }
 };
 
-},{}],112:[function(require,module,exports){
+},{}],109:[function(require,module,exports){
 'use strict';
 
 var utils = exports;
@@ -16950,7 +16819,7 @@ function intFromLE(bytes) {
 utils.intFromLE = intFromLE;
 
 
-},{"bn.js":43}],113:[function(require,module,exports){
+},{"bn.js":43}],110:[function(require,module,exports){
 module.exports={
   "_args": [
     [
@@ -17070,7 +16939,7 @@ module.exports={
   "version": "6.3.3"
 }
 
-},{}],114:[function(require,module,exports){
+},{}],111:[function(require,module,exports){
 // Inspired by Google Closure:
 // http://closure-library.googlecode.com/svn/docs/
 // closure_goog_array_array.js.html#goog.array.clear
@@ -17084,7 +16953,7 @@ module.exports = function () {
 	return this;
 };
 
-},{"../../object/valid-value":141}],115:[function(require,module,exports){
+},{"../../object/valid-value":138}],112:[function(require,module,exports){
 'use strict';
 
 var toPosInt = require('../../number/to-pos-integer')
@@ -17115,7 +16984,7 @@ module.exports = function (searchElement/*, fromIndex*/) {
 	return -1;
 };
 
-},{"../../number/to-pos-integer":121,"../../object/valid-value":141}],116:[function(require,module,exports){
+},{"../../number/to-pos-integer":118,"../../object/valid-value":138}],113:[function(require,module,exports){
 'use strict';
 
 var toString = Object.prototype.toString
@@ -17124,14 +16993,14 @@ var toString = Object.prototype.toString
 
 module.exports = function (x) { return (toString.call(x) === id); };
 
-},{}],117:[function(require,module,exports){
+},{}],114:[function(require,module,exports){
 'use strict';
 
 module.exports = require('./is-implemented')()
 	? Math.sign
 	: require('./shim');
 
-},{"./is-implemented":118,"./shim":119}],118:[function(require,module,exports){
+},{"./is-implemented":115,"./shim":116}],115:[function(require,module,exports){
 'use strict';
 
 module.exports = function () {
@@ -17140,7 +17009,7 @@ module.exports = function () {
 	return ((sign(10) === 1) && (sign(-20) === -1));
 };
 
-},{}],119:[function(require,module,exports){
+},{}],116:[function(require,module,exports){
 'use strict';
 
 module.exports = function (value) {
@@ -17149,7 +17018,7 @@ module.exports = function (value) {
 	return (value > 0) ? 1 : -1;
 };
 
-},{}],120:[function(require,module,exports){
+},{}],117:[function(require,module,exports){
 'use strict';
 
 var sign = require('../math/sign')
@@ -17163,7 +17032,7 @@ module.exports = function (value) {
 	return sign(value) * floor(abs(value));
 };
 
-},{"../math/sign":117}],121:[function(require,module,exports){
+},{"../math/sign":114}],118:[function(require,module,exports){
 'use strict';
 
 var toInteger = require('./to-integer')
@@ -17172,7 +17041,7 @@ var toInteger = require('./to-integer')
 
 module.exports = function (value) { return max(0, toInteger(value)); };
 
-},{"./to-integer":120}],122:[function(require,module,exports){
+},{"./to-integer":117}],119:[function(require,module,exports){
 // Internal method, used by iteration functions.
 // Calls a function for each key-value pair found in object
 // Optionally takes compareFn to iterate object in specific order
@@ -17203,14 +17072,14 @@ module.exports = function (method, defVal) {
 	};
 };
 
-},{"./valid-callable":140,"./valid-value":141}],123:[function(require,module,exports){
+},{"./valid-callable":137,"./valid-value":138}],120:[function(require,module,exports){
 'use strict';
 
 module.exports = require('./is-implemented')()
 	? Object.assign
 	: require('./shim');
 
-},{"./is-implemented":124,"./shim":125}],124:[function(require,module,exports){
+},{"./is-implemented":121,"./shim":122}],121:[function(require,module,exports){
 'use strict';
 
 module.exports = function () {
@@ -17221,7 +17090,7 @@ module.exports = function () {
 	return (obj.foo + obj.bar + obj.trzy) === 'razdwatrzy';
 };
 
-},{}],125:[function(require,module,exports){
+},{}],122:[function(require,module,exports){
 'use strict';
 
 var keys  = require('../keys')
@@ -17245,7 +17114,7 @@ module.exports = function (dest, src/*, …srcn*/) {
 	return dest;
 };
 
-},{"../keys":131,"../valid-value":141}],126:[function(require,module,exports){
+},{"../keys":128,"../valid-value":138}],123:[function(require,module,exports){
 'use strict';
 
 var assign = require('./assign')
@@ -17257,7 +17126,7 @@ module.exports = function (obj) {
 	return assign({}, obj);
 };
 
-},{"./assign":123,"./valid-value":141}],127:[function(require,module,exports){
+},{"./assign":120,"./valid-value":138}],124:[function(require,module,exports){
 // Workaround for http://code.google.com/p/v8/issues/detail?id=2804
 
 'use strict';
@@ -17295,19 +17164,19 @@ module.exports = (function () {
 	};
 }());
 
-},{"./set-prototype-of/is-implemented":138,"./set-prototype-of/shim":139}],128:[function(require,module,exports){
+},{"./set-prototype-of/is-implemented":135,"./set-prototype-of/shim":136}],125:[function(require,module,exports){
 'use strict';
 
 module.exports = require('./_iterate')('forEach');
 
-},{"./_iterate":122}],129:[function(require,module,exports){
+},{"./_iterate":119}],126:[function(require,module,exports){
 // Deprecated
 
 'use strict';
 
 module.exports = function (obj) { return typeof obj === 'function'; };
 
-},{}],130:[function(require,module,exports){
+},{}],127:[function(require,module,exports){
 'use strict';
 
 var map = { function: true, object: true };
@@ -17316,14 +17185,14 @@ module.exports = function (x) {
 	return ((x != null) && map[typeof x]) || false;
 };
 
-},{}],131:[function(require,module,exports){
+},{}],128:[function(require,module,exports){
 'use strict';
 
 module.exports = require('./is-implemented')()
 	? Object.keys
 	: require('./shim');
 
-},{"./is-implemented":132,"./shim":133}],132:[function(require,module,exports){
+},{"./is-implemented":129,"./shim":130}],129:[function(require,module,exports){
 'use strict';
 
 module.exports = function () {
@@ -17333,7 +17202,7 @@ module.exports = function () {
 	} catch (e) { return false; }
 };
 
-},{}],133:[function(require,module,exports){
+},{}],130:[function(require,module,exports){
 'use strict';
 
 var keys = Object.keys;
@@ -17342,7 +17211,7 @@ module.exports = function (object) {
 	return keys(object == null ? object : Object(object));
 };
 
-},{}],134:[function(require,module,exports){
+},{}],131:[function(require,module,exports){
 'use strict';
 
 var callable = require('./valid-callable')
@@ -17359,7 +17228,7 @@ module.exports = function (obj, cb/*, thisArg*/) {
 	return o;
 };
 
-},{"./for-each":128,"./valid-callable":140}],135:[function(require,module,exports){
+},{"./for-each":125,"./valid-callable":137}],132:[function(require,module,exports){
 'use strict';
 
 var forEach = Array.prototype.forEach, create = Object.create;
@@ -17378,7 +17247,7 @@ module.exports = function (options/*, …options*/) {
 	return result;
 };
 
-},{}],136:[function(require,module,exports){
+},{}],133:[function(require,module,exports){
 'use strict';
 
 var forEach = Array.prototype.forEach, create = Object.create;
@@ -17389,14 +17258,14 @@ module.exports = function (arg/*, …args*/) {
 	return set;
 };
 
-},{}],137:[function(require,module,exports){
+},{}],134:[function(require,module,exports){
 'use strict';
 
 module.exports = require('./is-implemented')()
 	? Object.setPrototypeOf
 	: require('./shim');
 
-},{"./is-implemented":138,"./shim":139}],138:[function(require,module,exports){
+},{"./is-implemented":135,"./shim":136}],135:[function(require,module,exports){
 'use strict';
 
 var create = Object.create, getPrototypeOf = Object.getPrototypeOf
@@ -17409,7 +17278,7 @@ module.exports = function (/*customCreate*/) {
 	return getPrototypeOf(setPrototypeOf(customCreate(null), x)) === x;
 };
 
-},{}],139:[function(require,module,exports){
+},{}],136:[function(require,module,exports){
 // Big thanks to @WebReflection for sorting this out
 // https://gist.github.com/WebReflection/5593554
 
@@ -17484,7 +17353,7 @@ module.exports = (function (status) {
 
 require('../create');
 
-},{"../create":127,"../is-object":130,"../valid-value":141}],140:[function(require,module,exports){
+},{"../create":124,"../is-object":127,"../valid-value":138}],137:[function(require,module,exports){
 'use strict';
 
 module.exports = function (fn) {
@@ -17492,7 +17361,7 @@ module.exports = function (fn) {
 	return fn;
 };
 
-},{}],141:[function(require,module,exports){
+},{}],138:[function(require,module,exports){
 'use strict';
 
 module.exports = function (value) {
@@ -17500,14 +17369,14 @@ module.exports = function (value) {
 	return value;
 };
 
-},{}],142:[function(require,module,exports){
+},{}],139:[function(require,module,exports){
 'use strict';
 
 module.exports = require('./is-implemented')()
 	? String.prototype.contains
 	: require('./shim');
 
-},{"./is-implemented":143,"./shim":144}],143:[function(require,module,exports){
+},{"./is-implemented":140,"./shim":141}],140:[function(require,module,exports){
 'use strict';
 
 var str = 'razdwatrzy';
@@ -17517,7 +17386,7 @@ module.exports = function () {
 	return ((str.contains('dwa') === true) && (str.contains('foo') === false));
 };
 
-},{}],144:[function(require,module,exports){
+},{}],141:[function(require,module,exports){
 'use strict';
 
 var indexOf = String.prototype.indexOf;
@@ -17526,7 +17395,7 @@ module.exports = function (searchString/*, position*/) {
 	return indexOf.call(this, searchString, arguments[1]) > -1;
 };
 
-},{}],145:[function(require,module,exports){
+},{}],142:[function(require,module,exports){
 'use strict';
 
 var toString = Object.prototype.toString
@@ -17538,7 +17407,7 @@ module.exports = function (x) {
 		((x instanceof String) || (toString.call(x) === id))) || false;
 };
 
-},{}],146:[function(require,module,exports){
+},{}],143:[function(require,module,exports){
 'use strict';
 
 var setPrototypeOf = require('es5-ext/object/set-prototype-of')
@@ -17570,7 +17439,7 @@ ArrayIterator.prototype = Object.create(Iterator.prototype, {
 	toString: d(function () { return '[object Array Iterator]'; })
 });
 
-},{"./":149,"d":83,"es5-ext/object/set-prototype-of":137,"es5-ext/string/#/contains":142}],147:[function(require,module,exports){
+},{"./":146,"d":83,"es5-ext/object/set-prototype-of":134,"es5-ext/string/#/contains":139}],144:[function(require,module,exports){
 'use strict';
 
 var isArguments = require('es5-ext/function/is-arguments')
@@ -17618,7 +17487,7 @@ module.exports = function (iterable, cb/*, thisArg*/) {
 	}
 };
 
-},{"./get":148,"es5-ext/function/is-arguments":116,"es5-ext/object/valid-callable":140,"es5-ext/string/is-string":145}],148:[function(require,module,exports){
+},{"./get":145,"es5-ext/function/is-arguments":113,"es5-ext/object/valid-callable":137,"es5-ext/string/is-string":142}],145:[function(require,module,exports){
 'use strict';
 
 var isArguments    = require('es5-ext/function/is-arguments')
@@ -17635,7 +17504,7 @@ module.exports = function (obj) {
 	return new ArrayIterator(obj);
 };
 
-},{"./array":146,"./string":151,"./valid-iterable":152,"es5-ext/function/is-arguments":116,"es5-ext/string/is-string":145,"es6-symbol":159}],149:[function(require,module,exports){
+},{"./array":143,"./string":148,"./valid-iterable":149,"es5-ext/function/is-arguments":113,"es5-ext/string/is-string":142,"es6-symbol":156}],146:[function(require,module,exports){
 'use strict';
 
 var clear    = require('es5-ext/array/#/clear')
@@ -17727,7 +17596,7 @@ defineProperty(Iterator.prototype, Symbol.iterator, d(function () {
 }));
 defineProperty(Iterator.prototype, Symbol.toStringTag, d('', 'Iterator'));
 
-},{"d":83,"d/auto-bind":82,"es5-ext/array/#/clear":114,"es5-ext/object/assign":123,"es5-ext/object/valid-callable":140,"es5-ext/object/valid-value":141,"es6-symbol":159}],150:[function(require,module,exports){
+},{"d":83,"d/auto-bind":82,"es5-ext/array/#/clear":111,"es5-ext/object/assign":120,"es5-ext/object/valid-callable":137,"es5-ext/object/valid-value":138,"es6-symbol":156}],147:[function(require,module,exports){
 'use strict';
 
 var isArguments    = require('es5-ext/function/is-arguments')
@@ -17744,7 +17613,7 @@ module.exports = function (value) {
 	return (typeof value[iteratorSymbol] === 'function');
 };
 
-},{"es5-ext/function/is-arguments":116,"es5-ext/string/is-string":145,"es6-symbol":159}],151:[function(require,module,exports){
+},{"es5-ext/function/is-arguments":113,"es5-ext/string/is-string":142,"es6-symbol":156}],148:[function(require,module,exports){
 // Thanks @mathiasbynens
 // http://mathiasbynens.be/notes/javascript-unicode#iterating-over-symbols
 
@@ -17783,7 +17652,7 @@ StringIterator.prototype = Object.create(Iterator.prototype, {
 	toString: d(function () { return '[object String Iterator]'; })
 });
 
-},{"./":149,"d":83,"es5-ext/object/set-prototype-of":137}],152:[function(require,module,exports){
+},{"./":146,"d":83,"es5-ext/object/set-prototype-of":134}],149:[function(require,module,exports){
 'use strict';
 
 var isIterable = require('./is-iterable');
@@ -17793,12 +17662,12 @@ module.exports = function (value) {
 	return value;
 };
 
-},{"./is-iterable":150}],153:[function(require,module,exports){
+},{"./is-iterable":147}],150:[function(require,module,exports){
 'use strict';
 
 module.exports = require('./is-implemented')() ? Map : require('./polyfill');
 
-},{"./is-implemented":154,"./polyfill":158}],154:[function(require,module,exports){
+},{"./is-implemented":151,"./polyfill":155}],151:[function(require,module,exports){
 'use strict';
 
 module.exports = function () {
@@ -17832,7 +17701,7 @@ module.exports = function () {
 	return true;
 };
 
-},{}],155:[function(require,module,exports){
+},{}],152:[function(require,module,exports){
 // Exports true if environment provides native `Map` implementation,
 // whatever that is.
 
@@ -17843,13 +17712,13 @@ module.exports = (function () {
 	return (Object.prototype.toString.call(new Map()) === '[object Map]');
 }());
 
-},{}],156:[function(require,module,exports){
+},{}],153:[function(require,module,exports){
 'use strict';
 
 module.exports = require('es5-ext/object/primitive-set')('key',
 	'value', 'key+value');
 
-},{"es5-ext/object/primitive-set":136}],157:[function(require,module,exports){
+},{"es5-ext/object/primitive-set":133}],154:[function(require,module,exports){
 'use strict';
 
 var setPrototypeOf    = require('es5-ext/object/set-prototype-of')
@@ -17889,7 +17758,7 @@ MapIterator.prototype = Object.create(Iterator.prototype, {
 Object.defineProperty(MapIterator.prototype, toStringTagSymbol,
 	d('c', 'Map Iterator'));
 
-},{"./iterator-kinds":156,"d":83,"es5-ext/object/set-prototype-of":137,"es6-iterator":149,"es6-symbol":159}],158:[function(require,module,exports){
+},{"./iterator-kinds":153,"d":83,"es5-ext/object/set-prototype-of":134,"es6-iterator":146,"es6-symbol":156}],155:[function(require,module,exports){
 'use strict';
 
 var clear          = require('es5-ext/array/#/clear')
@@ -17995,12 +17864,12 @@ Object.defineProperty(MapPoly.prototype, Symbol.iterator, d(function () {
 }));
 Object.defineProperty(MapPoly.prototype, Symbol.toStringTag, d('c', 'Map'));
 
-},{"./is-native-implemented":155,"./lib/iterator":157,"d":83,"es5-ext/array/#/clear":114,"es5-ext/array/#/e-index-of":115,"es5-ext/object/set-prototype-of":137,"es5-ext/object/valid-callable":140,"es5-ext/object/valid-value":141,"es6-iterator/for-of":147,"es6-iterator/valid-iterable":152,"es6-symbol":159,"event-emitter":164}],159:[function(require,module,exports){
+},{"./is-native-implemented":152,"./lib/iterator":154,"d":83,"es5-ext/array/#/clear":111,"es5-ext/array/#/e-index-of":112,"es5-ext/object/set-prototype-of":134,"es5-ext/object/valid-callable":137,"es5-ext/object/valid-value":138,"es6-iterator/for-of":144,"es6-iterator/valid-iterable":149,"es6-symbol":156,"event-emitter":161}],156:[function(require,module,exports){
 'use strict';
 
 module.exports = require('./is-implemented')() ? Symbol : require('./polyfill');
 
-},{"./is-implemented":160,"./polyfill":162}],160:[function(require,module,exports){
+},{"./is-implemented":157,"./polyfill":159}],157:[function(require,module,exports){
 'use strict';
 
 var validTypes = { object: true, symbol: true };
@@ -18019,7 +17888,7 @@ module.exports = function () {
 	return true;
 };
 
-},{}],161:[function(require,module,exports){
+},{}],158:[function(require,module,exports){
 'use strict';
 
 module.exports = function (x) {
@@ -18030,7 +17899,7 @@ module.exports = function (x) {
 	return (x[x.constructor.toStringTag] === 'Symbol');
 };
 
-},{}],162:[function(require,module,exports){
+},{}],159:[function(require,module,exports){
 // ES2015 Symbol polyfill for environments that do not support it (or partially support it)
 
 'use strict';
@@ -18150,7 +18019,7 @@ defineProperty(HiddenSymbol.prototype, SymbolPolyfill.toStringTag,
 defineProperty(HiddenSymbol.prototype, SymbolPolyfill.toPrimitive,
 	d('c', SymbolPolyfill.prototype[SymbolPolyfill.toPrimitive]));
 
-},{"./validate-symbol":163,"d":83}],163:[function(require,module,exports){
+},{"./validate-symbol":160,"d":83}],160:[function(require,module,exports){
 'use strict';
 
 var isSymbol = require('./is-symbol');
@@ -18160,7 +18029,7 @@ module.exports = function (value) {
 	return value;
 };
 
-},{"./is-symbol":161}],164:[function(require,module,exports){
+},{"./is-symbol":158}],161:[function(require,module,exports){
 'use strict';
 
 var d        = require('d')
@@ -18294,7 +18163,7 @@ module.exports = exports = function (o) {
 };
 exports.methods = methods;
 
-},{"d":83,"es5-ext/object/valid-callable":140}],165:[function(require,module,exports){
+},{"d":83,"es5-ext/object/valid-callable":137}],162:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -18598,7 +18467,7 @@ function isUndefined(arg) {
   return arg === void 0;
 }
 
-},{}],166:[function(require,module,exports){
+},{}],163:[function(require,module,exports){
 (function (Buffer){
 var md5 = require('create-hash/md5')
 module.exports = EVP_BytesToKey
@@ -18670,1565 +18539,13 @@ function EVP_BytesToKey (password, salt, keyLen, ivLen) {
 }
 
 }).call(this,require("buffer").Buffer)
-},{"buffer":73,"create-hash/md5":79}],167:[function(require,module,exports){
+},{"buffer":73,"create-hash/md5":79}],164:[function(require,module,exports){
 (function (global){
-;(function(){
+!function(){function t(n){function o(t){return t.split("/").slice(-1).toString().replace(".js","")}return n.slice?t[o(n)]:function(e,i){n(e={exports:{}}),t[o(i)]=e.exports}}var n;"undefined"!=typeof window&&(n=window),"undefined"!=typeof global&&(n=global),n=n||{};var o=n.console||{log:function(){}};if("undefined"!=typeof module)var e=module;t(function(t){var n={};n.fns=n.fn={is:function(t){return!!t&&"function"==typeof t}},n.bi={is:function(t){return t instanceof Boolean||"boolean"==typeof t}},n.num={is:function(t){return!e(t)&&(t-parseFloat(t)+1>=0||1/0===t||-(1/0)===t)}},n.text={is:function(t){return"string"==typeof t}},n.text.ify=function(t){return n.text.is(t)?t:"undefined"!=typeof JSON?JSON.stringify(t):t&&t.toString?t.toString():t},n.text.random=function(t,n){var o="";for(t=t||24,n=n||"0123456789ABCDEFGHIJKLMNOPQRSTUVWXZabcdefghijklmnopqrstuvwxyz";t>0;)o+=n.charAt(Math.floor(Math.random()*n.length)),t--;return o},n.text.match=function(t,o){function e(t,n){for(var o,e=-1,i=0;o=n[i++];)if(!~(e=t.indexOf(o,e+1)))return!1;return!0}var i=!1;if(t=t||"",o=n.text.is(o)?{"=":o}:o||{},n.obj.has(o,"~")&&(t=t.toLowerCase(),o["="]=(o["="]||o["~"]).toLowerCase()),n.obj.has(o,"="))return t===o["="];if(n.obj.has(o,"*")){if(t.slice(0,o["*"].length)!==o["*"])return!1;i=!0,t=t.slice(o["*"].length)}if(n.obj.has(o,"!")){if(t.slice(-o["!"].length)!==o["!"])return!1;i=!0}if(n.obj.has(o,"+")&&n.list.map(n.list.is(o["+"])?o["+"]:[o["+"]],function(n){return t.indexOf(n)>=0?void(i=!0):!0}))return!1;if(n.obj.has(o,"-")&&n.list.map(n.list.is(o["-"])?o["-"]:[o["-"]],function(n){return t.indexOf(n)<0?void(i=!0):!0}))return!1;if(n.obj.has(o,">")){if(!(t>o[">"]))return!1;i=!0}if(n.obj.has(o,"<")){if(!(t<o["<"]))return!1;i=!0}if(n.obj.has(o,"?")){if(!e(t,o["?"]))return!1;i=!0}return i},n.list={is:function(t){return t instanceof Array}},n.list.slit=Array.prototype.slice,n.list.sort=function(t){return function(n,o){return n&&o?(n=n[t],o=o[t],o>n?-1:n>o?1:0):0}},n.list.map=function(t,n,o){return a(t,n,o)},n.list.index=1,n.obj={is:function(t){return t?t instanceof Object&&t.constructor===Object||"Object"===Object.prototype.toString.call(t).match(/^\[object (\w+)\]$/)[1]:!1}},n.obj.put=function(t,n,o){return(t||{})[n]=o,t},n.obj.has=function(t,n){return t&&Object.prototype.hasOwnProperty.call(t,n)},n.obj.del=function(t,n){return t?(t[n]=null,delete t[n],t):void 0},n.obj.as=function(t,n,o,e){return t[n]=t[n]||(e===o?{}:o)},n.obj.ify=function(t){if(r(t))return t;try{t=JSON.parse(t)}catch(n){t={}}return t},function(){function t(t,n){u(this,n)&&o!==this[n]||(this[n]=t)}var o;n.obj.to=function(n,o){return o=o||{},a(n,t,o),o}}(),n.obj.copy=function(t){return t?JSON.parse(JSON.stringify(t)):t},function(){function t(t,n){var o=this.n;if(!o||!(n===o||r(o)&&u(o,n)))return n?!0:void 0}n.obj.empty=function(n,o){return n&&a(n,t,{n:o})?!1:!0}}(),function(){function t(n,o){return 2===arguments.length?(t.r=t.r||{},void(t.r[n]=o)):(t.r=t.r||[],void t.r.push(n))}var i=Object.keys;n.obj.map=function(a,s,f){var c,l,p,d,h,g=0,v=o(s);if(t.r=null,i&&r(a)&&(d=Object.keys(a),h=!0),e(a)||d)for(l=(d||a).length;l>g;g++){var b=g+n.list.index;if(v){if(p=h?s.call(f||this,a[d[g]],d[g],t):s.call(f||this,a[g],b,t),p!==c)return p}else if(s===a[h?d[g]:g])return d?d[g]:b}else for(g in a)if(v){if(u(a,g)&&(p=f?s.call(f,a[g],g,t):s(a[g],g,t),p!==c))return p}else if(s===a[g])return g;return v?t.r:n.list.index?0:-1}}(),n.time={},n.time.is=function(t){return t?t instanceof Date:+(new Date).getTime()};var o=n.fn.is,e=n.list.is,i=n.obj,r=i.is,u=i.has,a=i.map;t.exports=n})(t,"./type"),t(function(t){t.exports=function n(t,o,e){if(!t)return{to:n};var t=(this.tag||(this.tag={}))[t]||(this.tag[t]={tag:t,to:n._={next:function(){}}});if(o instanceof Function){var i={off:n.off||(n.off=function(){return this.next===n._.next?!0:(this===this.the.last&&(this.the.last=this.back),this.to.back=this.back,this.next=n._.next,void(this.back.to=this.to))}),to:n._,next:o,the:t,on:this,as:e};return(i.back=t.last||t).to=i,t.last=i}return(t=t.to).next(o),t}})(t,"./onto"),t(function(n){function o(t,n){n=n||{},n.id=n.id||"#",n.rid=n.rid||"@",n.uuid=n.uuid||function(){return+new Date+Math.random()};var o=e;return o.stun=function(t){var n=function(t){return n.off&&n===this.stun?(this.stun=null,!1):o.stun.skip?!1:(t&&(t.cb=t.fn,t.off(),e.queue.push(t)),!0)},e=n.res=function(t,r){if(!n.off){if(t instanceof Function)return o.stun.skip=!0,t.call(r),void(o.stun.skip=!1);n.off=!0;var u,a=0,s=e.queue,f=s.length;for(e.queue=[],n===i.stun&&(i.stun=null),a;f>a;a++)u=s[a],u.fn=u.cb,u.cb=null,o.stun.skip=!0,u.ctx.on(u.tag,u.fn,u),o.stun.skip=!1}},i=t._;return e.back=i.stun||(i.back||{_:{}})._.stun,e.back&&(e.back.next=n),e.queue=[],i.stun=n,e},o}var e=t("./onto");n.exports=o})(t,"./onify"),t(function(n){function o(t,n,e){o.time=e||Gun.time.is,o.waiting.push({when:t,event:n||function(){}}),o.soonest<t||o.set(t)}var e=t("./type");o.waiting=[],o.soonest=1/0,o.sort=e.list.sort("when"),o.set=function(t){if(!(1/0<=(o.soonest=t))){var n=o.time();t=n>=t?0:t-n,clearTimeout(o.id),o.id=setTimeout(o.check,t)}},o.each=function(t,n,o){var e=this;t&&(t.when<=e.now?t.event instanceof Function&&setTimeout(function(){t.event()},0):(e.soonest=e.soonest<t.when?e.soonest:t.when,o(t)))},o.check=function(){var t={now:o.time(),soonest:1/0};o.waiting.sort(o.sort),o.waiting=e.list.map(o.waiting,o.each,t)||[],o.set(t.soonest)},n.exports=o})(t,"./schedule"),t(function(t){function n(t,n,e,i,r){if(n>t)return{defer:!0};if(e>n)return{historical:!0};if(n>e)return{converge:!0,incoming:!0};if(n===e){if(o(i)===o(r))return{state:!0};if(o(i)<o(r))return{converge:!0,current:!0};if(o(r)<o(i))return{converge:!0,incoming:!0}}return{err:"you have not properly handled recursion through your data or filtered it as JSON"}}if("undefined"==typeof JSON)throw new Error("JSON is not included in this browser. Please load it first: ajax.cdnjs.com/ajax/libs/json2/20110223/json2.js");var o=JSON.stringify;t.exports=n})(t,"./HAM"),t(function(n){var o=t("./type"),e={};e.is=function(t){return t===i?!1:null===t?!0:t===1/0?!1:s(t)||u(t)||a(t)?!0:e.rel.is(t)||!1},e.rel={_:"#"},function(){function t(t,n){var o=this;return o.id?o.id=!1:n==r&&s(t)?void(o.id=t):o.id=!1}e.rel.is=function(n){if(n&&n[r]&&!n._&&c(n)){var o={};if(p(n,t,o),o.id)return o.id}return!1}}(),e.rel.ify=function(t){return l({},r,t)};var i,r=e.rel._,u=o.bi.is,a=o.num.is,s=o.text.is,f=o.obj,c=f.is,l=f.put,p=f.map;n.exports=e})(t,"./val"),t(function(n){var o=t("./type"),e=t("./val"),i={_:"_"};i.soul=function(t,n){return t&&t._&&t._[n||p]},i.soul.ify=function(t,n){return n="string"==typeof n?{soul:n}:n||{},t=t||{},t._=t._||{},t._[p]=n.soul||t._[p]||l(),t},function(){function t(t,n){return n!==i._?e.is(t)?void(this.cb&&this.cb.call(this.as,t,n,this.n,this.s)):!0:void 0}i.is=function(n,o,e){var r;return a(n)&&(r=i.soul(n))?!f(n,t,{as:e,cb:o,s:r,n:n}):!1}}(),function(){function t(t,n){var o,i,r=this.o;return r.map?(o=r.map.call(this.as,t,""+n,r.node),void(i===o?s(r.node,n):r.node&&(r.node[n]=o))):void(e.is(t)&&(r.node[n]=t))}i.ify=function(n,o,e){return o?"string"==typeof o?o={soul:o}:o instanceof Function&&(o={map:o}):o={},o.map&&(o.node=o.map.call(e,n,r,o.node||{})),(o.node=i.soul.ify(o.node||{},o))&&f(n,t,{o:o,as:e}),o.node}}();var r,u=o.obj,a=u.is,s=u.del,f=u.map,c=o.text,l=c.random,p=e.rel._;n.exports=i})(t,"./node"),t(function(n){function o(){var t=r();return t>u?(a=0,u=t):u=t+(a+=1)/s}var e=t("./type"),i=t("./node"),r=e.time.is,u=-(1/0),a=0,s=1e3;o._=">",o.ify=function(t,n,e,r,u){if(!t||!t[m]){if(!u)return;t=i.soul.ify(t,u)}var a=l(t[m],o._);return f!==n&&n!==m&&(v(e)&&(a[n]=e),f!==r&&(t[n]=r)),t},o.is=function(t,n,e){var i=n&&t&&t[m]&&t[m][o._]||e;if(i)return v(i[n])?i[n]:-(1/0)},function(){function t(t,n){m!==n&&o.ify(this.o,n,this.s)}o.map=function(n,e,i){var r,u=d(u=n||e)?u:null;return n=y(n=n||e)?n:null,u&&!n?(e=v(e)?e:o(),u[m]=u[m]||{},h(u,t,{o:u,s:e}),u):(i=i||d(e)?e:r,e=v(e)?e:o(),function(o,u,a,s){return n?(n.call(i||this||{},o,u,a,s),void(p(a,u)&&r===a[u]||t.call({o:a,s:e},o,u))):(t.call({o:a,s:e},o,u),o)})}}();var f,c=e.obj,l=c.as,p=c.has,d=c.is,h=c.map,g=e.num,v=g.is,b=e.fn,y=b.is,m=i._;n.exports=o})(t,"./state"),t(function(n){var o=t("./type"),e=t("./val"),i=t("./node"),r={};!function(){function t(t,o){return t&&o===i.soul(t)&&i.is(t,this.fn)?void(this.cb&&(n.n=t,n.as=this.as,this.cb.call(n.as,t,o,n))):!0}function n(t){t&&i.is(n.n,t,n.as)}r.is=function(n,o,e,i){return n&&s(n)&&!l(n)?!d(n,t,{cb:o,fn:e,as:i}):!1}}(),function(){function t(t,r){var u;return(u=l(t,r))?u:(r.env=t,r.soul=o,i.ify(r.obj,n,r)&&(t.graph[e.rel.is(r.rel)]=r.node),r)}function n(n,o,r){var s,l,p=this,d=p.env;if(i._===o&&c(n,e.rel._))return r._;if(s=a(n,o,r,p,d)){if(o||(p.node=p.node||r||{},c(n,i._)&&(p.node._=h(n._)),p.node=i.soul.ify(p.node,e.rel.is(p.rel)),p.rel=p.rel||e.rel.ify(i.soul(p.node))),(l=d.map)&&(l.call(d.as||{},n,o,r,p),c(r,o))){if(n=r[o],u===n)return void f(r,o);if(!(s=a(n,o,r,p,d)))return}if(!o)return p.node;if(!0===s)return n;if(l=t(d,{obj:n,path:p.path.concat(o)}),l.node)return l.rel}}function o(t){var n=this,o=e.rel.is(n.rel),r=n.env.graph;n.rel=n.rel||e.rel.ify(t),n.rel[e.rel._]=t,n.node&&n.node[i._]&&(n.node[i._][e.rel._]=t),c(r,o)&&(r[t]=r[o],f(r,o))}function a(t,n,o,i,r){var u;return e.is(t)?!0:s(t)?1:(u=r.invalid)?(t=u.call(r.as||{},t,n,o),a(t,n,o,i,r)):void(r.err="Invalid value at '"+i.path.concat(n).join(".")+"'!")}function l(t,n){for(var o,e=t.seen,i=e.length;i--;)if(o=e[i],n.obj===o.obj)return o;e.push(n)}r.ify=function(n,o,i){var r={path:[],obj:n};return o?"string"==typeof o?o={soul:o}:o instanceof Function&&(o.map=o):o={},o.soul&&(r.rel=e.rel.ify(o.soul)),o.graph=o.graph||{},o.seen=o.seen||[],o.as=o.as||i,t(o,r),o.root=r.node,o.graph}}(),r.node=function(t){var n=i.soul(t);if(n)return p({},n,t)},function(){function t(t,n){var o,u;if(i._===n){if(l(t,e.rel._))return;return void(this.obj[n]=h(t))}return(o=e.rel.is(t))?(u=this.opt.seen[o])?void(this.obj[n]=u):void(this.obj[n]=this.opt.seen[o]=r.to(this.graph,o,this.opt)):void(this.obj[n]=t)}r.to=function(n,o,e){if(n){var i={};return e=e||{seen:{}},d(n[o],t,{obj:i,graph:n,opt:e}),i}}}();var u,a=(o.fn.is,o.obj),s=a.is,f=a.del,c=a.has,l=a.empty,p=a.put,d=a.map,h=a.copy;n.exports=r})(t,"./graph"),t(function(n){function o(){this.cache={}}var e=t("./type");o.prototype.track=function(t){return this.cache[t]=e.time.is(),this.to||this.gc(),t},o.prototype.check=function(t){return e.obj.has(this.cache,t)?this.track(t):!1},o.prototype.gc=function(){var t=this,n=e.time.is(),o=n,i=3e5;e.obj.map(t.cache,function(r,u){o=Math.min(n,r),i>n-r||e.obj.del(t.cache,u)});var r=e.obj.empty(t.cache);if(r)return void(t.to=null);var u=n-o,a=i-u;t.to=setTimeout(function(){t.gc()},a)},n.exports=o})(t,"./dup"),t(function(n){function i(t){return t instanceof i?(this._={gun:this}).gun:this instanceof i?i.create(this._={gun:this,opt:t}):new i(t)}i.is=function(t){return t instanceof i},i.version=.6,i.chain=i.prototype,i.chain.toJSON=function(){};var r=t("./type");r.obj.to(r,i),i.HAM=t("./HAM"),i.val=t("./val"),i.node=t("./node"),i.state=t("./state"),i.graph=t("./graph"),i.dup=t("./dup"),i.on=t("./onify")(),i._={node:i.node._,soul:i.val.rel._,state:i.state._,field:".",value:"="},function(){function t(t){var o=this.as,e=o.gun;t.get&&n(t,o)||(o.on("in",l(t,{gun:o.gun})),t["#"]&&o.dup.track(t["#"]),t.gun||(t=l(t,{gun:e})),i.on("out",t))}function n(t,n){var o,e=t.get[d],r=n.graph[e],u=t.get[h],a=n.next||(n.next={}),s=(a[e]||(a[e]=n.gun.get(e)))._;if(r){if(u){if(!c(r,u))return;o=i.obj.put(i.node.soul.ify({},e),u,r[u]),r=i.state.ify(o,u,i.state.is(r,u))}return s.on("in",{put:r,get:s.soul,gun:s.gun}),0<s.ack?!0:void 0}}function o(t){var n=this,o=n.as;if(t.gun||(t.gun=o.gun),!t["#"]&&t["@"]){if(t["#"]=i.text.random(),i.on.ack(t["@"],t))return;return o.dup.track(t["#"]),void o.on("out",t)}t["#"]&&o.dup.check(t["#"])||(o.dup.track(t["#"]),i.on.ack(t["@"],t)||(t.put&&(i.HAM.synth(t,n,o.gun),i.on("put",t)),t.get&&i.on("get",t),i.on("out",t)))}i.create=function(n){n.on=n.on||i.on,n.root=n.root||n.gun,n.graph=n.graph||{},n.dup=n.dup||new i.dup;var e=n.gun.opt(n.opt);return n.once||(n.on("in",o,n),n.on("out",t,n)),n.once=1,e}}(),function(){var t=i.on.ask=function(n,o){var e=i.text.random();return n&&t.on(e,n,o),e};t.on=i.on,i.on.ack=function(n,o){if(n&&o&&t.on){var e=n["#"]||n;if(t.tag&&t.tag[e])return t.on(e,o),!0}}}(),function(){i.chain.opt=function(t){t=t||{};var n=this,o=n._,e=t.peers||t;return f(t)||(t={}),f(o.opt)||(o.opt=t),u(e)&&(e=[e]),a(e)&&(e=p(e,function(t,n,o){o(t,{url:t})}),f(o.opt.peers)||(o.opt.peers={}),o.opt.peers=l(e,o.opt.peers)),o.opt.peers=o.opt.peers||{},l(t,o.opt),i.on("opt",o),n}}();var u=i.text.is,a=i.list.is,s=i.obj,f=s.is,c=s.has,l=s.to,p=s.map,d=i._.soul,h=i._.field;o.debug=function(t,n){return o.debug.i&&t===o.debug.i&&o.debug.i++&&(o.log.apply(o,arguments)||n)},i.log=function(){return!i.log.off&&o.log.apply(o,arguments),[].slice.call(arguments).join(" ")},i.log.once=function(t,n,o){return(o=i.log.once)[t]=o[t]||0,o[t]++||i.log(n)},i.log.once("welcome","Hello wonderful person! :) Thanks for using GUN, feel free to ask for help on https://gitter.im/amark/gun and ask StackOverflow questions tagged with 'gun'!"),"undefined"!=typeof window&&(window.Gun=i),"undefined"!=typeof e&&(e.exports=i),n.exports=i})(t,"./root"),t(function(){var n=t("./root");n.chain.back=function(t,n){var i;if(-1===t||1/0===t)return this._.root;if(1===t)return this._.back||this;var r=this,u=r._;if("string"==typeof t&&(t=t.split(".")),t instanceof Array){var a=0,s=t.length,i=u;for(a;s>a;a++)i=(i||e)[t[a]];if(o!==i)return n?r:i;if(i=u.back)return i.back(t,n)}else if(t instanceof Function){for(var f,i={back:r};(i=i.back)&&(i=i._)&&!(f=t(i,n)););return f}};var o,e={}})(t,"./back"),t(function(){function o(t){{var n,o=this.as,e=o.gun;e.back(-1)}if(t.gun||(t.gun=e),(n=t.get)&&!n[m])if(h(n,_)){n=n[_];var i=n?e.get(n)._:o;if(h(i,"put"))return void i.on("in",i);if(h(o,"put")){var r,u=o.put;if((r=c.node.soul(u))&&(u=c.val.rel.ify(r)),r=c.val.rel.is(u)){if(!t.gun._)return;return void t.gun._.on("out",{get:{"#":r,".":n},"#":c.on.ask(c.HAM.synth,t.gun),gun:t.gun})}if(l===u||c.val.is(u)){if(!t.gun._)return;return void t.gun._.on("in",{get:n,gun:t.gun})}}else o.map&&y(o.map,function(t){t.at.on("in",t.at)});if(o.soul){if(!t.gun._)return;return void t.gun._.on("out",{get:{"#":o.soul,".":n},"#":c.on.ask(c.HAM.synth,t.gun),gun:t.gun})}if(o.get){if(!o.back._)return;return void o.back._.on("out",{get:g({},_,o.get),gun:e})}t=b(t,{get:{}})}else{if(h(o,"put")?o.on("in",o):o.map&&y(o.map,function(t){t.at.on("in",t.at)}),o.ack&&!h(o,"put"))return;if(o.ack=-1,o.soul)return void o.on("out",{get:{"#":o.soul},"#":c.on.ask(c.HAM.synth,o.gun)});if(o.get){if(!o.back._)return;return void o.back._.on("out",{get:g({},_,o.get),gun:o.gun})}}o.back._.on("out",t)}function e(t){t=t._||t;{var n,o=this,e=this.as,u=t.gun,f=u._,d=t.put;e.back._||p}if(0>e.ack&&t.via&&!c.val.rel.is(d)&&(e.ack=1),e.get&&t.get!==e.get&&(t=b(t,{get:e.get})),e.field&&f!==e&&(t=b(t,{gun:e.gun}),f.ack&&(e.ack=e.ack||f.ack)),l===d){if(o.to.next(t),e.soul)return;return r(e,t,o),e.field&&s(e,t),v(f.echo,e.id),void v(e.map,f.id)}return e.soul?(o.to.next(t),r(e,t,o),void y(d,a,{at:t,cat:e})):(n=c.val.rel.is(d))?(i(e,t,f,n),o.to.next(t),void r(e,t,o)):c.val.is(d)?(e.field||e.soul?s(e,t):(f.field||f.soul)&&((f.echo||(f.echo={}))[e.id]=e,(e.map||(e.map={}))[f.id]=e.map[f.id]||{at:f}),o.to.next(t),void r(e,t,o)):(e.field&&f!==e&&h(f,"put")&&(e.put=f.put),(n=c.node.soul(d))&&f.field&&(f.put=e.root.get(n)._.put),o.to.next(t),r(e,t,o),i(e,t,f,n),void y(d,a,{at:t,cat:e}))}function i(t,n,o,e){if(e&&k!==t.get){var r=t.root.get(e)._;t.field?o=r:o.field&&i(o,n,o,e),o!==t&&((o.echo||(o.echo={}))[t.id]=t,t.field&&!(t.map||p)[o.id]&&s(t,n),r=(t.map||(t.map={}))[o.id]=t.map[o.id]||{at:o},e!==r.rel&&f(t,r.rel=e))}}function r(t,n,o){t.echo&&(t.field&&(n=b(n,{event:o})),y(t.echo,u,n))}function u(t){t.on("in",this)}function a(t,n){var o,e,i,r=this.cat,u=r.next||p,a=this.at;(k!==n||u[n])&&(o=u[n])&&(i=o._,i.field?(t&&t[m]&&c.val.rel.is(t)===c.node.soul(i.put)||(i.put=t),e=o):e=a.gun.get(n),i.on("in",{put:t,get:n,gun:e,via:a}))}function s(t){if(t.field||t.soul){var n=t.map;t.map=null,null!==n&&(l!==n||t.put===l)&&(y(n,function(n){(n=n.at)&&v(n.echo,t.id)}),y(t.next,function(t,n){var o=t._;o.put=l,o.ack&&(o.ack=-1),o.on("in",{get:n,gun:t,put:l})}))}}function f(t,n){var o=t.root.get(n)._;return t.ack?(o.ack=o.ack||-1,void o.on("out",{get:{"#":n},"#":c.on.ask(c.HAM.synth,o.gun),gun:o.gun})):void y(t.next,function(t,e){t._.on("out",{get:{"#":n,".":e},"#":c.on.ask(c.HAM.synth,o.gun),gun:t})})}var c=t("./root");c.chain.chain=function(){var t=this._,i=new this.constructor(this),r=i._;return r.root=n=t.root,r.id=++n._.once,r.back=this,r.on=c.on,c.on("chain",r),r.on("in",e,r),r.on("out",o,r),i},c.chain.chain.input=e;var l,p={},d=c.obj,h=d.has,g=d.put,v=d.del,b=d.to,y=d.map,m=c._.soul,_=c._.field,k=c.node._})(t,"./chain"),t(function(){function n(t,n){var o=n._,e=o.next,i=n.chain(),r=i._;return e||(e=o.next={}),e[r.get=t]=i,o.root===n?r.soul=t:(o.soul||o.field)&&(r.field=t),i}function o(t){var n,o=this,e=o.as,r=t.gun,a=r._,f=t.put;i===f&&(f=a.put),(n=f)&&n[s._]&&(n=s.is(n))&&(n=a.root.get(n)._,i!==n.put&&(t=u(t,{put:n.put}))),e.use(t,t.event||o),o.to.next(t)}var e=t("./root");e.chain.get=function(t,i,r){if("string"!=typeof t){if(t instanceof Function){var u=this,s=u._;return r=i||{},r.use=t,r.out=r.out||{},r.out.get=r.out.get||{},s.root._.now=!0,s.on("in",o,r),s.on("out",r.out),s.root._.now=!1,u}return a(t)?this.get(""+t,i,r):((r=this.chain())._.err={err:e.log("Invalid get request!",t)},i&&i.call(r,r._.err),r)}var u,c,l=l||this,p=l._,d=p.next||f;return(u=d[t])||(u=n(t,l)),(c=p.stun)&&(u._.stun=u._.stun||c),i&&i instanceof Function&&u.get(i,r),u};var i,r=e.obj,u=(r.has,e.obj.to),a=e.num.is,s=e.val.rel,f=(e.node._,{})})(t,"./get"),t(function(){function n(t){t.batch=e;var n=t.opt||{},o=t.env=s.state.map(r,n.state);return o.soul=t.soul,t.graph=s.graph.ify(t.data,o,t),o.err?((t.ack||g).call(n.as||t.gun,t.out={err:s.log(o.err)}),void(t.res&&t.res())):void t.batch()}function e(){var t=this;t.graph&&!d(t.stun,i)&&((t.res||v)(function(){t.ref._.on("out",{gun:t.ref,put:t.out=t.env.graph,opt:t.opt,"#":s.on.ask(function(n){this.off(),t.ack&&t.ack(n,this)},t.opt)})},t),t.res&&t.res())}function i(t){return t?!0:void 0}function r(t,n,o,e){var i=this;!n&&e.path.length&&(i.res||v)(function(){var t=e.path,n=i.ref,o=(i.opt,0),r=t.length;for(o;r>o;o++)n=n.get(t[o]);return i.not||s.node.soul(e.obj)?void e.soul(s.node.soul(e.obj)||((i.opt||{}).uuid||i.gun.back("opt.uuid")||s.text.random)()):((i.stun=i.stun||{})[t]=!0,void n.get("_").get(u,{as:{at:e,as:i}}))},{as:i,at:e})}function u(t,n){var o=this.as,e=o.at;o=o.as,t.gun&&t.gun._.back&&(n.off(),t=t.gun._.back._,e.soul(s.node.soul(e.obj)||s.node.soul(t.put)||s.val.rel.is(t.put)||((o.opt||{}).uuid||o.gun.back("opt.uuid")||s.text.random)()),o.stun[e.path]=!1,o.batch())}function a(t,n){var e=this.as;if(t.gun&&t.gun._){if(t.err)return void o.log("Please report this as an issue! Put.any.err");var i,r=t.gun._.back._,u=r.put,a=e.opt||{};if(n.off(),e.ref!==e.gun){if(i=e.gun._.get,!i)return void o.log("Please report this as an issue! Put.no.get");e.data=p({},i,e.data),i=null}if(f===u){if(!r.get)return;r.soul||(i=r.gun.back(function(t){return t.soul?t.soul:void(e.data=p({},t.get,e.data))})),i=i||r.get,r=r.root.get(i)._,e.not=e.soul=i,u=e.data}e.not||(e.soul=s.node.soul(u))||(e.soul=e.path&&l(e.data)?(a.uuid||e.gun.back("opt.uuid")||s.text.random)():t.soul),e.ref.put(e.data,e.soul,e)}}var s=t("./root");s.chain.put=function(t,o,e){var i,r=this,u=r._.root;return e=e||{},e.data=t,e.gun=e.gun||r,"string"==typeof o?e.soul=o:e.ack=o,e.soul||u===r?l(e.data)?(e.gun=r=u.get(e.soul=e.soul||(e.not=s.node.soul(e.data)||(u._.opt.uuid||s.text.random)())),e.ref=e.gun,n(e),r):((opt.any||g).call(opt.as||r,e.out={err:s.log("No field to put",typeof e.data,'"'+e.data+'" on!')}),e.res&&e.res(),r):s.is(t)?(t.get(function(t,n){n.off();var i=s.node.soul(t.put);return i?void r.put(s.val.rel.ify(i),o,e):void s.log("Can only save a node, not a property.")}),r):(e.ref=e.ref||u===(i=r._.back)?r:i,e.ref.get("_").get(a,{as:e}),e.out||(e.res=e.res||s.on.stun(e.ref),e.gun._.stun=e.ref._.stun),r)};var f,c=s.obj,l=c.is,p=c.put,d=c.map,h={},g=function(){},v=function(t,n){t.call(n||h)}})(t,"./put"),t(function(n){var e=t("./root");n.exports=e,function(){function t(t,n){if(e._.node!==n){var r=this.node,u=this.vertex,a=this.union,s=this.machine,f=h(r,n),c=h(u,n);if(i===f||i===c)return!0;var l=t,p=u[n];if(!b(l)&&i!==l)return!0;if(!b(p)&&i!==p)return!0;var d=e.HAM(s,f,c,l,p);if(d.err)return void o.log(".!HYPOTHETICAL AMNESIA MACHINE ERR!.",d.err);if(!(d.state||d.historical||d.current))return d.incoming?(a[n]=t,void g(a,n,f)):d.defer?(a[n]=t,void g(a,n,f)):void 0}}function n(t,n){var o=this;if(e._.node!==n&&b(t)){var i=o.node,r=o.vertex,u=h(i,n,!0),a=h(r,n,!0),s=o.delta,f=e.HAM(o.machine,u,a,t,r[n]);f.incoming&&(s[n]=t,g(s,n,u))}}e.HAM.union=function(n,o,i){return o&&o._&&(n=n||e.node.soul.ify({_:{">":{}}},e.node.soul(o)),n&&n._&&(i=a(i)?{machine:i}:{machine:e.state()},i.union=n||e.obj.copy(n),i.vertex=n,i.node=o,!l(o,t,i)))?i.union:void 0},e.HAM.delta=function(t,o,i){return i=a(i)?{machine:i}:{machine:e.state()},t?(i.soul=e.node.soul(i.vertex=t),i.soul?(i.delta=e.node.soul.ify({},i.soul),l(i.node=o,n,i),i.delta):void 0):e.obj.copy(o)},e.HAM.synth=function(t,n,o){var r=this.as||o,u=r._,a=u.root._,s={};if(!t.put){if(u.put!==i)return;return void u.on("in",{get:u.get,put:u.put=i,gun:r,via:t})}l(t.put,function(t,n){var o=this.graph;s[n]=e.HAM.delta(o[n],t,{graph:o}),o[n]=e.HAM.union(o[n],t)||o[n]},a),l(s,function(o,r){var a=this,s=a.next||(a.next={}),l=s[r]||(s[r]=a.gun.get(r)),p=l._;return p.put=a.graph[r],u.field&&!f(o,u.field)?((t=c(t,{})).put=i,void e.HAM.synth(t,n,u.gun)):void p.on("in",{put:o,get:r,gun:l,via:t})},a)}}();{var i,r=e,u=r.num,a=u.is,s=r.obj,f=s.has,c=(s.put,s.to),l=s.map,p=e.node,d=(p.soul,p.is,p.ify,e.state),h=d.is,g=d.ify,v=e.val,b=v.is;v.rel.is}})(t,"./index"),t(function(n){var o=t("./root");t("./index"),t("./opt"),t("./chain"),t("./back"),t("./put"),t("./get"),n.exports=o})(t,"./core"),t(function(){{var n=t("./core"),e=n.obj,i=(e.is,e.put),r=(e.map,e.empty,n.num);r.is,n.val.rel._}!function(){function t(t,o){var u=this;return o.off(),u.soul=n.node.soul(t.put),u.soul&&u.key!==u.soul?(u.data=i({},r._,n.node.ify(i({},u.soul,n.val.rel.ify(u.soul)),"#"+u.key+"#")),(u.res||e)(function(){u.ref.put(u.data,u.any,{soul:u.key,key:u.key})},u),void(u.res&&u.res())):u.data={}}function e(t,n){t.call(n||{})}function r(t){if(t&&"#"===t[0]&&"#"===t[t.length-1]){var n=t.slice(1,-1);if(n)return n}}function u(t){var o=this;if(!t.put)return void(t.get&&a.call(t.gun?t.gun._:o,t));if(!t.opt||!t.opt.key){var e=t.put,i=o.gun.back(-1)._.graph;n.graph.is(e,function(t,o){n.node.is(i["#"+o+"#"],function r(o,u){return u===n.val.rel.is(o)?(o=i["#"+u+"#"])?void n.node.is(o,r):void n.node.soul.ify(o=e[u]=n.obj.copy(t),u):void 0})&&n.obj.del(e,o)})}}function a(t){function o(u,a){var s=(u.put,t.get);if(!i.pseudo||u.via)return n.on.ack(e,u);if(u.put){if(!s["."])return a.off(),n.on.ack(e,u);if(c(u.put[s["#"]],s["."]))return a.off(),n.on.ack(e,u)}n.obj.map(i.seen,function(i,a){return r[a]?n.on.ack(e,u):(r[a]=!0,void i.on("out",{gun:i,get:a={"#":a,".":t.get["."]},"#":n.on.ask(o)}))})}var e,i=this;if(n.obj.is(e=t.get)&&n.obj.has(e,"#")){if((e=t.get)&&null===e["."])return void(e["."]="##");(e=t.get)&&n.obj.has(e,".")&&(e["#"]&&(i=i.root.gun.get(e["#"])._),e=t["#"],t["#"]=n.on.ask(o));var r={}}}function s(t,o){function e(t){n.node.is(t,i)}function i(t,o){o===n.val.rel.is(t)&&(p[o]||(p[o]=l.get(o).on(u,!0)))}function u(t){t&&(a.pseudo=n.HAM.union(a.pseudo,t)||a.pseudo,a.change=a.changed=t,a.put=a.pseudo,c({gun:a.gun,put:a.pseudo,get:f}))}var a=this;if(a.pseudo){if(a.pseudo===t.put)return;return o.stun(),a.change=a.changed||a.pseudo,void a.on("in",n.obj.to(t,{put:a.put=a.pseudo}))}if(t.put){var s=n.val.rel.is(t.put[r._]);if(s){var f=n.node.soul(t.put),c=o.stun(c),l=a.gun.back(-1),p=a.seen={};a.pseudo=a.put=n.state.ify(n.node.ify({},f)),l.get(s).on(e,{change:!0})}}}n.chain.key=function(e,i,r){if(!e)return i&&i.call(this,{err:n.log("No key!")}),this;var u=this;return"string"==typeof r?(o.log("Please report this as an issue! key.opt.string"),u):u===u._.root?(i&&i({err:n.log("Can't do that on root instance.")}),u):(r=r||{},r.key=e,r.any=i||function(){},r.ref=u.back(-1).get(r.key),r.gun=r.gun||u,u.on(t,{as:r}),r.data||(r.res=n.on.stun(r.ref)),u)},r._="##",n.on("next",function(t){var n=t.gun;n.back(-1)===t.back&&(n.on("in",s,n._),n.on("out",u,n._))});var f=n.obj,c=f.has}()})(t,"./key"),t(function(){var n=t("./core");n.chain.path=function(t,o,e){var i,r=this,u=r;if(e=e||{},e.path=!0,u===u._.root)return o&&o({err:n.log("Can't do that on root instance.")}),u;if("string"==typeof t){if(i=t.split(e.split||"."),1===i.length)return u=r.get(t,o,e),u._.opt=e,u;t=i}if(t instanceof Array){if(t.length>1){u=r;var a=0,s=t.length;for(a;s>a;a++)u=u.get(t[a],a+1===s?o:null,e)}else u=r.get(t[0],o,e);return u._.opt=e,u}return t||0==t?(u=r.get(""+t,o,e),u._.opt=e,u):r}})(t,"./path"),t(function(){function n(t,n){var o,r=this,u=t.gun,s=u._,f=s.put||t.put,o=r.last,c=s.id+t.get;if(i!==f){if(f&&f[a._]&&(o=a.is(f))){if(o=s.root.get(o)._,i===o.put)return;f=o.put}r.change&&(f=t.put),(o.put!==f||o.get!==c||e.node.soul(f))&&(o.put=f,o.get=c,s.last=f,r.as?r.ok.call(r.as,t,n):r.ok.call(u,f,t.get,t,n))}}function o(t,n,e){var r,u=this.as,s=u.cat,f=t.gun,c=f._,l=c.put||t.put;if(i!==l){if(l&&l[a._]&&(r=a.is(l))){if(r=s.root.get(r)._,i===r.put)return;l=r.put}if(n.wait&&clearTimeout(n.wait),!(e||0<c.ack&&(!0!==u.async||0===u.wait)))return void(n.wait=setTimeout(function(){o.call({as:u},t,n,n.wait||1)},u.wait||99));if(s.field||s.soul){if(n.off())return}else{if((u.seen=u.seen||{})[c.id])return;u.seen[c.id]=!0}u.ok.call(t.gun||u.gun,l,t.get)}}var e=t("./core");e.chain.on=function(t,o,e,i){var r,u,a=this,s=a._;if("string"==typeof t)return o?(r=s.on(t,o,e||s,i),e&&e.gun&&(e.subs||(e.subs=[])).push(r),u=function(){r&&r.off&&r.off(),u.off()},u.off=a.off.bind(a)||noop,a.off=u,a):s.on(t);var f=o;return f=!0===f?{change:!0}:f||{},f.ok=t,f.last={},a.get(n,f),a},e.chain.val=function(t,n){var r=this,u=r._,a=u.put;if(0<u.ack&&i!==a&&t)return t.call(r,a,u.get),r;if(!t){e.log.once("valonce","Chainable val is experimental, its behavior and API may change moving forward. Please play with it and report bugs and ideas on how to improve it.");var s=r.chain();return s._.val=r.val(function(){s._.on("in",r._)}),s}return(n=n||{}).ok=t,n.cat=u,r.get(o,{as:n}),n.async=u.stun?1:!0,r},e.chain.off=function(){var t,n=this,o=n._,e=o.back||{},i=e._;return i?((t=i.next)&&(t[o.get]?u(t,o.get):obj_map(t,function(o,e){n===o&&u(t,e)})),(t=n.back(-1))===e&&u(t.graph,o.get),o.ons&&(t=o.ons["@$"])&&obj_map(t.s,function(t){t.off()}),n):void 0};var i,r=e.obj,u=(r.has,r.del),a=(r.to,e.val.rel)})(t,"./on"),t(function(){function n(t,n){n.off(),t.err||e!==t.put||this.not&&this.not.call(t.gun,t.get,function(){o.log("Please report this bug on https://gitter.im/amark/gun and in the issues."),need.to.implement})}var e,i=t("./core");i.chain.not=function(t){return this.get(n,{not:t})}})(t,"./not"),t(function(){function n(t){t.put&&!e.val.is(t.put)&&(this.as.val&&this.off(),r(t.put,o,{cat:this.as,gun:t.gun}),this.to.next(t))}function o(t,n){if(a!==n){var o=this.cat,e=this.gun.get(n),i=e._;(i.echo||(i.echo={}))[o.id]=o}}var e=t("./core");e.chain.map=function(t){var o,r=this,a=r._;return t?(e.log.once("mapfn","Map functions are experimental, their behavior and API may change moving forward. Please play with it and report bugs and ideas on how to improve it."),o=r.chain(),r.map().on(function(n,r,a,s){var f=(t||u).call(this,n,r,a,s);if(i!==f)return e.is(f)?void o._.on("in",f._):void o._.on("in",{get:r,put:f,gun:o})}),o):(o=a.fields)?o:(o=a.fields=r.chain(),o._.val=r.back("val"),r.on("in",n,o._),o)};var i,r=e.obj.map,u=function(){},a=e.node._})(t,"./map"),t(function(){var n=t("./core");n.chain.init=function(){return(this._.opt=this._.opt||{}).init=!0,this.back(-1).put(n.node.ify({},this._.get),null,this._.get)}})(t,"./init"),t(function(){var n=t("./core");n.chain.set=function(t,o,e){var i,r=this;return o=o||function(){},(i=n.node.soul(t))?r.set(r.back(-1).get(i),o,e):n.obj.is(t)&&!n.is(t)?r.set(r._.root.put(t),o,e):t.get("_").get(function(t,i){!t.gun||!t.gun._.back,i.off(),t=t.gun._.back._;var u={},a=t.put,s=n.node.soul(a);return s?void r.put(n.obj.put(u,s,n.val.rel.ify(s)),o,e):o.call(r,{err:n.log('Only a node can be linked! Not "'+a+'"!')})},{wait:0})}})(t,"./set"),t(function(){if("undefined"!=typeof Gun){var t,n=function(){};"undefined"!=typeof window&&(t=window);var o=t.localStorage||{setItem:n,removeItem:n,getItem:n};Gun.on("put",function(t){{var n,e;t.gun._.root}this.to.next(t),(e={}).prefix=(t.opt||e).prefix||t.gun.back("opt.prefix")||"gun/",Gun.graph.is(t.put,function(t,i,r){var u=Gun.obj.ify(o.getItem(e.prefix+i+"_")||{});r(function(r,a){u[a]=1;var s=Gun.state.is(t,a);try{o.setItem(e.prefix+i+a,JSON.stringify([r,s]))}catch(f){n=f||"localStorage failure"}});try{o.setItem(e.prefix+i+"_",JSON.stringify(u))}catch(a){n=a||"localStorage failure"}}),Gun.obj.empty(t.gun.back("opt.peers"))&&Gun.on.ack(t,{err:n,ok:0})}),Gun.on("get",function(t){this.to.next(t);var n,e,i,r,u=t.gun,a=t.get;if((i=t.opt||{}).prefix=i.prefix||t.gun.back("opt.prefix")||"gun/",a&&(n=a[Gun._.soul])){var s=a["."];s?(e=Gun.obj.ify(o.getItem(i.prefix+n+s)||null)||r)&&(e=Gun.state.ify(r,s,e[1],e[0],n)):Gun.obj.map(Gun.obj.ify(o.getItem(i.prefix+n+"_")),function(t,r){t=Gun.obj.ify(o.getItem(i.prefix+n+r)||{}),e=Gun.state.ify(e,r,t[1],t[0],n)}),u.back(-1).on("in",{"@":t["#"],put:Gun.graph.node(e)})}})}})(t,"./adapters/localStorage"),t(function(n){function o(t,n,e){return this instanceof o?(this.url=o.formatURL(t),this.socket=null,this.queue=[],this.sid=i.text.random(10),this.on=i.on,this.options=n||{},this.options.wsc=e,void this.resetBackoff()):new o(t,n,e)}function e(t,n){o.isSupported&&o.broadcast(t,n)}var i=t("./core");if("undefined"==typeof JSON)throw new Error("Gun depends on JSON. Please load it first:\najax.cdnjs.com/ajax/libs/json2/20110223/json2.js");o.prototype={constructor:o,drainQueue:function(){var t=this.queue,n=this;return this.queue=[],t.forEach(function(t){n.send(t)}),t.length},connect:function(){var t=this,n=new o.WebSocket(this.url,this.options.wsc.protocols,this.options.wsc);return this.socket=n,n.addEventListener("message",function(n){t.on("message",n)}),n.addEventListener("close",function(){t.scheduleReconnect()}),this.ready(function(){t.drainQueue()}),n},resetBackoff:function(){var t=this.options;return this.backoff={time:t.time||100,max:t.max||2e3,factor:t.factor||2},this.backoff},nextBackoff:function(){var t=this.backoff,n=t.time*t.factor,o=t.max;return n>o&&(n=o),t.time=n},scheduleReconnect:function(){var t=this,n=this.backoff.time;this.nextBackoff(),setTimeout(function(){t.connect(),t.ready(function(){t.resetBackoff()})},n)},isClosed:function(){var t=this.socket;if(!t)return!0;var n=t.readyState;return n===t.CLOSING||n===t.CLOSED?!0:!1},ready:function(t){var n=this.socket,o=n.readyState;return o===n.OPEN?void t():void(o===n.CONNECTING&&n.addEventListener("open",t))},send:function(t){if(this.isClosed())return this.queue.push(t),this.connect(),!1;var n=this.socket;return this.ready(function(){n.send(t)}),!0}},"undefined"!=typeof window&&(o.WebSocket=window.WebSocket||window.webkitWebSocket||window.mozWebSocket||null),o.isSupported=!!o.WebSocket,o.isSupported&&(o.formatURL=function(t){return t.replace(/^http/,"ws")},o.broadcast=function(t,n){var e=o.pool;n.headers=n.headers||{},i.obj.map(t,function(t,r){var u=o.formatURL(r),a=e[u],s={headers:i.obj.to(n.headers,{"gun-sid":a.sid}),body:n.body},f=i.text.ify(s);a.send(f)})},o.pool={},"undefined"!=typeof window&&window.addEventListener("unload",function(){i.obj.map(o.pool,function(t){t.isClosed()||t.socket.close();
 
-	function Gun(o){
-		var gun = this;
-		if(!Gun.is(gun)){ return new Gun(o) }
-		if(Gun.is(o)){ return gun }
-		return gun.opt(o);
-	}
-
-	;(function(Util){ // Generic javascript utilities.
-		;(function(Type){
-			Type.fns = {is: function(fn){ return (fn instanceof Function)? true : false }};
-			Type.bi = {is: function(b){ return (b instanceof Boolean || typeof b == 'boolean')? true : false }}
-			Type.num = {is: function(n){ return !Type.list.is(n) && (Infinity === n || n - parseFloat(n) + 1 >= 0) }}
-			Type.text = {is: function(t){ return typeof t == 'string'? true : false }}
-			Type.text.ify = function(t){
-				if(Type.text.is(t)){ return t }
-				if(typeof JSON !== "undefined"){ return JSON.stringify(t) }
-				return (t && t.toString)? t.toString() : t;
-			}
-			Type.text.random = function(l, c){
-				var s = '';
-				l = l || 24; // you are not going to make a 0 length random number, so no need to check type
-				c = c || '0123456789ABCDEFGHIJKLMNOPQRSTUVWXZabcdefghijklmnopqrstuvwxyz';
-				while(l > 0){ s += c.charAt(Math.floor(Math.random() * c.length)); l-- }
-				return s;
-			}
-			Type.text.match = function(t, o){ var r = false;
-				t = t || '';
-				o = Gun.text.is(o)? {'=': o} : o || {}; // {'~', '=', '*', '<', '>', '+', '-', '?', '!'} // ignore uppercase, exactly equal, anything after, lexically larger, lexically lesser, added in, subtacted from, questionable fuzzy match, and ends with.
-				if(Type.obj.has(o,'~')){ t = t.toLowerCase() }
-				if(Type.obj.has(o,'=')){ return t === o['='] }
-				if(Type.obj.has(o,'*')){ if(t.slice(0, o['*'].length) === o['*']){ r = true; t = t.slice(o['*'].length) } else { return false }}
-				if(Type.obj.has(o,'!')){ if(t.slice(-o['!'].length) === o['!']){ r = true } else { return false }}
-				if(Type.obj.has(o,'+')){
-					if(Type.list.map(Type.list.is(o['+'])? o['+'] : [o['+']], function(m){
-						if(t.indexOf(m) >= 0){ r = true } else { return true }
-					})){ return false }
-				}
-				if(Type.obj.has(o,'-')){
-					if(Type.list.map(Type.list.is(o['-'])? o['-'] : [o['-']], function(m){
-						if(t.indexOf(m) < 0){ r = true } else { return true }
-					})){ return false }
-				}
-				if(Type.obj.has(o,'>')){ if(t > o['>']){ r = true } else { return false }}
-				if(Type.obj.has(o,'<')){ if(t < o['<']){ r = true } else { return false }}
-				function fuzzy(t,f){ var n = -1, i = 0, c; for(;c = f[i++];){ if(!~(n = t.indexOf(c, n+1))){ return false }} return true } // via http://stackoverflow.com/questions/9206013/javascript-fuzzy-search
-				if(Type.obj.has(o,'?')){ if(fuzzy(t, o['?'])){ r = true } else { return false }} // change name!
-				return r;
-			}
-			Type.list = {is: function(l){ return (l instanceof Array)? true : false }}
-			Type.list.slit = Array.prototype.slice;
-			Type.list.sort = function(k){ // creates a new sort function based off some field
-				return function(A,B){
-					if(!A || !B){ return 0 } A = A[k]; B = B[k];
-					if(A < B){ return -1 }else if(A > B){ return 1 }
-					else { return 0 }
-				}
-			}
-			Type.list.map = function(l, c, _){ return Type.obj.map(l, c, _) }
-			Type.list.index = 1; // change this to 0 if you want non-logical, non-mathematical, non-matrix, non-convenient array notation
-			Type.obj = {is: function(o) { return !o || !o.constructor? false : o.constructor === Object? true : !o.constructor.call || o.constructor.toString().match(/\[native\ code\]/)? false : true }}
-			Type.obj.put = function(o, f, v){ return (o||{})[f] = v, o }
-			Type.obj.del = function(o, k){
-				if(!o){ return }
-				o[k] = null;
-				delete o[k];
-				return true;
-			}
-			Type.obj.ify = function(o){
-				if(Type.obj.is(o)){ return o }
-				try{o = JSON.parse(o);
-				}catch(e){o={}};
-				return o;
-			}
-			Type.obj.copy = function(o){ // because http://web.archive.org/web/20140328224025/http://jsperf.com/cloning-an-object/2
-				return !o? o : JSON.parse(JSON.stringify(o)); // is shockingly faster than anything else, and our data has to be a subset of JSON anyways!
-			}
-			Type.obj.as = function(b, f, d){ return b[f] = b[f] || (arguments.length >= 3? d : {}) }
-			Type.obj.has = function(o, t){ return o && Object.prototype.hasOwnProperty.call(o, t) }
-			Type.obj.empty = function(o, n){
-				if(!o){ return true }
-				return Type.obj.map(o,function(v,i){
-					if(n && (i === n || (Type.obj.is(n) && Type.obj.has(n, i)))){ return }
-					if(i){ return true }
-				})? false : true;
-			}
-			Type.obj.map = function(l, c, _){
-				var u, i = 0, ii = 0, x, r, rr, ll, lle, f = Type.fns.is(c),
-				t = function(k,v){
-					if(2 === arguments.length){
-						rr = rr || {};
-						rr[k] = v;
-						return;
-					} rr = rr || [];
-					rr.push(k);
-				};
-				if(Object.keys && Type.obj.is(l)){
-					ll = Object.keys(l); lle = true;
-				}
-				if(Type.list.is(l) || ll){
-					x = (ll || l).length;
-					for(;i < x; i++){
-						ii = (i + Type.list.index);
-						if(f){
-							r = lle? c.call(_ || this, l[ll[i]], ll[i], t) : c.call(_ || this, l[i], ii, t);
-							if(r !== u){ return r }
-						} else {
-							//if(Type.test.is(c,l[i])){ return ii } // should implement deep equality testing!
-							if(c === l[lle? ll[i] : i]){ return ll? ll[i] : ii } // use this for now
-						}
-					}
-				} else {
-					for(i in l){
-						if(f){
-							if(Type.obj.has(l,i)){
-								r = _? c.call(_, l[i], i, t) : c(l[i], i, t);
-								if(r !== u){ return r }
-							}
-						} else {
-							//if(a.test.is(c,l[i])){ return i } // should implement deep equality testing!
-							if(c === l[i]){ return i } // use this for now
-						}
-					}
-				}
-				return f? rr : Type.list.index? 0 : -1;
-			}
-			Type.time = {};
-			Type.time.is = function(t){ return t? t instanceof Date : (+new Date().getTime()) }
-			Type.time.now = (function(){
-			    var time = Type.time.is, last = -Infinity, n = 0, d = 1000;
-			    return function(){
-			        var t = time();
-			        if(last < t){
-			            n = 0;
-			            return last = t;
-			        }
-			        return last = t + ((n += 1) / d);
-			    }
-			}());
-		}(Util));
-		;(function(exports){ // On event emitter generic javascript utility.
-			function On(){};
-			On.create = function(){
-				var on = function(e){
-					on.event.e = e;
-					on.event.s[e] = on.event.s[e] || [];
-					return on;
-				};
-				on.emit = function(a){
-					var e = on.event.e, s = on.event.s[e], args = arguments, l = args.length;
-					exports.list.map(s, function(hear, i){
-						if(!hear.fn){ s.splice(i-1, 0); return; }
-						if(1 === l){ hear.fn(a); return; }
-						hear.fn.apply(hear, args);
-					});
-					if(!s.length){ delete on.event.s[e] }
-				}
-				on.event = function(fn, i){
-					var s = on.event.s[on.event.e]; if(!s){ return }
-					var e = {fn: fn, i: i || 0, off: function(){ return !(e.fn = false) }};
-					return s.push(e), i? s.sort(sort) : i, e;
-				}
-				on.event.s = {};
-				return on;
-			}
-			var sort = exports.list.sort('i');
-			exports.on = On.create();
-			exports.on.create = On.create;
-		}(Util));
-		;(function(exports){ // Generic javascript scheduler utility.
-			var schedule = function(state, cb){ // maybe use lru-cache?
-				schedule.waiting.push({when: state, event: cb || function(){}});
-				if(schedule.soonest < state){ return }
-				schedule.set(state);
-			}
-			schedule.waiting = [];
-			schedule.soonest = Infinity;
-			schedule.sort = exports.list.sort('when');
-			schedule.set = function(future){
-				if(Infinity <= (schedule.soonest = future)){ return }
-				var now = exports.time.now(); // WAS time.is() TODO: Hmmm, this would make it hard for every gun instance to have their own version of time.
-				future = (future <= now)? 0 : (future - now);
-				clearTimeout(schedule.id);
-				schedule.id = setTimeout(schedule.check, future);
-			}
-			schedule.check = function(){
-				var now = exports.time.now(), soonest = Infinity; // WAS time.is() TODO: Same as above about time. Hmmm.
-				schedule.waiting.sort(schedule.sort);
-				schedule.waiting = exports.list.map(schedule.waiting, function(wait, i, map){
-					if(!wait){ return }
-					if(wait.when <= now){
-						if(exports.fns.is(wait.event)){
-							setTimeout(function(){ wait.event() },0);
-						}
-					} else {
-						soonest = (soonest < wait.when)? soonest : wait.when;
-						map(wait);
-					}
-				}) || [];
-				schedule.set(soonest);
-			}
-			exports.schedule = schedule;
-		}(Util));
-	}(Gun));
-
-	;(function(Gun){ // Gun specific utilities.
-
-		Gun.version = 0.3;
-
-		Gun._ = { // some reserved key words, these are not the only ones.
-			meta: '_' // all metadata of the node is stored in the meta property on the node.
-			,soul: '#' // a soul is a UUID of a node but it always points to the "latest" data known.
-			,field: '.' // a field is a property on a node which points to a value.
-			,state: '>' // other than the soul, we store HAM metadata.
-			,'#':'soul'
-			,'.':'field'
-			,'=':'value'
-			,'>':'state'
-		}
-
-		Gun.is = function(gun){ return (gun instanceof Gun)? true : false } // check to see if it is a GUN instance.
-
-		Gun.is.val = function(v){ // Valid values are a subset of JSON: null, binary, number (!Infinity), text, or a soul relation. Arrays need special algorithms to handle concurrency, so they are not supported directly. Use an extension that supports them if needed but research their problems first.
-			if(v === null){ return true } // "deletes", nulling out fields.
-			if(v === Infinity){ return false } // we want this to be, but JSON does not support it, sad face.
-			if(Gun.bi.is(v) // by "binary" we mean boolean.
-			|| Gun.num.is(v)
-			|| Gun.text.is(v)){ // by "text" we mean strings.
-				return true; // simple values are valid.
-			}
-			return Gun.is.rel(v) || false; // is the value a soul relation? Then it is valid and return it. If not, everything else remaining is an invalid data type. Custom extensions can be built on top of these primitives to support other types.
-		}
-
-		Gun.is.rel = function(v){ // this defines whether an object is a soul relation or not, they look like this: {'#': 'UUID'}
-			if(Gun.obj.is(v)){ // must be an object.
-				var id;
-				Gun.obj.map(v, function(s, f){ // map over the object...
-					if(id){ return id = false } // if ID is already defined AND we're still looping through the object, it is considered invalid.
-					if(f == Gun._.soul && Gun.text.is(s)){ // the field should be '#' and have a text value.
-						id = s; // we found the soul!
-					} else {
-						return id = false; // if there exists anything else on the object that isn't the soul, then it is considered invalid.
-					}
-				});
-				if(id){ // a valid id was found.
-					return id; // yay! Return it.
-				}
-			}
-			return false; // the value was not a valid soul relation.
-		}
-
-		Gun.is.rel.ify = function(s){ var r = {}; return Gun.obj.put(r, Gun._.soul, s), r } // convert a soul into a relation and return it.
-
-		Gun.is.lex = function(l){ var r = true;
-			if(!Gun.obj.is(l)){ return false }
-			Gun.obj.map(l, function(v,f){
-				if(!Gun.obj.has(Gun._,f) || !(Gun.text.is(v) || Gun.obj.is(v))){ return r = false }
-			}); // TODO: What if the lex cursor has a document on the match, that shouldn't be allowed!
-			return r;
-		}
-
-		Gun.is.node = function(n, cb, t){ var s; // checks to see if an object is a valid node.
-			if(!Gun.obj.is(n)){ return false } // must be an object.
-			if(s = Gun.is.node.soul(n)){ // must have a soul on it.
-				return !Gun.obj.map(n, function(v, f){ // we invert this because the way we check for this is via a negation.
-					if(f == Gun._.meta){ return } // skip over the metadata.
-					if(!Gun.is.val(v)){ return true } // it is true that this is an invalid node.
-					if(cb){ cb.call(t, v, f, n) } // optionally callback each field/value.
-				});
-			}
-			return false; // nope! This was not a valid node.
-		}
-
-		Gun.is.node.ify = function(n, s, o){ // convert a shallow object into a node.
-			o = Gun.bi.is(o)? {force: o} : o || {}; // detect options.
-			n = Gun.is.node.soul.ify(n, s, o.force); // put a soul on it.
-			Gun.obj.map(n, function(v, f){ // iterate over each field/value.
-				if(Gun._.meta === f){ return } // ignore meta.
-				Gun.is.node.state.ify([n], f, v, o.state = o.state || Gun.time.now()); // and set the state for this field and value on this node.
-			});
-			return n; // This will only be a valid node if the object wasn't already deep!
-		}
-
-		Gun.is.node.soul = function(n, s){ return (n && n._ && n._[s || Gun._.soul]) || false } // convenience function to check to see if there is a soul on a node and return it.
-
-		Gun.is.node.soul.ify = function(n, s, o){ // put a soul on an object.
-			n = n || {}; // make sure it exists.
-			n._ = n._ || {}; // make sure meta exists.
-			n._[Gun._.soul] = o? s : n._[Gun._.soul] || s || Gun.text.random(); // if it already has a soul then use that instead - unless you force the soul you want with an option.
-			return n;
-		}
-
-		Gun.is.node.state = function(n, f){ return (f && n && n._ && n._[Gun._.state] && Gun.num.is(n._[Gun._.state][f]))? n._[Gun._.state][f] : false } // convenience function to get the state on a field on a node and return it.
-
-		Gun.is.node.state.ify = function(l, f, v, state){ // put a field's state and value on some nodes.
-			l = Gun.list.is(l)? l : [l]; // handle a list of nodes or just one node.
-			var l = l.reverse(), d = l[0]; // we might want to inherit the state from the last node in the list.
-			Gun.list.map(l, function(n, i){ // iterate over each node.
-				n = n || {}; // make sure it exists.
-				if(Gun.is.val(v)){ n[f] = v } // if we have a value, then put it.
-				n._ = n._ || {}; // make sure meta exists.
-				n = n._[Gun._.state] = n._[Gun._.state] || {}; // make sure HAM state exists.
-				if(i = d._[Gun._.state][f]){ n[f] = i } // inherit the state!
-				if(Gun.num.is(state)){ n[f] = state } // or manually set the state.
-			});
-		}
-
-		Gun.is.graph = function(g, cb, fn, t){ // checks to see if an object is a valid graph.
-			var exist = false;
-			if(!Gun.obj.is(g)){ return false } // must be an object.
-			return !Gun.obj.map(g, function(n, s){ // we invert this because the way we check for this is via a negation.
-				if(!n || s !== Gun.is.node.soul(n) || !Gun.is.node(n, fn)){ return true } // it is true that this is an invalid graph.
-				(cb || function(){}).call(t, n, s, function(fn){ // optional callback for each node.
-					if(fn){ Gun.is.node(n, fn, t) } // where we then have an optional callback for each field/value.
-				});
-				exist = true;
-			}) && exist; // makes sure it wasn't an empty object.
-		}
-
-		Gun.is.graph.ify = function(n){ var s; // wrap a node into a graph.
-			if(s = Gun.is.node.soul(n)){ // grab the soul from the node, if it is a node.
-				return Gun.obj.put({}, s, n); // then create and return a graph which has a node on the matching soul property.
-			}
-		}
-
-
-		Gun.HAM = function(machineState, incomingState, currentState, incomingValue, currentValue){ // TODO: Lester's comments on roll backs could be vulnerable to divergence, investigate!
-			if(machineState < incomingState){
-				// the incoming value is outside the boundary of the machine's state, it must be reprocessed in another state.
-				return {defer: true};
-			}
-			if(incomingState < currentState){
-				// the incoming value is within the boundary of the machine's state, but not within the range.
-				return {historical: true};
-			}
-			if(currentState < incomingState){
-				// the incoming value is within both the boundary and the range of the machine's state.
-				return {converge: true, incoming: true};
-			}
-			if(incomingState === currentState){
-				if(incomingValue === currentValue){ // Note: while these are practically the same, the deltas could be technically different
-					return {state: true};
-				}
-				/*
-					The following is a naive implementation, but will always work.
-					Never change it unless you have specific needs that absolutely require it.
-					If changed, your data will diverge unless you guarantee every peer's algorithm has also been changed to be the same.
-					As a result, it is highly discouraged to modify despite the fact that it is naive,
-					because convergence (data integrity) is generally more important.
-					Any difference in this algorithm must be given a new and different name.
-				*/
-				if(String(incomingValue) < String(currentValue)){ // String only works on primitive values!
-					return {converge: true, current: true};
-				}
-				if(String(currentValue) < String(incomingValue)){ // String only works on primitive values!
-					return {converge: true, incoming: true};
-				}
-			}
-			return {err: "you have not properly handled recursion through your data or filtered it as JSON"};
-		}
-
-		Gun.union = function(gun, prime, cb, opt){ // merge two graphs into the first.
-			var opt = opt || Gun.obj.is(cb)? cb : {};
-			var ctx = {graph: gun.__.graph, count: 0};
-			ctx.cb = function(){
-				cb = Gun.fns.is(cb)? cb() && null : null;
-			}
-			if(!ctx.graph){ ctx.err = {err: Gun.log("No graph!") } }
-			if(!prime){ ctx.err = {err: Gun.log("No data to merge!") } }
-			if(ctx.soul = Gun.is.node.soul(prime)){ prime = Gun.is.graph.ify(prime) }
-			if(!Gun.is.graph(prime, null, function(val, field, node){ var meta;
-				if(!Gun.num.is(Gun.is.node.state(node, field))){
-					return ctx.err = {err: Gun.log("No state on '" + field + "'!") }
-				}
-			}) || ctx.err){ return ctx.err = ctx.err || {err: Gun.log("Invalid graph!", prime)}, ctx }
-			function emit(at){
-				Gun.on('operating').emit(gun, at);
-			}
-			(function union(graph, prime){
-				var prime = Gun.obj.map(prime, function(n,s,t){t(n)}).sort(function(A,B){
-					var s = Gun.is.node.soul(A);
-					if(graph[s]){ return 1 }
-					return 0;
-				});
-				ctx.count += 1;
-				ctx.err = Gun.list.map(prime, function(node, soul){
-					soul = Gun.is.node.soul(node);
-					if(!soul){ return {err: Gun.log("Soul missing or mismatching!")} }
-					ctx.count += 1;
-					var vertex = graph[soul];
-					if(!vertex){ graph[soul] = vertex = Gun.is.node.ify({}, soul) }
-					Gun.union.HAM(vertex, node, function(vertex, field, val, state){
-						Gun.on('historical').emit(gun, {soul: soul, field: field, value: val, state: state, change: node});
-						gun.__.on('historical').emit({soul: soul, field: field, change: node});
-					}, function(vertex, field, val, state){
-						if(!vertex){ return }
-						var change = Gun.is.node.soul.ify({}, soul);
-						if(field){
-							Gun.is.node.state.ify([vertex, change, node], field, val);
-						}
-						emit({soul: soul, field: field, value: val, state: state, change: change});
-					}, function(vertex, field, val, state){
-						Gun.on('deferred').emit(gun, {soul: soul, field: field, value: val, state: state, change: node});
-					})(function(){
-						emit({soul: soul, change: node});
-						if(opt.soul){ opt.soul(soul) }
-						if(!(ctx.count -= 1)){ ctx.cb() }
-					}); // TODO: BUG? Handle error!
-				});
-				ctx.count -= 1;
-			})(ctx.graph, prime);
-			if(!ctx.count){ ctx.cb() }
-			return ctx;
-		}
-
-		Gun.union.ify = function(gun, prime, cb, opt){
-			if(gun){ gun = (gun.__ && gun.__.graph)? gun.__.graph : gun }
-			if(Gun.text.is(prime)){
-				if(gun && gun[prime]){
-					prime = gun[prime];
-				} else {
-					return Gun.is.node.ify({}, prime);
-				}
-			}
-			var vertex = Gun.is.node.soul.ify({}, Gun.is.node.soul(prime)), prime = Gun.is.graph.ify(prime) || prime;
-			if(Gun.is.graph(prime, null, function(val, field){ var node;
-				function merge(a, f, v){ Gun.is.node.state.ify(a, f, v) }
-				if(Gun.is.rel(val)){ node = gun? gun[field] || prime[field] : prime[field] }
-				Gun.union.HAM(vertex, node, function(){}, function(vert, f, v){
-					merge([vertex, node], f, v);
-				}, function(){})(function(err){
-					if(err){ merge([vertex], field, val) }
-				})
-			})){ return vertex }
-		}
-
-		Gun.union.HAM = function(vertex, delta, lower, now, upper){
-			upper.max = -Infinity;
-			now.end = true;
-			delta = delta || {};
-			vertex = vertex || {};
-			Gun.obj.map(delta._, function(v,f){
-				if(Gun._.state === f || Gun._.soul === f){ return }
-				vertex._[f] = v;
-			});
-			if(!Gun.is.node(delta, function update(incoming, field){
-				now.end = false;
-				var ctx = {incoming: {}, current: {}}, state;
-				ctx.drift = Gun.time.now(); // DANGEROUS!
-				ctx.incoming.value = Gun.is.rel(incoming) || incoming;
-				ctx.current.value = Gun.is.rel(vertex[field]) || vertex[field];
-				ctx.incoming.state = Gun.num.is(ctx.tmp = ((delta._||{})[Gun._.state]||{})[field])? ctx.tmp : -Infinity;
-				ctx.current.state = Gun.num.is(ctx.tmp = ((vertex._||{})[Gun._.state]||{})[field])? ctx.tmp : -Infinity;
-				upper.max = ctx.incoming.state > upper.max? ctx.incoming.state : upper.max;
-				state = Gun.HAM(ctx.drift, ctx.incoming.state, ctx.current.state, ctx.incoming.value, ctx.current.value);
-				if(state.err){
-					root.console.log(".!HYPOTHETICAL AMNESIA MACHINE ERR!.", state.err); // this error should never happen.
-					return;
-				}
-				if(state.state || state.historical || state.current){
-					lower.call(state, vertex, field, incoming, ctx.incoming.state);
-					return;
-				}
-				if(state.incoming){
-					now.call(state, vertex, field, incoming, ctx.incoming.state);
-					return;
-				}
-				if(state.defer){
-					upper.wait = true;
-					upper.call(state, vertex, field, incoming, ctx.incoming.state); // signals that there are still future modifications.
-					Gun.schedule(ctx.incoming.state, function(){
-						update(incoming, field);
-						if(ctx.incoming.state === upper.max){ (upper.last || function(){})() }
-					});
-				}
-			})){ return function(fn){ if(fn){ fn({err: 'Not a node!'}) } } }
-			if(now.end){ now.call({}, vertex) } // TODO: Should HAM handle empty updates? YES.
-			return function(fn){
-				upper.last = fn || function(){};
-				if(!upper.wait){ upper.last() }
-			}
-		}
-
-		Gun.on.at = function(on){ // On event emitter customized for gun.
-			var proxy = function(e){ return proxy.e = e, proxy }
-			proxy.emit = function(at){
-				if(at.soul){
-					at.hash = Gun.on.at.hash(at);
-					//Gun.obj.as(proxy.mem, proxy.e)[at.soul] = at;
-					Gun.obj.as(proxy.mem, proxy.e)[at.hash] = at;
-				}
-				if(proxy.all.cb){ proxy.all.cb(at, proxy.e) }
-				on(proxy.e).emit(at);
-				return {chain: function(c){
-					if(!c || !c._ || !c._.at){ return }
-					return c._.at(proxy.e).emit(at)
-				}};
-			}
-			proxy.only = function(cb){
-				if(proxy.only.cb){ return }
-				return proxy.event(proxy.only.cb = cb);
-			}
-			proxy.all = function(cb){
-				proxy.all.cb = cb;
-				Gun.obj.map(proxy.mem, function(mem, e){
-					Gun.obj.map(mem, function(at, i){
-						cb(at, e);
-					});
-				});
-			}
-			proxy.event = function(cb, i){
-				i = on(proxy.e).event(cb, i);
-				return Gun.obj.map(proxy.mem[proxy.e], function(at){
-					i.stat = {first: true};
-					cb.call(i, at);
-				}), i.stat = {}, i;
-			}
-			proxy.map = function(cb, i){
-				return proxy.event(cb, i);
-			};
-			proxy.mem = {};
-			return proxy;
-		}
-
-		Gun.on.at.hash = function(at){ return (at.at && at.at.soul)? at.at.soul + (at.at.field || '') : at.soul + (at.field || '') }
-
-		Gun.on.at.copy = function(at){ return Gun.obj.del(at, 'hash'), Gun.obj.map(at, function(v,f,t){t(f,v)}) }
-
-		Gun.root = function(gun) {
-			if (!Gun.is(gun)) return null;
-			if (gun.back === gun) return gun;
-			return Gun.root(gun.back);
-		};
-
-	}(Gun));
-
-	;(function(Gun){ // Gun prototype chain methods.
-
-		Gun.chain = Gun.prototype;
-
-		Gun.chain.opt = function(opt, stun){
-			opt = opt || {};
-			var gun = this, root = (gun.__ && gun.__.gun)? gun.__.gun : (gun._ = gun.__ = {gun: gun}).gun.chain(); // if root does not exist, then create a root chain.
-			root.__.by = root.__.by || function(f){ return gun.__.by[f] = gun.__.by[f] || {} };
-			root.__.graph = root.__.graph || {};
-			root.__.opt = root.__.opt || {peers: {}};
-			root.__.opt.wire = root.__.opt.wire || {};
-			if(Gun.text.is(opt)){ opt = {peers: opt} }
-			if(Gun.list.is(opt)){ opt = {peers: opt} }
-			if(Gun.text.is(opt.peers)){ opt.peers = [opt.peers] }
-			if(Gun.list.is(opt.peers)){ opt.peers = Gun.obj.map(opt.peers, function(n,f,m){ m(n,{}) }) }
-			Gun.obj.map(opt.peers, function(v, f){
-				root.__.opt.peers[f] = v;
-			});
-			Gun.obj.map(opt.wire, function(h, f){
-				if(!Gun.fns.is(h)){ return }
-				root.__.opt.wire[f] = h;
-			});
-			Gun.obj.map(['key', 'on', 'path', 'map', 'not', 'init'], function(f){
-				if(!opt[f]){ return }
-				root.__.opt[f] = opt[f] || root.__.opt[f];
-			});
-			if(!stun){ Gun.on('opt').emit(root, opt) }
-			return gun;
-		}
-
-		Gun.chain.chain = function(s){
-			var from = this, gun = !from.back? from : new this.constructor(from);//Gun(from);
-			gun._ = gun._ || {};
-			gun._.back = gun.back || from;
-			gun.back = gun.back || from;
-			gun.__ = gun.__ || from.__;
-			gun._.on = gun._.on || Gun.on.create();
-			gun._.at = gun._.at || Gun.on.at(gun._.on);
-			return gun;
-		}
-
-		Gun.chain.put = function(val, cb, opt){
-			opt = opt || {};
-			cb = cb || function(){}; cb.hash = {};
-			var gun = this, chain = gun.chain(), tmp = {val: val}, drift = Gun.time.now();
-			function put(at){
-				var val = tmp.val;
-				var ctx = {obj: val}; // prep the value for serialization
-				ctx.soul = at.field? at.soul : (at.at && at.at.soul) || at.soul; // figure out where we are
-				ctx.field = at.field? at.field : (at.at && at.at.field) || at.field; // did we come from some where?
-				if(Gun.is(val)){
-					if(!ctx.field){ return cb.call(chain, {err: ctx.err = Gun.log('No field to link node to!')}), chain._.at('err').emit(ctx.err) }
-					return val.val(function(node){
-						var soul = Gun.is.node.soul(node);
-						if(!soul){ return cb.call(chain, {err: ctx.err = Gun.log('Only a node can be linked! Not "' + node + '"!')}), chain._.at('err').emit(ctx.err) }
-						tmp.val = Gun.is.rel.ify(soul);
-						put(at);
-					});
-				}
-				if(cb.hash[at.hash = at.hash || Gun.on.at.hash(at)]){ return } // if we have already seen this hash...
-				cb.hash[at.hash] = true; // else mark that we're processing the data (failure to write could still occur).
-				ctx.by = chain.__.by(ctx.soul);
-				ctx.not = at.not || (at.at && at.at.not);
-				Gun.obj.del(at, 'not'); Gun.obj.del(at.at || at, 'not'); // the data is no longer not known! // TODO: BUG! It could have been asynchronous by the time we now delete these properties. Don't other parts of the code assume their deletion is synchronous?
-				if(ctx.field){ Gun.obj.as(ctx.obj = {}, ctx.field, val) } // if there is a field, then data is actually getting put on the parent.
-				else if(!Gun.obj.is(val)){ return cb.call(chain, ctx.err = {err: Gun.log("No node exists to put " + (typeof val) + ' "' + val + '" in!')}), chain._.at('err').emit(ctx.err) } // if the data is a primitive and there is no context for it yet, then we have an error.
-				// TODO: BUG? gun.get(key).path(field).put() isn't doing it as pseudo.
-				function soul(env, cb, map){ var eat;
-					if(!env || !(eat = env.at) || !env.at.node){ return }
-					if(!eat.node._){ eat.node._ = {} }
-					if(!eat.node._[Gun._.state]){ eat.node._[Gun._.state] = {} }
-					if(!Gun.is.node.soul(eat.node)){
-						if(ctx.obj === eat.obj){
-							Gun.obj.as(env.graph, eat.soul = Gun.obj.as(eat.node._, Gun._.soul, Gun.is.node.soul(eat.obj) || ctx.soul), eat.node);
-							cb(eat, eat.soul);
-						} else {
-							var path = function(err, node){
-								if(path.opt && path.opt.on && path.opt.on.off){ path.opt.on.off() }
-								if(path.opt.done){ return }
-								path.opt.done = true;
-								if(err){ env.err = err }
-								eat.soul = Gun.is.node.soul(node) || Gun.is.node.soul(eat.obj) || Gun.is.node.soul(eat.node) || Gun.text.random();
-								Gun.obj.as(env.graph, Gun.obj.as(eat.node._, Gun._.soul, eat.soul), eat.node);
-								cb(eat, eat.soul);
-							}; path.opt = {put: true};
-							(ctx.not)? path() : ((at.field || at.at)? gun._.back : gun).path(eat.path || [], path, path.opt);
-						}
-					}
-					if(!eat.field){ return }
-					eat.node._[Gun._.state][eat.field] = drift;
-				}
-				function end(err, ify){
-					ctx.ify = ify;
-					Gun.on('put').emit(chain, at, ctx, opt, cb, val);
-					if(err || ify.err){ return cb.call(chain, err || ify.err), chain._.at('err').emit(err || ify.err) } // check for serialization error, emit if so.
-					if(err = Gun.union(chain, ify.graph, {end: false, soul: function(soul){
-						if(chain.__.by(soul).end){ return }
-						Gun.union(chain, Gun.is.node.soul.ify({}, soul)); // fire off an end node if there hasn't already been one, to comply with the wire spec.
-					}}).err){ return cb.call(chain, err), chain._.at('err').emit(err) } // now actually union the serialized data, emit error if any occur.
-					if(Gun.fns.is(end.wire = chain.__.opt.wire.put)){
-						var wcb = function(err, ok, info){
-							if(err){ return Gun.log(err.err || err), cb.call(chain, err), chain._.at('err').emit(err) }
-							return cb.call(chain, err, ok);
-						}
-						end.wire(ify.graph, wcb, opt);
-					} else {
-						if(!Gun.log.count('no-wire-put')){ Gun.log("Warning! You have no persistence layer to save to!") }
-						cb.call(chain, null); // This is in memory success, hardly "success" at all.
-					}
-					if(ctx.field){
-						return gun._.back.path(ctx.field, null, {chain: opt.chain || chain});
-					}
-					if(ctx.not){
-						return gun.__.gun.get(ctx.soul, null, {chain: opt.chain || chain});
-					}
-					chain.get(ctx.soul, null, {chain: opt.chain || chain, at: gun._.at })
-				}
-				Gun.ify(ctx.obj, soul, {pure: true})(end); // serialize the data!
-			}
-			if(gun === gun.back){ // if we are the root chain...
-				put({soul: Gun.is.node.soul(val) || Gun.text.random(), not: true}); // then cause the new chain to save data!
-			} else { // else if we are on an existing chain then...
-				gun._.at('soul').map(put); // put data on every soul that flows through this chain.
-				var back = function(gun){
-					if(back.get || gun._.back === gun || gun._.not){ return } // TODO: CLEAN UP! Would be ideal to accomplish this in a more ideal way.
-					if(gun._.get){ back.get = true }
-					gun._.at('null').event(function(at){ this.off();
-						if(opt.init || gun.__.opt.init){ return Gun.log("Warning! You have no context to `.put`", val, "!") }
-						gun.init();
-					}, -999);
-					return back(gun._.back);
-				};
-				if(!opt.init && !gun.__.opt.init){ back(gun) }
-			}
-			chain.back = gun.back;
-			return chain;
-		}
-
-		Gun.chain.get = (function(){
-			Gun.on('operating').event(function(gun, at){
-				if(!gun.__.by(at.soul).node){ gun.__.by(at.soul).node = gun.__.graph[at.soul]  }
-				if(at.field){ return } // TODO: It would be ideal to reuse HAM's field emit.
-				gun.__.on(at.soul).emit(at);
-			});
-			Gun.on('get').event(function(gun, at, ctx, opt, cb){
-				if(ctx.halt){ return } // TODO: CLEAN UP with event emitter option?
-				at.change = at.change || gun.__.by(at.soul).node;
-				if(opt.raw){ return cb.call(opt.on, at) }
-				if(!ctx.cb.no){ cb.call(ctx.by.chain, null, Gun.obj.copy(ctx.node || gun.__.by(at.soul).node)) }
-				gun._.at('soul').emit(at).chain(opt.chain);
-			},0);
-			Gun.on('get').event(function(gun, at, ctx){
-				if(ctx.halt){ ctx.halt = false; return } // TODO: CLEAN UP with event emitter option?
-			}, Infinity);
-			return function(lex, cb, opt){ // get opens up a reference to a node and loads it.
-				var gun = this, ctx = {
-					opt: opt || {},
-					cb: cb || function(){},
-					lex: (Gun.text.is(lex) || Gun.num.is(lex))? Gun.is.rel.ify(lex) : lex,
-				};
-				ctx.force = ctx.opt.force;
-				if(cb !== ctx.cb){ ctx.cb.no = true }
-				if(!Gun.obj.is(ctx.lex)){ return ctx.cb.call(gun = gun.chain(), {err: Gun.log('Invalid get request!', lex)}), gun }
-				if(!(ctx.soul = ctx.lex[Gun._.soul])){ return ctx.cb.call(gun = this.chain(), {err: Gun.log('No soul to get!')}), gun } // TODO: With `.all` it'll be okay to not have an exact match!
-				ctx.by = gun.__.by(ctx.soul);
-				ctx.by.chain = ctx.by.chain || gun.chain();
-				function load(lex){
-					var soul = lex[Gun._.soul];
-					var cached = gun.__.by(soul).node || gun.__.graph[soul];
-					if(ctx.force){ ctx.force = false }
-					else if(cached){ return false }
-					wire(lex, stream, ctx.opt);
-					return true;
-				}
-				function stream(err, data, info){
-					//console.log("wire.get <--", err, data);
-					Gun.on('wire.get').emit(ctx.by.chain, ctx, err, data, info);
-					if(err){
-						Gun.log(err.err || err);
-						ctx.cb.call(ctx.by.chain, err);
-						return ctx.by.chain._.at('err').emit({soul: ctx.soul, err: err.err || err}).chain(ctx.opt.chain);
-					}
-					if(!data){
-						ctx.cb.call(ctx.by.chain, null);
-						return ctx.by.chain._.at('null').emit({soul: ctx.soul, not: true}).chain(ctx.opt.chain);
-					}
-					if(Gun.obj.empty(data)){ return }
-					if(err = Gun.union(ctx.by.chain, data).err){
-						ctx.cb.call(ctx.by.chain, err);
-						return ctx.by.chain._.at('err').emit({soul: Gun.is.node.soul(data) || ctx.soul, err: err.err || err}).chain(ctx.opt.chain);
-					}
-				}
-				function wire(lex, cb, opt){
-					Gun.on('get.wire').emit(ctx.by.chain, ctx, lex, cb, opt);
-					if(Gun.fns.is(gun.__.opt.wire.get)){ return gun.__.opt.wire.get(lex, cb, opt) }
-					if(!Gun.log.count('no-wire-get')){ Gun.log("Warning! You have no persistence layer to get from!") }
-					cb(null); // This is in memory success, hardly "success" at all.
-				}
-				function on(at){
-					if(on.ran = true){ ctx.opt.on = this }
-					if(load(ctx.lex)){ return }
-					Gun.on('get').emit(ctx.by.chain, at, ctx, ctx.opt, ctx.cb, ctx.lex);
-				}
-				ctx.opt.on = (ctx.opt.at || gun.__.at)(ctx.soul).event(on);
-				ctx.by.chain._.get = ctx.lex;
-				if(!ctx.opt.ran && !on.ran){ on.call(ctx.opt.on, {soul: ctx.soul}) }
-				return ctx.by.chain;
-			}
-		}());
-
-		Gun.chain.key = (function(){
-			Gun.on('put').event(function(gun, at, ctx, opt, cb){
-				if(opt.key){ return }
-				Gun.is.graph(ctx.ify.graph, function(node, soul){
-					var key = {node: gun.__.graph[soul]};
-					if(!Gun.is.node.soul(key.node, 'key')){ return }
-					if(!gun.__.by(soul).end){ gun.__.by(soul).end = 1 }
-					Gun.is.node(key.node, function each(rel, s){
-						var n = gun.__.graph[s];
-						if(n && Gun.is.node.soul(n, 'key')){
-							Gun.is.node(n, each);
-							return;
-						}
-						rel = ctx.ify.graph[s] = ctx.ify.graph[s] || Gun.is.node.soul.ify({}, s);
-						Gun.is.node(node, function(v,f){ Gun.is.node.state.ify([rel, node], f, v) });
-						Gun.obj.del(ctx.ify.graph, soul);
-					})
-				});
-			});
-			Gun.on('get').event(function(gun, at, ctx, opt, cb){
-				if(ctx.halt){ return } // TODO: CLEAN UP with event emitter option?
-				if(opt.key && opt.key.soul){
-					at.soul = opt.key.soul;
-					gun.__.by(opt.key.soul).node = Gun.union.ify(gun, opt.key.soul); // TODO: Check performance?
-					gun.__.by(opt.key.soul).node._['key'] = 'pseudo';
-					at.change = Gun.is.node.soul.ify(Gun.obj.copy(at.change || gun.__.by(at.soul).node), at.soul, true); // TODO: Check performance?
-					return;
-				}
-				if(!(Gun.is.node.soul(gun.__.graph[at.soul], 'key') === 1)){ return }
-				var node = at.change || gun.__.graph[at.soul];
-				function map(rel, soul){ gun.__.gun.get(rel, cb, {key: ctx, chain: opt.chain || gun, force: opt.force}) }
-				ctx.halt = true;
-				Gun.is.node(node, map);
-			},-999);
-			return function(key, cb, opt){
-				var gun = this;
-				opt = Gun.text.is(opt)? {soul: opt} : opt || {};
-				cb = cb || function(){}; cb.hash = {};
-				if(!Gun.text.is(key) || !key){ return cb.call(gun, {err: Gun.log('No key!')}), gun }
-				function index(at){
-					var ctx = {node: gun.__.graph[at.soul]};
-					if(at.soul === key || at.key === key){ return }
-					if(cb.hash[at.hash = at.hash || Gun.on.at.hash(at)]){ return } cb.hash[at.hash] = true;
-					ctx.obj = (1 === Gun.is.node.soul(ctx.node, 'key'))? Gun.obj.copy(ctx.node) : Gun.obj.put({}, at.soul, Gun.is.rel.ify(at.soul));
-					Gun.obj.as((ctx.put = Gun.is.node.ify(ctx.obj, key, true))._, 'key', 1);
-					gun.__.gun.put(ctx.put, function(err, ok){cb.call(this, err, ok)}, {chain: opt.chain, key: true, init: true});
-				}
-				if(opt.soul){
-					index({soul: opt.soul});
-					return gun;
-				}
-				if(gun === gun.back){
-					cb.call(gun, {err: Gun.log('You have no context to `.key`', key, '!')});
-				} else {
-					gun._.at('soul').map(index);
-				}
-				return gun;
-			}
-		}());
-
-		Gun.chain.on = function(cb, opt){ // on subscribes to any changes on the souls.
-			var gun = this, u, oldoff = this.off;
-			opt = Gun.obj.is(opt)? opt : {change: opt};
-			cb = cb || function(){};
-			function map(at){
-				opt.on = opt.on || this;
-				var ctx = {by: gun.__.by(at.soul)}, change = ctx.by.node;
-				if(opt.on.stat && opt.on.stat.first){ (at = Gun.on.at.copy(at)).change = ctx.by.node }
-				if(opt.raw){ return cb.call(opt.on, at) }
-				if(opt.once){ this.off() }
-				if(opt.change){ change = at.change }
-				if(!opt.empty && Gun.obj.empty(change, Gun._.meta)){ return }
-				cb.call(ctx.by.chain || gun, Gun.obj.copy(at.field? change[at.field] : change), at.field || (at.at && at.at.field));
-			};
-			opt.on = gun._.at('soul').map(map);
-			if(gun === gun.back){ Gun.log('You have no context to `.on`!') }
-			gun.off = oldoff ? function() { oldoff(); opt.on.off(); } : opt.on.off // Chain offs
-			return gun;
-		}
-
-		Gun.chain.path = (function(){
-			Gun.on('get').event(function(gun, at, ctx, opt, cb, lex){
-				if(ctx.halt){ return } // TODO: CLEAN UP with event emitter option?
-				if(opt.path){ at.at = opt.path }
-				var xtc = {soul: lex[Gun._.soul], field: lex[Gun._.field]};
-				xtc.change = at.change || gun.__.by(at.soul).node;
-				if(xtc.field){ // TODO: future feature!
-					if(!Gun.obj.has(xtc.change, xtc.field)){ return }
-					ctx.node = Gun.is.node.soul.ify({}, at.soul); // TODO: CLEAN UP! ctx.node usage.
-					Gun.is.node.state.ify([ctx.node, xtc.change], xtc.field, xtc.change[xtc.field]);
-					at.change = ctx.node; at.field = xtc.field;
-				}
-			},-99);
-			Gun.on('get').event(function(gun, at, ctx, opt, cb, lex){
-				if(ctx.halt){ return } // TODO: CLEAN UP with event emitter option?
-				var xtc = {}; xtc.change = at.change || gun.__.by(at.soul).node;
-				if(!opt.put){ // TODO: CLEAN UP be nice if path didn't have to worry about this.
-					Gun.is.node(xtc.change, function(v,f){
-						var fat = Gun.on.at.copy(at); fat.field = f; fat.value = v;
-						Gun.obj.del(fat, 'at'); // TODO: CLEAN THIS UP! It would be nice in every other function every where else it didn't matter whether there was a cascading at.at.at.at or not, just and only whether the current context as a field or should rely on a previous field. But maybe that is the gotcha right there?
-						fat.change = fat.change || xtc.change;
-						if(v = Gun.is.rel(fat.value)){ fat = {soul: v, at: fat} }
-						gun._.at('path:' + f).emit(fat).chain(opt.chain);
-					});
-				}
-				if(!ctx.end){
-					ctx.end = gun._.at('end').emit(at).chain(opt.chain);
-				}
-			},99);
-			return function(path, cb, opt){
-				opt = opt || {};
-				cb = cb || (function(){ var cb = function(){}; cb.no = true; return cb }()); cb.hash = {};
-				var gun = this, chain = gun.chain(), ons = [], f, c, u;
-				if(!Gun.list.is(path)){ if(!Gun.text.is(path)){ if(!Gun.num.is(path)){ // if not a list, text, or number
-					return cb.call(chain, {err: Gun.log("Invalid path '" + path + "'!")}), chain; // then complain
-				} else { return this.path(path + '', cb, opt)  } } else { return this.path(path.split('.'), cb, opt) } } // else coerce upward to a list.
-				if(gun === gun.back){
-					cb.call(chain, opt.put? null : {err: Gun.log('You have no context to `.path`', path, '!')}, opt.put? gun.__.graph[(path||[])[0]] : u);
-					return chain;
-				}
-				ons.push(gun._.at('path:' + path[0]).event(function(at){
-					if(opt.done){ this.off(); return } // TODO: BUG - THIS IS A FIX FOR A BUG! TEST #"context no double emit", COMMENT THIS LINE OUT AND SEE IT FAIL!
-					var ctx = {soul: at.soul, field: at.field, by: gun.__.by(at.soul)}, field = path[0];
-					var on = Gun.obj.as(cb.hash, at.hash, {off: function(){}});
-					if(at.soul === on.soul){ return }
-					else { on.off() }
-					if(ctx.rel = (Gun.is.rel(at.value) || Gun.is.rel(at.at && at.at.value))){
-						if(opt.put && 1 === path.length){
-							return cb.call(ctx.by.chain || chain, null, Gun.is.node.soul.ify({}, ctx.rel));
-						}
-						var get = function(err, node){
-							if(!err && 1 !== path.length){ return }
-							cb.call(this, err, node, field);
-						};
-						ctx.opt = {chain: opt.chain || chain, put: opt.put, path: {soul: (at.at && at.at.soul) || at.soul, field: field }};
-						gun.__.gun.get(ctx.rel || at.soul, cb.no? null : get, ctx.opt);
-						(opt.on = cb.hash[at.hash] = on = ctx.opt.on).soul = at.soul; // TODO: BUG! CB getting reused as the hash point for multiple paths potentially! Could cause problems!
-						return;
-					}
-					if(1 === path.length){ cb.call(ctx.by.chain || chain, null, at.value, ctx.field) }
-					chain._.at('soul').emit(at).chain(opt.chain);
-				}));
-				ons.push(gun._.at('null').only(function(at){
-					if(!at.field){ return }
-					if(at.not){
-						gun.put({}, null, {init: true});
-						if(opt.init || gun.__.opt.init){ return }
-					}
-					(at = Gun.on.at.copy(at)).field = path[0];
-					at.not = true;
-					chain._.at('null').emit(at).chain(opt.chain);
-				}));
-				ons.push(gun._.at('end').event(function(at){
-					this.off();
-					if(at.at && at.at.field === path[0]){ return } // TODO: BUG! THIS FIXES SO MANY PROBLEMS BUT DOES IT CATCH VARYING SOULS EDGE CASE?
-					var ctx = {by: gun.__.by(at.soul)};
-					if(Gun.obj.has(ctx.by.node, path[0])){ return }
-					(at = Gun.on.at.copy(at)).field = path[0];
-					at.not = true;
-					cb.call(ctx.by.chain || chain, null);
-					chain._.at('null').emit(at).chain(opt.chain);
-				}));
-				if(path.length > 1){
-					(c = chain.path(path.slice(1), cb, opt)).back = gun;
-				}
-				(c || chain).off = function() {
-					ons.forEach(function(on) {
-						on.off();
-					})
-				};
-				return c || chain;
-			}
-		}());
-
-		Gun.chain.map = function(cb, opt){
-			var u, gun = this, chain = gun.chain();
-			cb = cb || function(){}; cb.hash = {};
-			opt = Gun.bi.is(opt)? {change: opt} : opt || {};
-			opt.change = Gun.bi.is(opt.change)? opt.change : true;
-			function path(err, val, field){
-				if(err || (val === u)){ return }
-				cb.call(this, val, field);
-			}
-			function each(val, field){
-				//if(!Gun.is.rel(val)){ path.call(this.gun, null, val, field);return;}
-				if(opt.node){
-					if(!Gun.is.rel(val)){
-						return;
-					}
-				}
-				cb.hash[this.soul + field] = cb.hash[this.soul + field] || (pathon = this.gun.path(field, path, {chain: chain, via: 'map'})); // TODO: path should reuse itself! We shouldn't have to do it ourselves.
-				// TODO:
-				// 1. Ability to turn off an event. // automatically happens within path since reusing is manual?
-				// 2. Ability to pass chain context to fire on. // DONE
-				// 3. Pseudoness handled for us. // DONE
-				// 4. Reuse. // MANUALLY DONE
-			}
-			function map(at){
-				var ref = gun.__.by(at.soul).chain || gun;
-				Gun.is.node(at.change, each, {gun: ref, soul: at.soul});
-			}
-			on = gun.on(map, {raw: true, change: true}); // TODO: ALLOW USER TO DO map change false!
-			chain.off = function() {
-				if (pathon) pathon.off();
-				on.off();
-			}
-			if(gun === gun.back){ Gun.log('You have no context to `.map`!') }
-			return chain;
-		}
-
-		Gun.chain.val = (function(){
-			Gun.on('get.wire').event(function(gun, ctx){
-				if(!ctx.soul){ return } var end;
-				(end = gun.__.by(ctx.soul)).end = (end.end || -1); // TODO: CLEAN UP! This should be per peer!
-			},-999);
-			Gun.on('wire.get').event(function(gun, ctx, err, data){
-				if(err || !ctx.soul){ return }
-				if(data && !Gun.obj.empty(data, Gun._.meta)){ return }
-				var end = gun.__.by(ctx.soul);
-				end.end = (!end.end || end.end < 0)? 1 : end.end + 1;
-			},-999);
-			return function(cb, opt){
-				var gun = this, args = Gun.list.slit.call(arguments);
-				cb = Gun.fns.is(cb)? cb : function(val, field){ root.console.log.apply(root.console, args.concat([field && (field += ':'), val])) }; cb.hash = {};
-				opt = opt || {};
-				function val(at){
-					var ctx = {by: gun.__.by(at.soul), at: at.at || at}, node = ctx.by.node, field = ctx.at.field, hash = Gun.on.at.hash({soul: ctx.at.key || ctx.at.soul, field: field});
-					if(cb.hash[hash]){ return }
-					if(at.field && Gun.obj.has(node, at.field)){
-						return cb.hash[hash] = true, cb.call(ctx.by.chain || gun, Gun.obj.copy(node[at.field]), at.field);
-					}
-					if(!opt.empty && Gun.obj.empty(node, Gun._.meta)){ return } // TODO: CLEAN UP! .on already does this without the .raw!
-					if(ctx.by.end < 0){ return }
-					return cb.hash[hash] = true, cb.call(ctx.by.chain || gun, Gun.obj.copy(node), field);
-				}
-				gun.on(val, {raw: true});
-				if(gun === gun.back){ Gun.log('You have no context to `.val`!') }
-				return gun;
-			}
-		}());
-
-		Gun.chain.not = function(cb, opt){
-			var gun = this, chain = gun.chain();
-			cb = cb || function(){};
-			opt = opt || {};
-			function not(at,e){
-				if(at.field){
-					if(Gun.obj.has(gun.__.by(at.soul).node, at.field)){ return Gun.obj.del(at, 'not'), chain._.at(e).emit(at) }
-				} else
-				if(at.soul && gun.__.by(at.soul).node){ return Gun.obj.del(at, 'not'), chain._.at(e).emit(at) }
-				if(!at.not){ return }
-				var kick = function(next){
-					if(++kick.c){ return Gun.log("Warning! Multiple `not` resumes!"); }
-					next._.at.all(function(on ,e){ // TODO: BUG? Switch back to .at? I think .on is actually correct so it doesn't memorize. // TODO: BUG! What about other events?
-						chain._.at(e).emit(on);
-					});
-				};
-				kick.c = -1
-				kick.chain = gun.chain();
-				kick.next = cb.call(kick.chain, opt.raw? at : (at.field || at.soul || at.not), kick);
-				kick.soul = Gun.text.random();
-				if(Gun.is(kick.next)){ kick(kick.next) }
-				kick.chain._.at('soul').emit({soul: kick.soul, field: at.field, not: true, via: 'not'});
-			}
-			gun._.at.all(not);
-			if(gun === gun.back){ Gun.log('You have no context to `.not`!') }
-			chain._.not = true; // TODO: CLEAN UP! Would be ideal if we could accomplish this in a more elegant way.
-			return chain;
-		}
-
-		Gun.chain.set = function(item, cb, opt){
-			var gun = this, ctx = {}, chain, rel;
-			cb = cb || function(){};
-			if(Gun.is.node(item) && (rel=Gun.is.rel(item._))){
-				// Resolve set with a node
-				return gun.set(gun.get(rel), cb, opt);
-			}
-			if(typeof(item)=='object'&&!Gun.is(item)&&!Gun.is.rel(item)&&!Gun.is.lex(item)&&!Gun.is.node(item)&&!Gun.is.graph(item)){
-				// Resolve set with a new soul
-				return gun.set(Gun.root(gun).put(item), cb, opt);
-			}
-			if(!Gun.is(item)){ return cb.call(gun, {err: Gun.log('Set only supports node references currently!')}), gun } // TODO: Bug? Should we return not gun on error?
-			(ctx.chain = item.chain()).back = gun;
-			ctx.chain._ = item._;
-			item.val(function(node){ // TODO: BUG! Return proxy chain with back = list.
-				if(ctx.done){ return } ctx.done = true;
-				var put = {}, soul = Gun.is.node.soul(node);
-				if(!soul){ return cb.call(gun, {err: Gun.log('Only a node can be linked! Not "' + node + '"!')}) }
-				gun.put(Gun.obj.put(put, soul, Gun.is.rel.ify(soul)), cb, opt);
-			});
-			return ctx.chain;
-		}
-
-		Gun.chain.init = function(cb, opt){
-			var gun = this;
-			gun._.at('null').event(function(at){
-				if(!at.not){ return } // TODO: BUG! This check is synchronous but it could be asynchronous!
-				var ctx = {by: gun.__.by(at.soul)};
-				this.off();
-				if(at.field){
-					if(Gun.obj.has(ctx.by.node, at.field)){ return }
-					gun._.at('soul').emit({soul: at.soul, field: at.field, not: true});
-					return;
-				}
-				if(at.soul){
-					if(ctx.by.node){ return }
-					var soul = Gun.text.random();
-					gun.__.gun.put(Gun.is.node.soul.ify({}, soul), null, {init: true});
-					gun.__.gun.key(at.soul, null, soul);
-				}
-			}, {raw: true});
-			return gun;
-		}
-
-	}(Gun));
-
-	;(function(Gun){ // Javascript to Gun Serializer.
-		function ify(data, cb, opt){
-			opt = opt || {};
-			cb = cb || function(env, cb){ cb(env.at, Gun.is.node.soul(env.at.obj) || Gun.is.node.soul(env.at.node) || Gun.text.random()) };
-			var end = function(fn){
-				ctx.end = fn || function(){};
-				unique(ctx);
-			}, ctx = {at: {path: [], obj: data}, root: {}, graph: {}, queue: [], seen: [], opt: opt, loop: true};
-			if(!data){ return ctx.err = {err: Gun.log('Serializer does not have correct parameters.')}, end }
-			if(ctx.opt.start){ Gun.is.node.soul.ify(ctx.root, ctx.opt.start) }
-			ctx.at.node = ctx.root;
-			while(ctx.loop && !ctx.err){
-				seen(ctx, ctx.at);
-				map(ctx, cb);
-				if(ctx.queue.length){
-					ctx.at = ctx.queue.shift();
-				} else {
-					ctx.loop = false;
-				}
-			}
-			return end;
-		}
-		function map(ctx, cb){
-			var u, rel = function(at, soul){
-				at.soul = at.soul || soul || Gun.is.node.soul(at.obj) || Gun.is.node.soul(at.node);
-				if(!ctx.opt.pure){
-					ctx.graph[at.soul] = Gun.is.node.soul.ify(at.node, at.soul);
-					if(ctx.at.field){
-						Gun.is.node.state.ify([at.node], at.field, u, ctx.opt.state);
-					}
-				}
-				Gun.list.map(at.back, function(rel){
-					rel[Gun._.soul] = at.soul;
-				});
-				unique(ctx);
-			}, it;
-			Gun.obj.map(ctx.at.obj, function(val, field){
-				ctx.at.val = val;
-				ctx.at.field = field;
-				it = cb(ctx, rel, map) || true;
-				if(field === Gun._.meta){
-					ctx.at.node[field] = Gun.obj.copy(val); // TODO: BUG! Is this correct?
-					return;
-				}
-				if(String(field).indexOf('.') != -1 || (false && notValidField(field))){ // TODO: BUG! Do later for ACID "consistency" guarantee.
-					return ctx.err = {err: Gun.log("Invalid field name on '" + ctx.at.path.join('.') + "'!")};
-				}
-				if(!Gun.is.val(val)){
-					var at = {obj: val, node: {}, back: [], path: [field]}, tmp = {}, was;
-					at.path = (ctx.at.path||[]).concat(at.path || []);
-					if(!Gun.obj.is(val)){
-						return ctx.err = {err: Gun.log("Invalid value at '" + at.path.join('.') + "'!" )};
-					}
-					if(was = seen(ctx, at)){
-						tmp[Gun._.soul] = Gun.is.node.soul(was.node) || null;
-						(was.back = was.back || []).push(ctx.at.node[field] = tmp);
-					} else {
-						ctx.queue.push(at);
-						tmp[Gun._.soul] = null;
-						at.back.push(ctx.at.node[field] = tmp);
-					}
-				} else {
-					ctx.at.node[field] = Gun.obj.copy(val);
-				}
-			});
-			if(!it){ cb(ctx, rel) }
-		}
-		function unique(ctx){
-			if(ctx.err || (!Gun.list.map(ctx.seen, function(at){
-				if(!at.soul){ return true }
-			}) && !ctx.loop)){ return ctx.end(ctx.err, ctx), ctx.end = function(){}; }
-		}
-		function seen(ctx, at){
-			return Gun.list.map(ctx.seen, function(has){
-				if(at.obj === has.obj){ return has }
-			}) || (ctx.seen.push(at) && false);
-		}
-		ify.wire = function(n, cb, opt){ return Gun.text.is(n)? ify.wire.from(n, cb, opt) : ify.wire.to(n, cb, opt) }
-		ify.wire.to = function(n, cb, opt){ var t, b;
-			if(!n || !(t = Gun.is.node.soul(n))){ return null }
-			cb = cb || function(){};
-			t = (b = "#'" + JSON.stringify(t) + "'");
-			Gun.obj.map(n, function(v,f){
-				if(Gun._.meta === f){ return }
-				var w = '', s = Gun.is.node.state(n,f);
-				if(!s){ return }
-				w += ".'" + JSON.stringify(f) + "'";
-				w += "='" + JSON.stringify(v) + "'";
-				w += ">'" + JSON.stringify(s) + "'";
-				t += w;
-				w = b + w;
-				cb(null, w);
-			});
-			return t;
-		}
-		ify.wire.from = function(n, cb, opt){
-			if(!n){ return null }
-			var a = [], s = -1, e = 0, end = 1;
-			while((e = n.indexOf("'", s + 1)) >= 0){
-				if(s === e || '\\' === n.charAt(e-1)){}else{
-					a.push(n.slice(s + 1,e));
-					s = e;
-				}
-			}
-			return a;
-		}
-		Gun.ify = ify;
-	}(Gun));
-
-	var root = this || {}; // safe for window, global, root, and 'use strict'.
-	if(typeof window !== "undefined"){ (root = window).Gun = Gun }
-	if(typeof module !== "undefined" && module.exports){ module.exports = Gun }
-	if(typeof global !== "undefined"){ root = global; }
-	root.console = root.console || {log: function(s){ return s }}; // safe for old browsers
-	var console = {
-		log: function(s){return root.console.log.apply(root.console, arguments), s},
-		Log: Gun.log = function(s){ return (!Gun.log.squelch && root.console.log.apply(root.console, arguments)), s }
-	};
-	console.debug = function(i, s){ return (Gun.log.debug && i === Gun.log.debug && Gun.log.debug++) && root.console.log.apply(root.console, arguments), s };
-	Gun.log.count = function(s){ return Gun.log.count[s] = Gun.log.count[s] || 0, Gun.log.count[s]++ }
-}.bind(this || module)());
-
-
-;(function(Tab){
-
-	if(typeof window === "undefined"){ return; }
-	if(!window.Gun){ return }
-	if(!window.JSON){ throw new Error("Include JSON first: ajax.cdnjs.com/ajax/libs/json2/20110223/json2.js") } // for old IE use
-
-	;(function(exports){
-		function s(){}
-		s.put = function(key, val, cb){ try{ store.setItem(key, Gun.text.ify(val)) }catch(e){if(cb)cb(e)} }
-		s.get = function(key, cb){ /*setTimeout(function(){*/ try{ cb(null, Gun.obj.ify(store.getItem(key) || null)) }catch(e){cb(e)} /*},1)*/}
-		s.del = function(key){ return store.removeItem(key) }
-		// Feature detect + local reference
-		var storage;
-		var fail;
-		var uid;
-		try {
-			uid = new Date;
-			(storage = window.localStorage).setItem(uid, uid);
-			fail = storage.getItem(uid) != uid;
-			storage.removeItem(uid);
-			fail && (storage = false);
-		} catch (exception) {}
-		var store = (storage && window.localStorage) || {setItem: function(){}, removeItem: function(){}, getItem: function(){}};
-		exports.store = s;
-	}.bind(this || module)(Tab));
-
-	Gun.on('opt').event(function(gun, opt){
-		opt = opt || {};
-		var tab = gun.tab = gun.tab || {};
-		tab.store = tab.store || Tab.store;
-		tab.request = tab.request || Gun.request;
-		if(!tab.request){ throw new Error("Default GUN driver could not find default network abstraction.") }
-		tab.request.s = tab.request.s || {};
-		tab.headers = opt.headers || {};
-		tab.headers['gun-sid'] = tab.headers['gun-sid'] || Gun.text.random(); // stream id
-		tab.prefix = tab.prefix || opt.prefix || 'gun/';
-		tab.get = tab.get || function(lex, cb, opt){
-			if(!lex){ return }
-			var soul = lex[Gun._.soul];
-			if(!soul){ return }
-			cb = cb || function(){};
-			var ropt = {};
-			(ropt.headers = Gun.obj.copy(tab.headers)).id = tab.msg();
-			(function local(soul, cb){
-				tab.store.get(tab.prefix + soul, function(err, data){
-					if(!data){ return } // let the peers handle no data.
-					if(err){ return cb(err) }
-					cb(err, cb.node = data); // node
-					cb(err, Gun.is.node.soul.ify({}, Gun.is.node.soul(data))); // end
-					cb(err, {}); // terminate
-				});
-			}(soul, cb));
-			if(!(cb.local = opt.local)){
-				tab.request.s[ropt.headers.id] = tab.error(cb, "Error: Get failed!", function(reply){
-					setTimeout(function(){ tab.put(Gun.is.graph.ify(reply.body), function(){}, {local: true, peers: {}}) },1); // and flush the in memory nodes of this graph to localStorage after we've had a chance to union on it.
-				});
-				Gun.obj.map(opt.peers || gun.__.opt.peers, function(peer, url){ var p = {};
-					tab.request(url, lex, tab.request.s[ropt.headers.id], ropt);
-					cb.peers = true;
-				});
-				var node = gun.__.graph[soul];
-				if(node){
-					tab.put(Gun.is.graph.ify(node));
-				}
-			} tab.peers(cb);
-		}
-		tab.put = tab.put || function(graph, cb, opt){
-			cb = cb || function(){};
-			opt = opt || {};
-			var ropt = {};
-			(ropt.headers = Gun.obj.copy(tab.headers)).id = tab.msg();
-			Gun.is.graph(graph, function(node, soul){
-				if(!gun.__.graph[soul]){ return }
-				tab.store.put(tab.prefix + soul, gun.__.graph[soul], function(err){if(err){ cb({err: err}) }});
-			});
-			if(!(cb.local = opt.local)){
-				tab.request.s[ropt.headers.id] = tab.error(cb, "Error: Put failed!");
-				Gun.obj.map(opt.peers || gun.__.opt.peers, function(peer, url){
-					tab.request(url, graph, tab.request.s[ropt.headers.id], ropt);
-					cb.peers = true;
-				});
-			} tab.peers(cb);
-		}
-		tab.error = function(cb, error, fn){
-			return function(err, reply){
-				reply.body = reply.body || reply.chunk || reply.end || reply.write;
-				if(err || !reply || (err = reply.body && reply.body.err)){
-					return cb({err: Gun.log(err || error) });
-				}
-				if(fn){ fn(reply) }
-				cb(null, reply.body);
-			}
-		}
-		tab.peers = function(cb, o){
-			if(Gun.text.is(cb)){ return (o = {})[cb] = {}, o }
-			if(cb && !cb.peers){ setTimeout(function(){
-				if(!cb.local){ if(!Gun.log.count('no-peers')){ Gun.log("Warning! You have no peers to connect to!") } }
-				if(!(cb.graph || cb.node)){ cb(null) }
-			},1)}
-		}
-		tab.msg = tab.msg || function(id){
-			if(!id){
-				return tab.msg.debounce[id = Gun.text.random(9)] = Gun.time.is(), id;
-			}
-			clearTimeout(tab.msg.clear);
-			tab.msg.clear = setTimeout(function(){
-				var now = Gun.time.is();
-				Gun.obj.map(tab.msg.debounce, function(t,id){
-					if(now - t < 1000 * 60 * 5){ return }
-					Gun.obj.del(tab.msg.debounce, id);
-				});
-			},500);
-			if(id = tab.msg.debounce[id]){
-				return tab.msg.debounce[id] = Gun.time.is(), id;
-			}
-		};
-		tab.msg.debounce = tab.msg.debounce || {};
-		tab.server = tab.server || function(req, res){
-			if(!req || !res || !req.body || !req.headers || !req.headers.id){ return }
-			if(tab.request.s[req.headers.rid]){ return tab.request.s[req.headers.rid](null, req) }
-			if(tab.msg(req.headers.id)){ return }
-			// TODO: Re-emit message to other peers if we have any non-overlaping ones.
-			if(req.headers.rid){ return } // no need to process
-			if(Gun.is.lex(req.body)){ return tab.server.get(req, res) }
-			else { return tab.server.put(req, res) }
-		}
-		tab.server.json = 'application/json';
-		tab.server.regex = gun.__.opt.route = gun.__.opt.route || opt.route || /^\/gun/i;
-		tab.server.get = function(req, cb){
-			var soul = req.body[Gun._.soul], node;
-			if(!(node = gun.__.graph[soul])){ return }
-			var reply = {headers: {'Content-Type': tab.server.json, rid: req.headers.id, id: tab.msg()}};
-			cb({headers: reply.headers, body: node});
-		}
-		tab.server.put = function(req, cb){
-			var reply = {headers: {'Content-Type': tab.server.json, rid: req.headers.id, id: tab.msg()}}, keep;
-			if(!req.body){ return cb({headers: reply.headers, body: {err: "No body"}}) }
-			if(!Gun.obj.is(req.body, function(node, soul){
-				if(gun.__.graph[soul]){ return true }
-			})){ return }
-			if(req.err = Gun.union(gun, req.body, function(err, ctx){
-				if(err){ return cb({headers: reply.headers, body: {err: err || "Union failed."}}) }
-				var ctx = ctx || {}; ctx.graph = {};
-				Gun.is.graph(req.body, function(node, soul){ ctx.graph[soul] = gun.__.graph[soul] });
-				gun.__.opt.wire.put(ctx.graph, function(err, ok){
-					if(err){ return cb({headers: reply.headers, body: {err: err || "Failed."}}) }
-					cb({headers: reply.headers, body: {ok: ok || "Persisted."}});
-				}, {local: true, peers: {}});
-			}).err){ cb({headers: reply.headers, body: {err: req.err || "Union failed."}}) }
-		}
-		Gun.obj.map(gun.__.opt.peers, function(){ // only create server if peers and do it once by returning immediately.
-			return (tab.server.able = tab.server.able || tab.request.createServer(tab.server) || true);
-		});
-		gun.__.opt.wire.get = gun.__.opt.wire.get || tab.get;
-		gun.__.opt.wire.put = gun.__.opt.wire.put || tab.put;
-		gun.__.opt.wire.key = gun.__.opt.wire.key || tab.key;
-
-		Tab.request = tab.request;
-		Gun.Tab = Tab;
-	});
-
-}.bind(this || module)({}));
-
-
-;(function(Tab){
-	var request = (function(){
-		function r(base, body, cb, opt){ opt = opt || {};
-			var o = base.length? {base: base} : {};
-			o.base = opt.base || base;
-			o.body = opt.body || body;
-			o.headers = opt.headers;
-			o.url = opt.url;
-			cb = cb || function(){};
-			if(!o.base){ return }
-			r.transport(o, cb);
-		}
-		r.createServer = function(fn){ r.createServer.s.push(fn) }
-		r.createServer.ing = function(req, cb){
-			var i = r.createServer.s.length;
-			while(i--){ (r.createServer.s[i] || function(){})(req, cb) }
-		}
-		r.createServer.s = [];
-		r.back = 2; r.backoff = 2; r.backmax = 2000;
-		r.transport = function(opt, cb){
-			//Gun.log("TRANSPORT:", opt);
-			if(r.ws(opt, cb)){ return }
-			r.jsonp(opt, cb);
-		}
-
-		var queues = r.queues = {};
-
-		r.ws = function(opt, cb){
-			var ws, WS = r.WebSocket || window.WebSocket || window.mozWebSocket || window.webkitWebSocket;
-			if(!WS){ return }
-
-			// Queued offline updates.
-			var queue = queues[opt.base];
-
-			// Create the queue if it doesn't exist.
-			if (!queue) {
-				queue = queues[opt.base] = {};
-			}
-
-			// Try to de-duplicate queued messages.
-			var reqID = ((opt || {}).headers || {}).id || Gun.text.random(9);
-
-			ws = r.ws.peers[opt.base];
-			if(ws && (ws.readyState <= ws.OPEN)){
-				if(ws.readyState === ws.CONNECTING){
-					queue[reqID] = [opt, cb];
-
-					return true;
-				}
-
-				var req = {};
-				if(opt.headers){ req.headers = opt.headers }
-				if(opt.body){ req.body = opt.body }
-				if(opt.url){ req.url = opt.url }
-				req.headers = req.headers || {};
-				r.ws.cbs[req.headers['ws-rid'] = 'WS' + (+ new Date()) + '.' + Math.floor((Math.random()*65535)+1)] = function(err,res){
-					if(res.body || res.end){ delete r.ws.cbs[req.headers['ws-rid']] }
-					cb(err,res);
-				}
-
-				ws.send(JSON.stringify(req),function(err){});
-				return true;
-			}
-
-			if(ws === false){ return }
-
-			// If we've made it this far, the socket isn't open.
-			queue[reqID] = [opt, cb];
-
-			try{ws = r.ws.peers[opt.base] = new WS(opt.base.replace('http','ws'));
-			}catch(e){}
-
-			ws.onopen = function(o){
-
-				// Send the queued messages.
-				r.each(queue, function (deferred) {
-					r.ws.apply(null, deferred);
-				});
-
-				// Clear the queue.
-				queue = queues[opt.base] = {};
-
-				// Reset the reconnect backoff.
-				r.back = 2;
-			};
-
-			ws.onclose = function(c){
-				if(!c){ return }
-				if(ws && ws.close instanceof Function){ ws.close() }
-				if(1006 === c.code){ // websockets cannot be used
-					/*ws = r.ws.peers[opt.base] = false; // 1006 has mixed meanings, therefore we can no longer respect it.
-					r.transport(opt, cb);
-					return;*/
-				}
-				ws = r.ws.peers[opt.base] = null; // this will make the next request try to reconnect
-				setTimeout(function(){
-					r.ws(opt, function(){}); // opt here is a race condition, is it not? Does this matter?
-				}, (r.back *= r.backoff) > r.backmax ? (r.back = r.backmax) : r.back);
-			};
-			if(typeof window !== "undefined"){ window.onbeforeunload = ws.onclose; }
-			ws.onmessage = function(m){
-				if(!m || !m.data){ return }
-				var res;
-				try{res = JSON.parse(m.data);
-				}catch(e){ return }
-				if(!res){ return }
-				res.headers = res.headers || {};
-				if(res.headers['ws-rid']){ return (r.ws.cbs[res.headers['ws-rid']]||function(){})(null, res) }
-				if(res.body){ r.createServer.ing(res, function(res){ r(opt.base, null, null, res)}) } // emit extra events.
-			};
-			ws.onerror = function(e){ console.log(e); };
-			return true;
-		}
-		r.ws.peers = {};
-		r.ws.cbs = {};
-		r.jsonp = function(opt, cb){
-			if(typeof window === "undefined"){
-				return cb("JSONP is currently browser only.");
-			}
-			//Gun.log("jsonp send", opt);
-			r.jsonp.ify(opt, function(url){
-				//Gun.log(url);
-				if(!url){ return }
-				r.jsonp.send(url, function(reply){
-					//Gun.log("jsonp reply", reply);
-					cb(null, reply);
-					r.jsonp.poll(opt, reply);
-				}, opt.jsonp);
-			});
-		}
-		r.jsonp.send = function(url, cb, id){
-			var js = document.createElement('script');
-			js.src = url;
-			window[js.id = id] = function(res){
-				cb(res);
-				cb.id = js.id;
-				js.parentNode.removeChild(js);
-				window[cb.id] = null; // TODO: BUG: This needs to handle chunking!
-				try{delete window[cb.id];
-				}catch(e){}
-			}
-			js.async = true;
-			document.getElementsByTagName('head')[0].appendChild(js);
-			return js;
-		}
-		r.jsonp.poll = function(opt, res){
-			if(!opt || !opt.base || !res || !res.headers || !res.headers.poll){ return }
-			(r.jsonp.poll.s = r.jsonp.poll.s || {})[opt.base] = r.jsonp.poll.s[opt.base] || setTimeout(function(){ // TODO: Need to optimize for Chrome's 6 req limit?
-				//Gun.log("polling again");
-				var o = {base: opt.base, headers: {pull: 1}};
-				r.each(opt.headers, function(v,i){ o.headers[i] = v })
-				r.jsonp(o, function(err, reply){
-					delete r.jsonp.poll.s[opt.base];
-					while(reply.body && reply.body.length && reply.body.shift){ // we're assuming an array rather than chunk encoding. :(
-						var res = reply.body.shift();
-						//Gun.log("-- go go go", res);
-						if(res && res.body){ r.createServer.ing(res, function(){ r(opt.base, null, null, res) }) } // emit extra events.
-					}
-				});
-			}, res.headers.poll);
-		}
-		r.jsonp.ify = function(opt, cb){
-			var uri = encodeURIComponent, q = '?';
-			if(opt.url && opt.url.pathname){ q = opt.url.pathname + q; }
-			q = opt.base + q;
-			r.each((opt.url||{}).query, function(v, i){ q += uri(i) + '=' + uri(v) + '&' });
-			if(opt.headers){ q += uri('`') + '=' + uri(JSON.stringify(opt.headers)) + '&' }
-			if(r.jsonp.max < q.length){ return cb() }
-			q += uri('jsonp') + '=' + uri(opt.jsonp = 'P'+Math.floor((Math.random()*65535)+1));
-			if(opt.body){
-				q += '&';
-				var w = opt.body, wls = function(w,l,s){
-					return uri('%') + '=' + uri(w+'-'+(l||w)+'/'+(s||w))  + '&' + uri('$') + '=';
-				}
-				if(typeof w != 'string'){
-					w = JSON.stringify(w);
-					q += uri('^') + '=' + uri('json') + '&';
-				}
-				w = uri(w);
-				var i = 0, l = w.length
-				, s = r.jsonp.max - (q.length + wls(l.toString()).length);
-				if(s < 0){ return cb() }
-				while(w){
-					cb(q + wls(i, (i = i + s), l) + w.slice(0, i));
-					w = w.slice(i);
-				}
-			} else {
-				cb(q);
-			}
-		}
-		r.jsonp.max = 2000;
-		r.each = function(obj, cb){
-			if(!obj || !cb){ return }
-			for(var i in obj){
-				if(obj.hasOwnProperty(i)){
-					cb(obj[i], i);
-				}
-			}
-		}
-		return r;
-	}());
-	if(typeof window !== "undefined"){ Gun.request = request }
-	if(typeof module !== "undefined" && module.exports){ module.exports.request = request }
-}.bind(this || module)({}));
-
+})}),i.on("opt",function(t){this.to.next(t);var n=t.gun,e=n.back("opt.peers")||{};i.obj.map(e,function(t,e){var r=o.formatURL(e);if(!o.pool.hasOwnProperty(r)){var u=new o(r,t.backoff,n.back("opt.wsc")||{protocols:null});o.pool[r]=u,u.on("message",function(t){var o;try{o=i.obj.ify(t.data)}catch(e){return}o&&o.body&&n.on("in",o.body)})}})}),i.on("out",function(t){this.to.next(t);var n=t.gun,o=n.back("opt.peers")||{},r=n.back("opt.headers")||{};i.obj.empty(o)||e(o,{body:t,headers:r})}),e.jsonp=function(t,n){e.jsonp.ify(t,function(o){o&&e.jsonp.send(o,function(o,i){n(o,i),e.jsonp.poll(t,i)},t.jsonp)})},e.jsonp.send=function(t,n,o){var e=document.createElement("script");return e.src=t,e.onerror=function(){(window[e.id]||function(){})(null,{err:"JSONP failed!"})},window[e.id=o]=function(t,o){n(o,t),n.id=e.id,e.parentNode.removeChild(e),delete window[n.id]},e.async=!0,document.getElementsByTagName("head")[0].appendChild(e),e},e.jsonp.poll=function(t,n){if(t&&t.base&&n&&n.headers&&n.headers.poll){var o=e.jsonp.poll.s=e.jsonp.poll.s||{};o[t.base]=o[t.base]||setTimeout(function(){var n={base:t.base,headers:{pull:1}};e.each(t.headers,function(t,o){n.headers[o]=t}),e.jsonp(n,function(n,i){delete o[t.base];for(var r=i.body||[];r.length&&r.shift;){var u=i.body.shift();u&&u.body&&e.createServer.ing(u,function(){e(t.base,null,null,u)})}})},n.headers.poll)}},e.jsonp.ify=function(t,n){var o=encodeURIComponent,i="?";if(t.url&&t.url.pathname&&(i=t.url.pathname+i),i=t.base+i,e.each((t.url||{}).query,function(t,n){i+=o(n)+"="+o(t)+"&"}),t.headers&&(i+=o("`")+"="+o(JSON.stringify(t.headers))+"&"),e.jsonp.max<i.length)return n();var r=Math.floor(65536*Math.random());if(i+=o("jsonp")+"="+o(t.jsonp="P"+r),t.body){i+="&";var u=t.body,a=function(t,n,e){return o("%")+"="+o(t+"-"+(n||t)+"/"+(e||t))+"&"+o("$")+"="};"string"!=typeof u&&(u=JSON.stringify(u),i+=o("^")+"="+o("json")+"&"),u=o(u);var s=0,f=u.length,c=e.jsonp.max-(i.length+a(f.toString()).length);if(0>c)return n();for(;u;)n(i+a(s,s+=c,f)+u.slice(0,s)),u=u.slice(s)}else n(i)},e.jsonp.max=2e3,e.each=function(t,n,o){if(t&&n)for(var e in t)t.hasOwnProperty(e)&&n.call(o,t[e],e)},n.exports=o)})(t,"./polyfill/request")}();
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],168:[function(require,module,exports){
+},{}],165:[function(require,module,exports){
 var hash = exports;
 
 hash.utils = require('./hash/utils');
@@ -20245,7 +18562,7 @@ hash.sha384 = hash.sha.sha384;
 hash.sha512 = hash.sha.sha512;
 hash.ripemd160 = hash.ripemd.ripemd160;
 
-},{"./hash/common":169,"./hash/hmac":170,"./hash/ripemd":171,"./hash/sha":172,"./hash/utils":173}],169:[function(require,module,exports){
+},{"./hash/common":166,"./hash/hmac":167,"./hash/ripemd":168,"./hash/sha":169,"./hash/utils":170}],166:[function(require,module,exports){
 var hash = require('../hash');
 var utils = hash.utils;
 var assert = utils.assert;
@@ -20338,7 +18655,7 @@ BlockHash.prototype._pad = function pad() {
   return res;
 };
 
-},{"../hash":168}],170:[function(require,module,exports){
+},{"../hash":165}],167:[function(require,module,exports){
 var hmac = exports;
 
 var hash = require('../hash');
@@ -20388,7 +18705,7 @@ Hmac.prototype.digest = function digest(enc) {
   return this.outer.digest(enc);
 };
 
-},{"../hash":168}],171:[function(require,module,exports){
+},{"../hash":165}],168:[function(require,module,exports){
 var hash = require('../hash');
 var utils = hash.utils;
 
@@ -20534,7 +18851,7 @@ var sh = [
   8, 5, 12, 9, 12, 5, 14, 6, 8, 13, 6, 5, 15, 13, 11, 11
 ];
 
-},{"../hash":168}],172:[function(require,module,exports){
+},{"../hash":165}],169:[function(require,module,exports){
 var hash = require('../hash');
 var utils = hash.utils;
 var assert = utils.assert;
@@ -21100,7 +19417,7 @@ function g1_512_lo(xh, xl) {
   return r;
 }
 
-},{"../hash":168}],173:[function(require,module,exports){
+},{"../hash":165}],170:[function(require,module,exports){
 var utils = exports;
 var inherits = require('inherits');
 
@@ -21359,7 +19676,7 @@ function shr64_lo(ah, al, num) {
 };
 exports.shr64_lo = shr64_lo;
 
-},{"inherits":176}],174:[function(require,module,exports){
+},{"inherits":173}],171:[function(require,module,exports){
 exports.read = function (buffer, offset, isLE, mLen, nBytes) {
   var e, m
   var eLen = nBytes * 8 - mLen - 1
@@ -21445,7 +19762,7 @@ exports.write = function (buffer, value, offset, isLE, mLen, nBytes) {
   buffer[offset + i - d] |= s * 128
 }
 
-},{}],175:[function(require,module,exports){
+},{}],172:[function(require,module,exports){
 
 var indexOf = [].indexOf;
 
@@ -21456,7 +19773,7 @@ module.exports = function(arr, obj){
   }
   return -1;
 };
-},{}],176:[function(require,module,exports){
+},{}],173:[function(require,module,exports){
 if (typeof Object.create === 'function') {
   // implementation from standard node.js 'util' module
   module.exports = function inherits(ctor, superCtor) {
@@ -21481,7 +19798,7 @@ if (typeof Object.create === 'function') {
   }
 }
 
-},{}],177:[function(require,module,exports){
+},{}],174:[function(require,module,exports){
 /*!
  * Determine if an object is a Buffer
  *
@@ -21504,14 +19821,14 @@ function isSlowBuffer (obj) {
   return typeof obj.readFloatLE === 'function' && typeof obj.slice === 'function' && isBuffer(obj.slice(0, 0))
 }
 
-},{}],178:[function(require,module,exports){
+},{}],175:[function(require,module,exports){
 var toString = {}.toString;
 
 module.exports = Array.isArray || function (arr) {
   return toString.call(arr) == '[object Array]';
 };
 
-},{}],179:[function(require,module,exports){
+},{}],176:[function(require,module,exports){
 /**
  * lodash 3.1.4 (Custom Build) <https://lodash.com/>
  * Build: `lodash modern modularize exports="npm" -o ./`
@@ -21644,7 +19961,7 @@ function isLength(value) {
 
 module.exports = baseFlatten;
 
-},{"lodash.isarguments":191,"lodash.isarray":192}],180:[function(require,module,exports){
+},{"lodash.isarguments":188,"lodash.isarray":189}],177:[function(require,module,exports){
 /**
  * lodash 3.0.3 (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize exports="npm" -o ./`
@@ -21694,7 +20011,7 @@ function createBaseFor(fromRight) {
 
 module.exports = baseFor;
 
-},{}],181:[function(require,module,exports){
+},{}],178:[function(require,module,exports){
 /**
  * lodash 3.1.0 (Custom Build) <https://lodash.com/>
  * Build: `lodash modern modularize exports="npm" -o ./`
@@ -21753,7 +20070,7 @@ function indexOfNaN(array, fromIndex, fromRight) {
 
 module.exports = baseIndexOf;
 
-},{}],182:[function(require,module,exports){
+},{}],179:[function(require,module,exports){
 /**
  * lodash 3.0.3 (Custom Build) <https://lodash.com/>
  * Build: `lodash modern modularize exports="npm" -o ./`
@@ -21823,7 +20140,7 @@ function baseUniq(array, iteratee) {
 
 module.exports = baseUniq;
 
-},{"lodash._baseindexof":181,"lodash._cacheindexof":184,"lodash._createcache":185}],183:[function(require,module,exports){
+},{"lodash._baseindexof":178,"lodash._cacheindexof":181,"lodash._createcache":182}],180:[function(require,module,exports){
 /**
  * lodash 3.0.1 (Custom Build) <https://lodash.com/>
  * Build: `lodash modern modularize exports="npm" -o ./`
@@ -21890,7 +20207,7 @@ function identity(value) {
 
 module.exports = bindCallback;
 
-},{}],184:[function(require,module,exports){
+},{}],181:[function(require,module,exports){
 /**
  * lodash 3.0.2 (Custom Build) <https://lodash.com/>
  * Build: `lodash modern modularize exports="npm" -o ./`
@@ -21945,7 +20262,7 @@ function isObject(value) {
 
 module.exports = cacheIndexOf;
 
-},{}],185:[function(require,module,exports){
+},{}],182:[function(require,module,exports){
 (function (global){
 /**
  * lodash 3.1.2 (Custom Build) <https://lodash.com/>
@@ -22040,7 +20357,7 @@ SetCache.prototype.push = cachePush;
 module.exports = createCache;
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"lodash._getnative":186}],186:[function(require,module,exports){
+},{"lodash._getnative":183}],183:[function(require,module,exports){
 /**
  * lodash 3.9.1 (Custom Build) <https://lodash.com/>
  * Build: `lodash modern modularize exports="npm" -o ./`
@@ -22179,7 +20496,7 @@ function isNative(value) {
 
 module.exports = getNative;
 
-},{}],187:[function(require,module,exports){
+},{}],184:[function(require,module,exports){
 (function (global){
 /**
  * lodash 3.0.1 (Custom Build) <https://lodash.com/>
@@ -22242,7 +20559,7 @@ function checkGlobal(value) {
 module.exports = root;
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],188:[function(require,module,exports){
+},{}],185:[function(require,module,exports){
 /**
  * lodash 3.2.0 (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize exports="npm" -o ./`
@@ -22427,7 +20744,7 @@ function deburr(string) {
 
 module.exports = deburr;
 
-},{"lodash._root":187}],189:[function(require,module,exports){
+},{"lodash._root":184}],186:[function(require,module,exports){
 /**
  * lodash 3.2.0 (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize exports="npm" -o ./`
@@ -22609,7 +20926,7 @@ function escape(string) {
 
 module.exports = escape;
 
-},{"lodash._root":187}],190:[function(require,module,exports){
+},{"lodash._root":184}],187:[function(require,module,exports){
 /**
  * lodash 3.0.2 (Custom Build) <https://lodash.com/>
  * Build: `lodash modern modularize exports="npm" -o ./`
@@ -22682,7 +20999,7 @@ var forOwn = createForOwn(baseForOwn);
 
 module.exports = forOwn;
 
-},{"lodash._basefor":180,"lodash._bindcallback":183,"lodash.keys":194}],191:[function(require,module,exports){
+},{"lodash._basefor":177,"lodash._bindcallback":180,"lodash.keys":191}],188:[function(require,module,exports){
 /**
  * lodash (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize exports="npm" -o ./`
@@ -22913,7 +21230,7 @@ function isObjectLike(value) {
 
 module.exports = isArguments;
 
-},{}],192:[function(require,module,exports){
+},{}],189:[function(require,module,exports){
 /**
  * lodash 3.0.4 (Custom Build) <https://lodash.com/>
  * Build: `lodash modern modularize exports="npm" -o ./`
@@ -23095,7 +21412,7 @@ function isNative(value) {
 
 module.exports = isArray;
 
-},{}],193:[function(require,module,exports){
+},{}],190:[function(require,module,exports){
 /**
  * lodash 3.1.1 (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize exports="npm" -o ./`
@@ -23169,7 +21486,7 @@ var kebabCase = createCompounder(function(result, word, index) {
 
 module.exports = kebabCase;
 
-},{"lodash.deburr":188,"lodash.words":197}],194:[function(require,module,exports){
+},{"lodash.deburr":185,"lodash.words":194}],191:[function(require,module,exports){
 /**
  * lodash 3.1.2 (Custom Build) <https://lodash.com/>
  * Build: `lodash modern modularize exports="npm" -o ./`
@@ -23407,7 +21724,7 @@ function keysIn(object) {
 
 module.exports = keys;
 
-},{"lodash._getnative":186,"lodash.isarguments":191,"lodash.isarray":192}],195:[function(require,module,exports){
+},{"lodash._getnative":183,"lodash.isarguments":188,"lodash.isarray":189}],192:[function(require,module,exports){
 /**
  * lodash 3.6.1 (Custom Build) <https://lodash.com/>
  * Build: `lodash modern modularize exports="npm" -o ./`
@@ -23476,7 +21793,7 @@ function restParam(func, start) {
 
 module.exports = restParam;
 
-},{}],196:[function(require,module,exports){
+},{}],193:[function(require,module,exports){
 /**
  * lodash 3.1.0 (Custom Build) <https://lodash.com/>
  * Build: `lodash modern modularize exports="npm" -o ./`
@@ -23513,7 +21830,7 @@ var union = restParam(function(arrays) {
 
 module.exports = union;
 
-},{"lodash._baseflatten":179,"lodash._baseuniq":182,"lodash.restparam":195}],197:[function(require,module,exports){
+},{"lodash._baseflatten":176,"lodash._baseuniq":179,"lodash.restparam":192}],194:[function(require,module,exports){
 /**
  * lodash 3.2.0 (Custom Build) <https://lodash.com/>
  * Build: `lodash modularize exports="npm" -o ./`
@@ -23713,7 +22030,7 @@ function words(string, pattern, guard) {
 
 module.exports = words;
 
-},{"lodash._root":187}],198:[function(require,module,exports){
+},{"lodash._root":184}],195:[function(require,module,exports){
 'use strict';
 
 var proto = Element.prototype;
@@ -23743,7 +22060,7 @@ function match(el, selector) {
   }
   return false;
 }
-},{}],199:[function(require,module,exports){
+},{}],196:[function(require,module,exports){
 var bn = require('bn.js');
 var brorand = require('brorand');
 
@@ -23858,7 +22175,7 @@ MillerRabin.prototype.getDivisor = function getDivisor(n, k) {
   return false;
 };
 
-},{"bn.js":43,"brorand":44}],200:[function(require,module,exports){
+},{"bn.js":43,"brorand":44}],197:[function(require,module,exports){
 module.exports = assert;
 
 function assert(val, msg) {
@@ -23871,7 +22188,7 @@ assert.equal = function assertEqual(l, r, msg) {
     throw new Error(msg || ('Assertion failed: ' + l + ' != ' + r));
 };
 
-},{}],201:[function(require,module,exports){
+},{}],198:[function(require,module,exports){
 module.exports={"2.16.840.1.101.3.4.1.1": "aes-128-ecb",
 "2.16.840.1.101.3.4.1.2": "aes-128-cbc",
 "2.16.840.1.101.3.4.1.3": "aes-128-ofb",
@@ -23885,7 +22202,7 @@ module.exports={"2.16.840.1.101.3.4.1.1": "aes-128-ecb",
 "2.16.840.1.101.3.4.1.43": "aes-256-ofb",
 "2.16.840.1.101.3.4.1.44": "aes-256-cfb"
 }
-},{}],202:[function(require,module,exports){
+},{}],199:[function(require,module,exports){
 // from https://github.com/indutny/self-signed/blob/gh-pages/lib/asn1.js
 // Fedor, you are amazing.
 
@@ -24004,7 +22321,7 @@ exports.signature = asn1.define('signature', function () {
   )
 })
 
-},{"asn1.js":28}],203:[function(require,module,exports){
+},{"asn1.js":28}],200:[function(require,module,exports){
 (function (Buffer){
 // adapted from https://github.com/apatil/pemstrip
 var findProc = /Proc-Type: 4,ENCRYPTED\r?\nDEK-Info: AES-((?:128)|(?:192)|(?:256))-CBC,([0-9A-H]+)\r?\n\r?\n([0-9A-z\n\r\+\/\=]+)\r?\n/m
@@ -24038,7 +22355,7 @@ module.exports = function (okey, password) {
 }
 
 }).call(this,require("buffer").Buffer)
-},{"browserify-aes":49,"buffer":73,"evp_bytestokey":166}],204:[function(require,module,exports){
+},{"browserify-aes":49,"buffer":73,"evp_bytestokey":163}],201:[function(require,module,exports){
 (function (Buffer){
 var asn1 = require('./asn1')
 var aesid = require('./aesid.json')
@@ -24143,7 +22460,7 @@ function decrypt (data, password) {
 }
 
 }).call(this,require("buffer").Buffer)
-},{"./aesid.json":201,"./asn1":202,"./fixProc":203,"browserify-aes":49,"buffer":73,"pbkdf2":205}],205:[function(require,module,exports){
+},{"./aesid.json":198,"./asn1":199,"./fixProc":200,"browserify-aes":49,"buffer":73,"pbkdf2":202}],202:[function(require,module,exports){
 (function (process,Buffer){
 var createHmac = require('create-hmac')
 var checkParameters = require('./precondition')
@@ -24215,7 +22532,7 @@ exports.pbkdf2Sync = function (password, salt, iterations, keylen, digest) {
 }
 
 }).call(this,require('_process'),require("buffer").Buffer)
-},{"./precondition":206,"_process":208,"buffer":73,"create-hmac":80}],206:[function(require,module,exports){
+},{"./precondition":203,"_process":205,"buffer":73,"create-hmac":80}],203:[function(require,module,exports){
 var MAX_ALLOC = Math.pow(2, 30) - 1 // default in iojs
 module.exports = function (iterations, keylen) {
   if (typeof iterations !== 'number') {
@@ -24235,7 +22552,7 @@ module.exports = function (iterations, keylen) {
   }
 }
 
-},{}],207:[function(require,module,exports){
+},{}],204:[function(require,module,exports){
 (function (process){
 'use strict';
 
@@ -24282,7 +22599,7 @@ function nextTick(fn, arg1, arg2, arg3) {
 }
 
 }).call(this,require('_process'))
-},{"_process":208}],208:[function(require,module,exports){
+},{"_process":205}],205:[function(require,module,exports){
 // shim for using process in browser
 var process = module.exports = {};
 
@@ -24464,7 +22781,7 @@ process.chdir = function (dir) {
 };
 process.umask = function() { return 0; };
 
-},{}],209:[function(require,module,exports){
+},{}],206:[function(require,module,exports){
 exports.publicEncrypt = require('./publicEncrypt');
 exports.privateDecrypt = require('./privateDecrypt');
 
@@ -24475,7 +22792,7 @@ exports.privateEncrypt = function privateEncrypt(key, buf) {
 exports.publicDecrypt = function publicDecrypt(key, buf) {
   return exports.privateDecrypt(key, buf, true);
 };
-},{"./privateDecrypt":211,"./publicEncrypt":212}],210:[function(require,module,exports){
+},{"./privateDecrypt":208,"./publicEncrypt":209}],207:[function(require,module,exports){
 (function (Buffer){
 var createHash = require('create-hash');
 module.exports = function (seed, len) {
@@ -24494,7 +22811,7 @@ function i2ops(c) {
   return out;
 }
 }).call(this,require("buffer").Buffer)
-},{"buffer":73,"create-hash":77}],211:[function(require,module,exports){
+},{"buffer":73,"create-hash":77}],208:[function(require,module,exports){
 (function (Buffer){
 var parseKeys = require('parse-asn1');
 var mgf = require('./mgf');
@@ -24605,7 +22922,7 @@ function compare(a, b){
   return dif;
 }
 }).call(this,require("buffer").Buffer)
-},{"./mgf":210,"./withPublic":213,"./xor":214,"bn.js":43,"browserify-rsa":65,"buffer":73,"create-hash":77,"parse-asn1":204}],212:[function(require,module,exports){
+},{"./mgf":207,"./withPublic":210,"./xor":211,"bn.js":43,"browserify-rsa":65,"buffer":73,"create-hash":77,"parse-asn1":201}],209:[function(require,module,exports){
 (function (Buffer){
 var parseKeys = require('parse-asn1');
 var randomBytes = require('randombytes');
@@ -24703,7 +23020,7 @@ function nonZero(len, crypto) {
   return out;
 }
 }).call(this,require("buffer").Buffer)
-},{"./mgf":210,"./withPublic":213,"./xor":214,"bn.js":43,"browserify-rsa":65,"buffer":73,"create-hash":77,"parse-asn1":204,"randombytes":215}],213:[function(require,module,exports){
+},{"./mgf":207,"./withPublic":210,"./xor":211,"bn.js":43,"browserify-rsa":65,"buffer":73,"create-hash":77,"parse-asn1":201,"randombytes":212}],210:[function(require,module,exports){
 (function (Buffer){
 var bn = require('bn.js');
 function withPublic(paddedMsg, key) {
@@ -24716,7 +23033,7 @@ function withPublic(paddedMsg, key) {
 
 module.exports = withPublic;
 }).call(this,require("buffer").Buffer)
-},{"bn.js":43,"buffer":73}],214:[function(require,module,exports){
+},{"bn.js":43,"buffer":73}],211:[function(require,module,exports){
 module.exports = function xor(a, b) {
   var len = a.length;
   var i = -1;
@@ -24725,7 +23042,7 @@ module.exports = function xor(a, b) {
   }
   return a
 };
-},{}],215:[function(require,module,exports){
+},{}],212:[function(require,module,exports){
 (function (process,global,Buffer){
 'use strict'
 
@@ -24765,10 +23082,10 @@ function randomBytes (size, cb) {
 }
 
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("buffer").Buffer)
-},{"_process":208,"buffer":73}],216:[function(require,module,exports){
+},{"_process":205,"buffer":73}],213:[function(require,module,exports){
 module.exports = require("./lib/_stream_duplex.js")
 
-},{"./lib/_stream_duplex.js":217}],217:[function(require,module,exports){
+},{"./lib/_stream_duplex.js":214}],214:[function(require,module,exports){
 // a duplex stream is just a stream that is both readable and writable.
 // Since JS doesn't have multiple prototypal inheritance, this class
 // prototypally inherits from Readable, and then parasitically from
@@ -24844,7 +23161,7 @@ function forEach(xs, f) {
     f(xs[i], i);
   }
 }
-},{"./_stream_readable":219,"./_stream_writable":221,"core-util-is":75,"inherits":176,"process-nextick-args":207}],218:[function(require,module,exports){
+},{"./_stream_readable":216,"./_stream_writable":218,"core-util-is":75,"inherits":173,"process-nextick-args":204}],215:[function(require,module,exports){
 // a passthrough stream.
 // basically just the most minimal sort of Transform stream.
 // Every written chunk gets output as-is.
@@ -24871,7 +23188,7 @@ function PassThrough(options) {
 PassThrough.prototype._transform = function (chunk, encoding, cb) {
   cb(null, chunk);
 };
-},{"./_stream_transform":220,"core-util-is":75,"inherits":176}],219:[function(require,module,exports){
+},{"./_stream_transform":217,"core-util-is":75,"inherits":173}],216:[function(require,module,exports){
 (function (process){
 'use strict';
 
@@ -25815,7 +24132,7 @@ function indexOf(xs, x) {
   return -1;
 }
 }).call(this,require('_process'))
-},{"./_stream_duplex":217,"./internal/streams/BufferList":222,"_process":208,"buffer":73,"buffer-shims":71,"core-util-is":75,"events":165,"inherits":176,"isarray":178,"process-nextick-args":207,"string_decoder/":258,"util":45}],220:[function(require,module,exports){
+},{"./_stream_duplex":214,"./internal/streams/BufferList":219,"_process":205,"buffer":73,"buffer-shims":71,"core-util-is":75,"events":162,"inherits":173,"isarray":175,"process-nextick-args":204,"string_decoder/":255,"util":45}],217:[function(require,module,exports){
 // a transform stream is a readable/writable stream where you do
 // something with the data.  Sometimes it's called a "filter",
 // but that's not a great name for it, since that implies a thing where
@@ -25998,7 +24315,7 @@ function done(stream, er, data) {
 
   return stream.push(null);
 }
-},{"./_stream_duplex":217,"core-util-is":75,"inherits":176}],221:[function(require,module,exports){
+},{"./_stream_duplex":214,"core-util-is":75,"inherits":173}],218:[function(require,module,exports){
 (function (process){
 // A bit simpler than readable streams.
 // Implement an async ._write(chunk, encoding, cb), and it'll handle all
@@ -26555,7 +24872,7 @@ function CorkedRequest(state) {
   };
 }
 }).call(this,require('_process'))
-},{"./_stream_duplex":217,"_process":208,"buffer":73,"buffer-shims":71,"core-util-is":75,"events":165,"inherits":176,"process-nextick-args":207,"util-deprecate":262}],222:[function(require,module,exports){
+},{"./_stream_duplex":214,"_process":205,"buffer":73,"buffer-shims":71,"core-util-is":75,"events":162,"inherits":173,"process-nextick-args":204,"util-deprecate":259}],219:[function(require,module,exports){
 'use strict';
 
 var Buffer = require('buffer').Buffer;
@@ -26620,10 +24937,10 @@ BufferList.prototype.concat = function (n) {
   }
   return ret;
 };
-},{"buffer":73,"buffer-shims":71}],223:[function(require,module,exports){
+},{"buffer":73,"buffer-shims":71}],220:[function(require,module,exports){
 module.exports = require("./lib/_stream_passthrough.js")
 
-},{"./lib/_stream_passthrough.js":218}],224:[function(require,module,exports){
+},{"./lib/_stream_passthrough.js":215}],221:[function(require,module,exports){
 (function (process){
 var Stream = (function (){
   try {
@@ -26643,13 +24960,13 @@ if (!process.browser && process.env.READABLE_STREAM === 'disable' && Stream) {
 }
 
 }).call(this,require('_process'))
-},{"./lib/_stream_duplex.js":217,"./lib/_stream_passthrough.js":218,"./lib/_stream_readable.js":219,"./lib/_stream_transform.js":220,"./lib/_stream_writable.js":221,"_process":208}],225:[function(require,module,exports){
+},{"./lib/_stream_duplex.js":214,"./lib/_stream_passthrough.js":215,"./lib/_stream_readable.js":216,"./lib/_stream_transform.js":217,"./lib/_stream_writable.js":218,"_process":205}],222:[function(require,module,exports){
 module.exports = require("./lib/_stream_transform.js")
 
-},{"./lib/_stream_transform.js":220}],226:[function(require,module,exports){
+},{"./lib/_stream_transform.js":217}],223:[function(require,module,exports){
 module.exports = require("./lib/_stream_writable.js")
 
-},{"./lib/_stream_writable.js":221}],227:[function(require,module,exports){
+},{"./lib/_stream_writable.js":218}],224:[function(require,module,exports){
 (function (Buffer){
 /*
 CryptoJS v3.1.2
@@ -26863,7 +25180,7 @@ function ripemd160 (message) {
 module.exports = ripemd160
 
 }).call(this,require("buffer").Buffer)
-},{"buffer":73}],228:[function(require,module,exports){
+},{"buffer":73}],225:[function(require,module,exports){
 (function (Buffer){
 // prototype class for hash functions
 function Hash (blockSize, finalSize) {
@@ -26936,7 +25253,7 @@ Hash.prototype._update = function () {
 module.exports = Hash
 
 }).call(this,require("buffer").Buffer)
-},{"buffer":73}],229:[function(require,module,exports){
+},{"buffer":73}],226:[function(require,module,exports){
 var exports = module.exports = function SHA (algorithm) {
   algorithm = algorithm.toLowerCase()
 
@@ -26953,7 +25270,7 @@ exports.sha256 = require('./sha256')
 exports.sha384 = require('./sha384')
 exports.sha512 = require('./sha512')
 
-},{"./sha":230,"./sha1":231,"./sha224":232,"./sha256":233,"./sha384":234,"./sha512":235}],230:[function(require,module,exports){
+},{"./sha":227,"./sha1":228,"./sha224":229,"./sha256":230,"./sha384":231,"./sha512":232}],227:[function(require,module,exports){
 (function (Buffer){
 /*
  * A JavaScript implementation of the Secure Hash Algorithm, SHA-0, as defined
@@ -27050,7 +25367,7 @@ Sha.prototype._hash = function () {
 module.exports = Sha
 
 }).call(this,require("buffer").Buffer)
-},{"./hash":228,"buffer":73,"inherits":176}],231:[function(require,module,exports){
+},{"./hash":225,"buffer":73,"inherits":173}],228:[function(require,module,exports){
 (function (Buffer){
 /*
  * A JavaScript implementation of the Secure Hash Algorithm, SHA-1, as defined
@@ -27152,7 +25469,7 @@ Sha1.prototype._hash = function () {
 module.exports = Sha1
 
 }).call(this,require("buffer").Buffer)
-},{"./hash":228,"buffer":73,"inherits":176}],232:[function(require,module,exports){
+},{"./hash":225,"buffer":73,"inherits":173}],229:[function(require,module,exports){
 (function (Buffer){
 /**
  * A JavaScript implementation of the Secure Hash Algorithm, SHA-256, as defined
@@ -27208,7 +25525,7 @@ Sha224.prototype._hash = function () {
 module.exports = Sha224
 
 }).call(this,require("buffer").Buffer)
-},{"./hash":228,"./sha256":233,"buffer":73,"inherits":176}],233:[function(require,module,exports){
+},{"./hash":225,"./sha256":230,"buffer":73,"inherits":173}],230:[function(require,module,exports){
 (function (Buffer){
 /**
  * A JavaScript implementation of the Secure Hash Algorithm, SHA-256, as defined
@@ -27346,7 +25663,7 @@ Sha256.prototype._hash = function () {
 module.exports = Sha256
 
 }).call(this,require("buffer").Buffer)
-},{"./hash":228,"buffer":73,"inherits":176}],234:[function(require,module,exports){
+},{"./hash":225,"buffer":73,"inherits":173}],231:[function(require,module,exports){
 (function (Buffer){
 var inherits = require('inherits')
 var SHA512 = require('./sha512')
@@ -27406,7 +25723,7 @@ Sha384.prototype._hash = function () {
 module.exports = Sha384
 
 }).call(this,require("buffer").Buffer)
-},{"./hash":228,"./sha512":235,"buffer":73,"inherits":176}],235:[function(require,module,exports){
+},{"./hash":225,"./sha512":232,"buffer":73,"inherits":173}],232:[function(require,module,exports){
 (function (Buffer){
 var inherits = require('inherits')
 var Hash = require('./hash')
@@ -27669,7 +25986,7 @@ Sha512.prototype._hash = function () {
 module.exports = Sha512
 
 }).call(this,require("buffer").Buffer)
-},{"./hash":228,"buffer":73,"inherits":176}],236:[function(require,module,exports){
+},{"./hash":225,"buffer":73,"inherits":173}],233:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -27711,7 +26028,7 @@ function classNameFromVNode(vNode) {
 
   return cn.trim();
 }
-},{"./selectorParser":237}],237:[function(require,module,exports){
+},{"./selectorParser":234}],234:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -27769,7 +26086,7 @@ function selectorParser() {
     className: classes.join(' ')
   };
 }
-},{"browser-split":46}],238:[function(require,module,exports){
+},{"browser-split":46}],235:[function(require,module,exports){
 
 // All SVG children elements, not in this list, should self-close
 
@@ -27792,12 +26109,12 @@ module.exports = {
   'metadata': true,
   'title': true
 };
-},{}],239:[function(require,module,exports){
+},{}],236:[function(require,module,exports){
 
 var init = require('./init');
 
 module.exports = init([require('./modules/attributes'), require('./modules/style')]);
-},{"./init":240,"./modules/attributes":241,"./modules/style":242}],240:[function(require,module,exports){
+},{"./init":237,"./modules/attributes":238,"./modules/style":239}],237:[function(require,module,exports){
 
 var parseSelector = require('./parse-selector');
 var VOID_ELEMENTS = require('./void-elements');
@@ -27857,7 +26174,7 @@ module.exports = function init(modules) {
     return tag.join('');
   };
 };
-},{"./container-elements":238,"./parse-selector":243,"./void-elements":244}],241:[function(require,module,exports){
+},{"./container-elements":235,"./parse-selector":240,"./void-elements":241}],238:[function(require,module,exports){
 
 var forOwn = require('lodash.forown');
 var escape = require('lodash.escape');
@@ -27922,7 +26239,7 @@ function setAttributes(values, target) {
     target[key] = value;
   });
 }
-},{"../parse-selector":243,"lodash.escape":189,"lodash.forown":190,"lodash.union":196}],242:[function(require,module,exports){
+},{"../parse-selector":240,"lodash.escape":186,"lodash.forown":187,"lodash.union":193}],239:[function(require,module,exports){
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
 var forOwn = require('lodash.forown');
@@ -27949,7 +26266,7 @@ module.exports = function style(vnode) {
 
   return styles.length ? 'style="' + styles.join('; ') + '"' : '';
 };
-},{"lodash.escape":189,"lodash.forown":190,"lodash.kebabcase":193}],243:[function(require,module,exports){
+},{"lodash.escape":186,"lodash.forown":187,"lodash.kebabcase":190}],240:[function(require,module,exports){
 
 // https://github.com/Matt-Esch/virtual-dom/blob/master/virtual-hyperscript/parse-tag.js
 
@@ -27996,7 +26313,7 @@ module.exports = function parseSelector(selector, upper) {
     className: classes.join(' ')
   };
 };
-},{"browser-split":46}],244:[function(require,module,exports){
+},{"browser-split":46}],241:[function(require,module,exports){
 
 // http://www.w3.org/html/wg/drafts/html/master/syntax.html#void-elements
 
@@ -28017,7 +26334,7 @@ module.exports = {
   track: true,
   wbr: true
 };
-},{}],245:[function(require,module,exports){
+},{}],242:[function(require,module,exports){
 var VNode = require('./vnode');
 var is = require('./is');
 
@@ -28052,7 +26369,7 @@ module.exports = function h(sel, b, c) {
   return VNode(sel, data, children, text, undefined);
 };
 
-},{"./is":247,"./vnode":256}],246:[function(require,module,exports){
+},{"./is":244,"./vnode":253}],243:[function(require,module,exports){
 function createElement(tagName){
   return document.createElement(tagName);
 }
@@ -28108,13 +26425,13 @@ module.exports = {
   setTextContent: setTextContent
 };
 
-},{}],247:[function(require,module,exports){
+},{}],244:[function(require,module,exports){
 module.exports = {
   array: Array.isArray,
   primitive: function(s) { return typeof s === 'string' || typeof s === 'number'; },
 };
 
-},{}],248:[function(require,module,exports){
+},{}],245:[function(require,module,exports){
 var booleanAttrs = ["allowfullscreen", "async", "autofocus", "autoplay", "checked", "compact", "controls", "declare", 
                 "default", "defaultchecked", "defaultmuted", "defaultselected", "defer", "disabled", "draggable", 
                 "enabled", "formnovalidate", "hidden", "indeterminate", "inert", "ismap", "itemscope", "loop", "multiple", 
@@ -28155,7 +26472,7 @@ function updateAttrs(oldVnode, vnode) {
 
 module.exports = {create: updateAttrs, update: updateAttrs};
 
-},{}],249:[function(require,module,exports){
+},{}],246:[function(require,module,exports){
 function updateClass(oldVnode, vnode) {
   var cur, name, elm = vnode.elm,
       oldClass = oldVnode.data.class || {},
@@ -28175,7 +26492,7 @@ function updateClass(oldVnode, vnode) {
 
 module.exports = {create: updateClass, update: updateClass};
 
-},{}],250:[function(require,module,exports){
+},{}],247:[function(require,module,exports){
 var is = require('../is');
 
 function arrInvoker(arr) {
@@ -28235,7 +26552,7 @@ function updateEventListeners(oldVnode, vnode) {
 
 module.exports = {create: updateEventListeners, update: updateEventListeners};
 
-},{"../is":247}],251:[function(require,module,exports){
+},{"../is":244}],248:[function(require,module,exports){
 var raf = (typeof window !== 'undefined' && window.requestAnimationFrame) || setTimeout;
 var nextFrame = function(fn) { raf(function() { raf(fn); }); };
 
@@ -28389,7 +26706,7 @@ function post() {
 
 module.exports = {pre: pre, create: create, destroy: destroy, post: post};
 
-},{}],252:[function(require,module,exports){
+},{}],249:[function(require,module,exports){
 function updateProps(oldVnode, vnode) {
   var key, cur, old, elm = vnode.elm,
       oldProps = oldVnode.data.props || {}, props = vnode.data.props || {};
@@ -28409,7 +26726,7 @@ function updateProps(oldVnode, vnode) {
 
 module.exports = {create: updateProps, update: updateProps};
 
-},{}],253:[function(require,module,exports){
+},{}],250:[function(require,module,exports){
 var raf = (typeof window !== 'undefined' && window.requestAnimationFrame) || setTimeout;
 var nextFrame = function(fn) { raf(function() { raf(fn); }); };
 
@@ -28475,7 +26792,7 @@ function applyRemoveStyle(vnode, rm) {
 
 module.exports = {create: updateStyle, update: updateStyle, destroy: applyDestroyStyle, remove: applyRemoveStyle};
 
-},{}],254:[function(require,module,exports){
+},{}],251:[function(require,module,exports){
 // jshint newcap: false
 /* global require, module, document, Node */
 'use strict';
@@ -28735,7 +27052,7 @@ function init(modules, api) {
 
 module.exports = {init: init};
 
-},{"./htmldomapi":246,"./is":247,"./vnode":256}],255:[function(require,module,exports){
+},{"./htmldomapi":243,"./is":244,"./vnode":253}],252:[function(require,module,exports){
 var h = require('./h');
 
 function copyToThunk(vnode, thunk) {
@@ -28783,14 +27100,14 @@ module.exports = function(sel, key, fn, args) {
   });
 };
 
-},{"./h":245}],256:[function(require,module,exports){
+},{"./h":242}],253:[function(require,module,exports){
 module.exports = function(sel, data, children, text, elm) {
   var key = data === undefined ? undefined : data.key;
   return {sel: sel, data: data, children: children,
           text: text, elm: elm, key: key};
 };
 
-},{}],257:[function(require,module,exports){
+},{}],254:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -28919,7 +27236,7 @@ Stream.prototype.pipe = function(dest, options) {
   return dest;
 };
 
-},{"events":165,"inherits":176,"readable-stream/duplex.js":216,"readable-stream/passthrough.js":223,"readable-stream/readable.js":224,"readable-stream/transform.js":225,"readable-stream/writable.js":226}],258:[function(require,module,exports){
+},{"events":162,"inherits":173,"readable-stream/duplex.js":213,"readable-stream/passthrough.js":220,"readable-stream/readable.js":221,"readable-stream/transform.js":222,"readable-stream/writable.js":223}],255:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -29142,10 +27459,10 @@ function base64DetectIncompleteChar(buffer) {
   this.charLength = this.charReceived ? 3 : 0;
 }
 
-},{"buffer":73}],259:[function(require,module,exports){
+},{"buffer":73}],256:[function(require,module,exports){
 module.exports = require('./lib/index');
 
-},{"./lib/index":260}],260:[function(require,module,exports){
+},{"./lib/index":257}],257:[function(require,module,exports){
 (function (global){
 'use strict';
 
@@ -29177,7 +27494,7 @@ if (typeof self !== 'undefined') {
 var result = (0, _ponyfill2['default'])(root);
 exports['default'] = result;
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./ponyfill":261}],261:[function(require,module,exports){
+},{"./ponyfill":258}],258:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -29201,7 +27518,7 @@ function symbolObservablePonyfill(root) {
 
 	return result;
 };
-},{}],262:[function(require,module,exports){
+},{}],259:[function(require,module,exports){
 (function (global){
 
 /**
@@ -29272,10 +27589,10 @@ function config (name) {
 }
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],263:[function(require,module,exports){
+},{}],260:[function(require,module,exports){
 !function(){function e(t){return t?(t^r(16)>>t/4).toString(16):([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g,e)}function r(e){if(crypto){if(crypto.getRandomValues)return crypto.getRandomValues(new Uint8Array(1))[0]%e;if(crypto.randomBytes)return crypto.randomBytes(1)[0]%e}return Math.random()*e}"undefined"!=typeof module&&"function"==typeof require?(crypto=require("crypto"),module.exports=e):"undefined"!=typeof window&&(window.uuid=e)}();
 
-},{"crypto":81}],264:[function(require,module,exports){
+},{"crypto":81}],261:[function(require,module,exports){
 var indexOf = require('indexof');
 
 var Object_keys = function (obj) {
@@ -29415,130 +27732,7 @@ exports.createContext = Script.createContext = function (context) {
     return copy;
 };
 
-},{"indexof":175}],265:[function(require,module,exports){
-"use strict";
-var index_1 = require("../index");
-var empty = {};
-var DropRepeatsOperator = (function () {
-    function DropRepeatsOperator(ins, fn) {
-        this.ins = ins;
-        this.fn = fn;
-        this.type = 'dropRepeats';
-        this.out = null;
-        this.v = empty;
-    }
-    DropRepeatsOperator.prototype._start = function (out) {
-        this.out = out;
-        this.ins._add(this);
-    };
-    DropRepeatsOperator.prototype._stop = function () {
-        this.ins._remove(this);
-        this.out = null;
-        this.v = empty;
-    };
-    DropRepeatsOperator.prototype.isEq = function (x, y) {
-        return this.fn ? this.fn(x, y) : x === y;
-    };
-    DropRepeatsOperator.prototype._n = function (t) {
-        var u = this.out;
-        if (!u)
-            return;
-        var v = this.v;
-        if (v !== empty && this.isEq(t, v))
-            return;
-        this.v = Array.isArray(t) ? t.slice() : t;
-        u._n(t);
-    };
-    DropRepeatsOperator.prototype._e = function (err) {
-        var u = this.out;
-        if (!u)
-            return;
-        u._e(err);
-    };
-    DropRepeatsOperator.prototype._c = function () {
-        var u = this.out;
-        if (!u)
-            return;
-        u._c();
-    };
-    return DropRepeatsOperator;
-}());
-exports.DropRepeatsOperator = DropRepeatsOperator;
-/**
- * Drops consecutive duplicate values in a stream.
- *
- * Marble diagram:
- *
- * ```text
- * --1--2--1--1--1--2--3--4--3--3|
- *     dropRepeats
- * --1--2--1--------2--3--4--3---|
- * ```
- *
- * Example:
- *
- * ```js
- * import dropRepeats from 'xstream/extra/dropRepeats'
- *
- * const stream = xs.of(1, 2, 1, 1, 1, 2, 3, 4, 3, 3)
- *   .compose(dropRepeats())
- *
- * stream.addListener({
- *   next: i => console.log(i),
- *   error: err => console.error(err),
- *   complete: () => console.log('completed')
- * })
- * ```
- *
- * ```text
- * > 1
- * > 2
- * > 1
- * > 2
- * > 3
- * > 4
- * > 3
- * > completed
- * ```
- *
- * Example with a custom isEqual function:
- *
- * ```js
- * import dropRepeats from 'xstream/extra/dropRepeats'
- *
- * const stream = xs.of('a', 'b', 'a', 'A', 'B', 'b')
- *   .compose(dropRepeats((x, y) => x.toLowerCase() === y.toLowerCase()))
- *
- * stream.addListener({
- *   next: i => console.log(i),
- *   error: err => console.error(err),
- *   complete: () => console.log('completed')
- * })
- * ```
- *
- * ```text
- * > a
- * > b
- * > a
- * > B
- * > completed
- * ```
- *
- * @param {Function} isEqual An optional function of type
- * `(x: T, y: T) => boolean` that takes an event from the input stream and
- * checks if it is equal to previous event, by returning a boolean.
- * @return {Stream}
- */
-function dropRepeats(isEqual) {
-    if (isEqual === void 0) { isEqual = void 0; }
-    return function dropRepeatsOperator(ins) {
-        return new index_1.Stream(new DropRepeatsOperator(ins, isEqual));
-    };
-}
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = dropRepeats;
-
-},{"../index":267}],266:[function(require,module,exports){
+},{"indexof":172}],262:[function(require,module,exports){
 "use strict";
 var index_1 = require("../index");
 var NO = {};
@@ -29714,7 +27908,7 @@ sampleCombine = function sampleCombine() {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = sampleCombine;
 
-},{"../index":267}],267:[function(require,module,exports){
+},{"../index":263}],263:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -31564,4 +29758,4 @@ exports.MemoryStream = MemoryStream;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = Stream;
 
-},{"symbol-observable":259}]},{},[3]);
+},{"symbol-observable":256}]},{},[3]);
