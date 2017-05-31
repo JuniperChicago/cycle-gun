@@ -1,4 +1,4 @@
-import xs from 'xstream';
+import xs, {Stream} from 'xstream';
 import sampleCombine from 'xstream/extra/sampleCombine'
 import * as uuid from '../../../node_modules/uuid-random/uuid-random.min.js';
 import {
@@ -30,7 +30,7 @@ import {
 
 /**
  * Transforms gun store object into object containing headers and rows
- * 
+ *
  * @param {any} inStream
  * @returns
  */
@@ -78,7 +78,7 @@ function theadElems(tableData) {
 
 /**
  * build table body elements
- * 
+ *
  * @param {any} tableData
  * @returns
  */
@@ -112,7 +112,7 @@ export default function app(sources) {
 
     // clear
     const clearButtonClick$ = DOM.select('#clear').events('click')
-    
+
     // remove task
     const removeButtonClick$ = DOM.select('.button-remove').events('click')
 
@@ -148,7 +148,9 @@ export default function app(sources) {
     // TODO: check for duplicates on text event
     const outgunAddTask$ = saveClickOrEnter$
       .compose(sampleCombine(textEvent$))
-      .map(([click, event]) => ({ typeKey: 'out-gun', payload: { key: uuid(), value: event.payload } }))
+      .map(([click, event]: [any, any]) =>
+        ({ typeKey: 'out-gun', payload: { key: uuid(), value: event.payload } })
+      )
 
     // transform text clearing events into messages
     const textClearEvents$ = xs.merge(clearButtonClick$, saveButtonClick$, keydownEvent$)
@@ -157,13 +159,13 @@ export default function app(sources) {
     return {
       textEvent$,
       textClearEvents$,
-      outgun$: xs.merge(outgunAddTask$, outgunRemoveTask$)
+      outgun$: xs.merge(outgunAddTask$, outgunRemoveTask$) as Stream<{typeKey: string, payload: any}>
     }
   }
 
- 
+
   // utilizes a reducer type store
-  // reducers are selected using streams and filters 
+  // reducers are selected using streams and filters
   function model(event$) {
 
     const clearTransformer$ = event$.filter(event => event.typeKey === 'text-clear')
@@ -253,8 +255,8 @@ export default function app(sources) {
   // We are removing nulls, keys that are meta, etc...
   const gunTable$ = transformTodoStream(gunTodos$);
 
-  
-  
+
+
   // intent() returns and object of streams
   const events = intent(DOM);
 
@@ -264,17 +266,17 @@ export default function app(sources) {
     .filter((event) => event.typeKey === 'out-gun')
     .map((event) => {
       const {key, value} = event.payload;
-      
+
       // return function that directly interacts with the gun instance
       return (gunInstance) => {
-        
+
         // gun.js api here
         return gunInstance.get('example/todo/data').path(key).put(value);
       }
     })
 
   const textState$ = model(blendedTextEvents$);
-  
+
   const vtree$ = vtree(gunTable$, textState$);
 
   const sinks = {

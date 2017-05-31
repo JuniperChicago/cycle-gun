@@ -1,13 +1,11 @@
 /**
  * Test & Development Server
- * 
- * 
+ *
+ *
  */
 
-import * as http from 'http';
-
-
 import * as Gun from 'gun';
+import http = require('http');
 
 const port = 3800;
 const ip = '127.0.0.1';
