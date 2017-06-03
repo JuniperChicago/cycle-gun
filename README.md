@@ -1,7 +1,5 @@
 # cycle-gun
 
-**WIP**
-
 A [cycle.js](https://github.com/cyclejs/cyclejs) driver that wraps a [gun.js](https://github.com/amark/gun) store instance.
 
 Note: This driver currently depends on the [xstream](https://github.com/staltz/xstream) library.
@@ -9,10 +7,8 @@ Note: This driver currently depends on the [xstream](https://github.com/staltz/x
 ## Overview
 
 - Gun.js store is created inside a cycle driver pointing to an optional peer.
-- Method named `get` is returned with the sources.
-- The `get` method accepts a function argument that accesses the gun store directly and returns an event stream.
-- The returned event stream contains the gun event object
-- Sink streams contain functions with payload references that are applied directly to the gun.js instance.
+- The source from the Gun driver is an object with 3 methods: `select`, `shallow`, and `each`
+- The sink stream emits "command" functions which take the gun.js instance and apply some changes to it using the normal Gun.js API
 
 ## Installation
 
@@ -20,38 +16,46 @@ Note: This driver currently depends on the [xstream](https://github.com/staltz/x
 npm install --save cycle-gun
 ```
 
+## GunSource
 
+The source from the Gun.js driver is an object with some methods that return streams.
 
-## Creating `get` Stream
+Use `gunSource.select('books')` to go to the `books` path in the graph. It returns a new `gunSource` object.
 
-The get method applies a function directly to the gun instance. The `gun.get(gunFn)` example attaches a reactive stream that listens to the response of the initial function and any changes to the data stored under the given key, both the local instance and synced changes from peers of the gun instance as well.
+Use `gunSource.shallow()` to get a Stream of the data under the current path. This is equivalent to Gun's `.on(callback)` API.
 
 ```typescript
-
-const {gun} = sources;
-
-const gunTodoEvent$ = gun.get((gunInstance) => {
-    return gunInstance.get('example/todo/data')
-    })
-    .compose(dropRepeats(equal))
-    .map((todoState) => {
-      return { typeKey: 'example-todo-data', payload: todoState };
-    })
-
+const presidentAge$ = sources.gun
+  .select('president').shallow()
+  .map(x => {
+    // x is the data for `president`
+    return x.age;
+  })
 ```
 
-## Sinking messages to gun driver
-
-In this version, we sink payload and transform messages to the gun driver by sending a transform function through the stream with payload references.
+Use `gunSource.each()` to get a Stream of the data under each child property of the current path. This is equivalent to Gun's `.map().on(callback)` API. The return stream will emit an object `{key, value}`. This method is useful when the current path points to a set of many resources.
 
 ```typescript
-  var outgoingGunTodo$ = event$
-    .filter(keyFilter('out-gun-todo'))
-    .map((event) => {
-      return (gunInstance) => {
-        return gunInstance.get('example/todo/data').path(uuid()).put(event.payload);
-      }
-    })
+const book$ = sources.gun
+  .select('books').each()
+  .map(x => {
+    // x is an object {key, value} representing ONE book
+    return x.value;
+  })
+```
+
+## Sinking commands to gun driver
+
+In this version, we can send commands to the gun driver by sending a function through the sink stream with payload references.
+
+```typescript
+const outgoingGunTodo$ = event$
+  .map((event) => function command(gunInstance) {
+    return gunInstance
+      .get('example/todo/data')
+      .path(uuid())
+      .put(event.payload);
+  })
 ```
 
 ## A more detailed example
@@ -60,23 +64,20 @@ Note: virtual-dom details omitted and transducers are verbose here
 
 ```typescript
 import xs from 'xstream';
-import { run } from '@cycle/xstream-run';
-<!--import { makeDOMDriver } from '@cycle/dom';-->
+import { run } from '@cycle/run';
+//import { makeDOMDriver } from '@cycle/dom';
 import { makeGunDriver } from 'cycle-gun';
 import * as uuid from 'uuid-random';
 import * as equal from 'deep-equal';
 import dropRepeats from 'xstream/extra/dropRepeats';
 
-
-function gunGetTodo(gun) {
-    return gun.get('example/todo/data');
-}
-
 function main(sources) {
 
   const {DOM, gun} = sources;
 
-  const gunTodoEvent$ = gun.get(gunGetTodo));
+  const gunTodoEvent$ = sources.gun
+    .select('example').select('todo').select('data')
+    .shallow();
 
   // map gun driver events into messages, or return as state
   const gunState$ = gunTodoEvent$
@@ -107,7 +108,7 @@ function main(sources) {
 
 const drivers = {
   // DOM: makeDOMDriver('#app'),
-  gun: makeGunDriver('http://localhost:3500')
+  gun: makeGunDriver({root: 'root', peers: ['http://localhost:3500']})
 };
 
 run(main, drivers);
