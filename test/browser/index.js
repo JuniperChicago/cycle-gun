@@ -1,5 +1,5 @@
 var lib = require('../../lib/index');
-var cycle = require('@cycle/xstream-run').default;
+var run = require('@cycle/run').run;
 var xstream = require('xstream').default;
 
 
@@ -19,7 +19,7 @@ function sinkToGun(eventStream) {
             return event.typeKey === 'out-gun';
         })
         .map(function (event) {
-            return function (gunInstance) {
+            return function command(gunInstance) {
                 return gunInstance
                     .get('example/todo/data')
                     .path(event.payload.key)
@@ -119,14 +119,16 @@ describe('cycle-gun driver instance', function () {
             assert.strictEqual(typeof sources.gun, 'object');
         });
 
-        it('returns a get method', function () {
-            assert.strictEqual(typeof sources.gun.get, 'function');
+        it('GunSource has select, shallow, each methods', function () {
+            assert.strictEqual(typeof sources.gun.select, 'function');
+            assert.strictEqual(typeof sources.gun.shallow, 'function');
+            assert.strictEqual(typeof sources.gun.each, 'function');
         });
 
         it('gets inbound stream from gun', function () {
-            var get$ = sources.gun.get(function (gunInstance) {
-                return gunInstance.get('example/todo/data');
-            });
+            var get$ = sources.gun
+                .select('example').select('todo').select('data')
+                .shallow();
 
             get$.addListener({
                 next: function (event) {
@@ -137,9 +139,9 @@ describe('cycle-gun driver instance', function () {
         });
 
         it('checks data elements are same as those sent', function () {
-            var get$ = sources.gun.get(function (gunInstance) {
-                return gunInstance.get('example/todo/data');
-            });
+            var get$ = sources.gun
+                .select('example').select('todo').select('data')
+                .shallow();
 
             get$.addListener({
                 next: function (event) {
@@ -176,9 +178,9 @@ describe('cycle-gun driver instance', function () {
     }
 
     var drivers = {
-        gun: makeGunDriver()
+        gun: makeGunDriver({root: '/'})
     }
 
-    cycle.run(main, drivers)
+    run(main, drivers)
 
 });

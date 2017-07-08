@@ -1,5 +1,5 @@
 import xs from 'xstream';
-import { run } from '@cycle/xstream-run';
+import { run } from '@cycle/run';
 import { makeDOMDriver, div } from '@cycle/dom';
 import { makeGunDriver } from '../../../lib/index.js';
 

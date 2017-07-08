@@ -1,5 +1,1 @@
-
-export {makeGunDriver} from './cycle-gun';
-
-
-
+export {makeGunDriver, GunSource} from './cycle-gun';
