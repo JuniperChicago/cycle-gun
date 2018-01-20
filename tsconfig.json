@@ -4,14 +4,15 @@
         "module": "commonjs",
         "sourceMap": true,
         "outDir": "lib/",
-        "allowJs": true,
         "lib": [
-            "es2015",
-            "dom"
+            "dom",
+            "es5",
+            "es6",
+            "es2015"
         ]
     },
     "include": [
-        "src/index.ts"
+        "**/*.ts"
     ],
     "exclude": [
         "node_modules",

@@ -19,7 +19,7 @@ export class GunSource {
 
     return xs.create({
       start(listener: Listener<any>) {
-        self.gun.path(...self.path).on((x: any) => {
+        self.gun.get(...self.path).on((x: any) => {
           listener.next(x)
         })
       },
@@ -30,10 +30,9 @@ export class GunSource {
 
   public each(): Stream<{key: string, value: any}> {
     const self = this
-
     return xs.create({
       start(listener: Listener<{key: string, value: any}>) {
-        self.gun.path(...self.path).map().on((value: any, key: string) => {
+        self.gun.get(...self.path).map().on((value: any, key: string) => {
           listener.next({key, value})
         })
       },
@@ -46,7 +45,11 @@ export class GunSource {
 export type Command = (gun: any) => void
 
 export function makeGunDriver(opts: any) {
-  const gun = Gun(opts).get(opts.root)
+  // console.log('gun opts.root--------------------------------------')
+  // console.log(opts)
+  // console.log('-----------------------------------------------------')
+
+  const gun = Gun(opts)
 
   return function gunDriver(sink: Stream<Function>) {
     sink.addListener({
