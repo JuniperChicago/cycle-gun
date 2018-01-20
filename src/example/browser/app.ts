@@ -1,6 +1,8 @@
-import xs, {Stream} from 'xstream';
+import xs, { Stream } from 'xstream';
 import sampleCombine from 'xstream/extra/sampleCombine'
-import * as uuid from '../../../node_modules/uuid-random/uuid-random.min.js';
+//import * as uuid from '../../../node_modules/uuid-random/uuid-random.min.js';
+import * as uuid from 'uuid-random';
+
 import {
   legend,
   div,
@@ -24,8 +26,6 @@ import {
   fieldset
 
 } from '@cycle/dom';
-
-
 
 
 /**
@@ -58,9 +58,8 @@ function transformTodoStream(inStream) {
 }
 
 
-
 function theadElems(tableData) {
-  const {headings} = tableData;
+  const { headings } = tableData;
 
   const thElems = headings
     .filter(heading => heading !== 'key') // skippings the key
@@ -83,7 +82,7 @@ function theadElems(tableData) {
  * @returns
  */
 function tbodyElems(tableData) {
-  const {headings, rows} = tableData;
+  const { headings, rows } = tableData;
   return rows.map((row) => {
 
     const tdElems = headings
@@ -103,9 +102,6 @@ function tbodyElems(tableData) {
 }
 
 export default function app(sources) {
-
-
-
 
 
   function intent(DOM) {
@@ -159,7 +155,7 @@ export default function app(sources) {
     return {
       textEvent$,
       textClearEvents$,
-      outgun$: xs.merge(outgunAddTask$, outgunRemoveTask$) as Stream<{typeKey: string, payload: any}>
+      outgun$: xs.merge(outgunAddTask$, outgunRemoveTask$) as Stream<{ typeKey: string, payload: any }>
     }
   }
 
@@ -241,21 +237,23 @@ export default function app(sources) {
     })
   }
 
-
-  const {DOM, gun} = sources;
-
-
+  const { DOM, gun } = sources;
 
   // Get streams from cycle-gun driver
   ///////////////////////////////////////////////////////////////////////////
-  const gunTodos$ = gun.get((gunInstance) => {
-    return gunInstance.get('example/todo/data');
-  });
+  console.log('sources.gun', gun)
+
+
+  const gunTodoEvent$ = gun
+    .select('example')
+    .select('todo')
+    .select('data')
+    .shallow();
+
+  console.log('gunTodoEvent$', gunTodoEvent$)
 
   // We are removing nulls, keys that are meta, etc...
-  const gunTable$ = transformTodoStream(gunTodos$);
-
-
+  const gunTable$ = transformTodoStream(gunTodoEvent$);
 
   // intent() returns and object of streams
   const events = intent(DOM);
@@ -265,13 +263,13 @@ export default function app(sources) {
   const outgoingGunTodo$ = events.outgun$
     .filter((event) => event.typeKey === 'out-gun')
     .map((event) => {
-      const {key, value} = event.payload;
+      const { key, value } = event.payload;
 
       // return function that directly interacts with the gun instance
       return (gunInstance) => {
 
         // gun.js api here
-        return gunInstance.get('example/todo/data').path(key).put(value);
+        return gunInstance.get('example/todo/data').get(key).put(value);
       }
     })
 

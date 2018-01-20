@@ -11,8 +11,6 @@ var makeGunDriver = lib.makeGunDriver;
 
 var assert = chai.assert;
 
-
-
 function sinkToGun(eventStream) {
     return eventStream
         .filter(function (event) {
@@ -22,7 +20,7 @@ function sinkToGun(eventStream) {
             return function command(gunInstance) {
                 return gunInstance
                     .get('example/todo/data')
-                    .path(event.payload.key)
+                    .get(event.payload.key)
                     .put(event.payload.value)
             };
         });
@@ -113,13 +111,15 @@ describe('cycle-gun driver instance', function () {
 
 
     function main(sources) {
-
+        console.log('sources', sources)
 
         it('sources is an object', function () {
             assert.strictEqual(typeof sources.gun, 'object');
         });
 
         it('GunSource has select, shallow, each methods', function () {
+
+            console.log(sources.gun);
             assert.strictEqual(typeof sources.gun.select, 'function');
             assert.strictEqual(typeof sources.gun.shallow, 'function');
             assert.strictEqual(typeof sources.gun.each, 'function');
@@ -132,7 +132,7 @@ describe('cycle-gun driver instance', function () {
 
             get$.addListener({
                 next: function (event) {
-                    console.log(event)
+                    console.log('get$ event', event)
                     assert.strictEqual(typeof event, 'object');
                 }
             });
@@ -154,19 +154,6 @@ describe('cycle-gun driver instance', function () {
                 }
             });
         });
-
-
-
-
-
-
-
-
-
-
-
-
-
 
         var testPut$ = xstream.fromArray(testArray);
 
